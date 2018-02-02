@@ -125,5 +125,10 @@ func (sig *Signature) UnmarshalJSON(data []byte) error {
 	sig.hash = hash
 	sig.sig = decSig
 	sig.pub = pubKey
+
+	if !sig.verify() {
+		return errors.New("failed to validate the authenticity of the signature")
+	}
+
 	return nil
 }
