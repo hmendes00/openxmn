@@ -5,26 +5,25 @@ import (
 	"errors"
 	"fmt"
 
+	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
+	concrete_blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 	sdk "github.com/XMNBlockchain/core/sdks/domain"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
-
-	aggregated "github.com/XMNBlockchain/core/packages/transactions/aggregated/domain"
-	concrete_aggregated "github.com/XMNBlockchain/core/packages/transactions/aggregated/infrastructure"
 )
 
-type leaders struct {
+type databases struct {
 	sigBuilderFactory users.SignatureBuilderFactory
 	pk                cryptography.PrivateKey
 	userID            *uuid.UUID
 }
 
-// CreateLeaders creates a new Leaders SDK instance
-func CreateLeaders(sigBuilderFactory users.SignatureBuilderFactory, pk cryptography.PrivateKey, userID *uuid.UUID) sdk.Leaders {
-	out := leaders{
+// CreateDatabases creates a new Databases SDK instance
+func CreateDatabases(sigBuilderFactory users.SignatureBuilderFactory, pk cryptography.PrivateKey, userID *uuid.UUID) sdk.Databases {
+	out := databases{
 		sigBuilderFactory: sigBuilderFactory,
 		pk:                pk,
 		userID:            userID,
@@ -32,20 +31,20 @@ func CreateLeaders(sigBuilderFactory users.SignatureBuilderFactory, pk cryptogra
 	return &out
 }
 
-// SaveTrs saves aggregated transactions to the leaders
-func (sdklead *leaders) SaveTrs(serv servers.Server, trs aggregated.Transactions) (aggregated.SignedTransactions, error) {
-	url := fmt.Sprintf("%s/aggregated-transactions", serv.String())
-	js, jsErr := json.Marshal(trs)
+// SaveBlock saves a block to the database
+func (sdkdb *databases) SaveBlock(serv servers.Server, blk blocks.Block) (blocks.SignedBlock, error) {
+	url := fmt.Sprintf("%s/block", serv.String())
+	js, jsErr := json.Marshal(blk)
 	if jsErr != nil {
-		str := fmt.Sprintf("the given transaction could not be converted to JSON: %s", jsErr.Error())
+		str := fmt.Sprintf("the given block could not be converted to JSON: %s", jsErr.Error())
 		return nil, errors.New(str)
 	}
 
 	formData := map[string]string{
-		"transactions": string(js),
+		"block": string(js),
 	}
 
-	userSig, userSigErr := sdklead.sigBuilderFactory.Create().Create().WithUserID(*sdklead.userID).WithPrivateKey(sdklead.pk).WithInterface(trs).Now()
+	userSig, userSigErr := sdkdb.sigBuilderFactory.Create().Create().WithUserID(*sdkdb.userID).WithPrivateKey(sdkdb.pk).WithInterface(blk).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)
@@ -68,10 +67,10 @@ func (sdklead *leaders) SaveTrs(serv servers.Server, trs aggregated.Transactions
 		return nil, errors.New(string(resp.Body()))
 	}
 
-	out := new(concrete_aggregated.SignedTransactions)
+	out := new(concrete_blocks.SignedBlock)
 	outErr := json.Unmarshal(resp.Body(), out)
 	if outErr != nil {
-		str := fmt.Sprintf("there was a problem while converting output to a signed aggregated transaction: %s", outErr.Error())
+		str := fmt.Sprintf("there was a problem while converting output to a signed block: %s", outErr.Error())
 		return nil, errors.New(str)
 	}
 

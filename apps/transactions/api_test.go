@@ -74,7 +74,7 @@ func TestPostTransactions_PostAtomicTransactions_Success(t *testing.T) {
 	atomicSignedTrsBuilderFactory := concrete_signed_trs.CreateAtomicTransactionBuilderFactory()
 
 	//create application:
-	trsApp := CreateTransactionsAPI(commonSigBuilderFactory, signedTrsBuilderFactory, atomicSignedTrsBuilderFactory, newSignedTrs, newAtomicSignedTrs, port)
+	trsApp := CreateAPI(commonSigBuilderFactory, signedTrsBuilderFactory, atomicSignedTrsBuilderFactory, newSignedTrs, newAtomicSignedTrs, port)
 
 	//create SDK:
 	trsSDK := concrete_sdk.CreateTransactions(userSigBuilderFactory, pk, &userID)

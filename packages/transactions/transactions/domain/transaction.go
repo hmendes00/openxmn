@@ -11,5 +11,6 @@ import (
 type Transaction interface {
 	GetID() *uuid.UUID
 	GetBody() body.Body
+	GetKarma() int
 	CreatedOn() time.Time
 }

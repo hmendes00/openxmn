@@ -15,8 +15,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// TransactionsAPI represents the concrete TransactionsAPI API Handlers
-type TransactionsAPI struct {
+// API represents the concrete transactions API Handlers
+type API struct {
 	sigBuilderFactory             commons.SignatureBuilderFactory
 	signedTrsBuilderFactory       signed_trs.TransactionBuilderFactory
 	atomicSignedTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory
@@ -25,16 +25,16 @@ type TransactionsAPI struct {
 	port                          int
 }
 
-// CreateTransactionsAPI creates a new TransactionsAPI instance
-func CreateTransactionsAPI(
+// CreateAPI creates a new API instance
+func CreateAPI(
 	sigBuilderFactory commons.SignatureBuilderFactory,
 	signedTrsBuilderFactory signed_trs.TransactionBuilderFactory,
 	atomicSignedTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory,
 	newSignedTrs chan<- signed_trs.Transaction,
 	newAtomicSignedTrs chan<- signed_trs.AtomicTransaction,
 	port int,
-) *TransactionsAPI {
-	out := TransactionsAPI{
+) *API {
+	out := API{
 		sigBuilderFactory:             sigBuilderFactory,
 		signedTrsBuilderFactory:       signedTrsBuilderFactory,
 		atomicSignedTrsBuilderFactory: atomicSignedTrsBuilderFactory,
@@ -45,8 +45,8 @@ func CreateTransactionsAPI(
 	return &out
 }
 
-// Execute execute the TransactionsAPI API
-func (trs *TransactionsAPI) Execute() {
+// Execute execute the transactions API
+func (trs *API) Execute() {
 
 	//create router:
 	r := mux.NewRouter()
@@ -69,7 +69,7 @@ func (trs *TransactionsAPI) Execute() {
 }
 
 // PostTransaction represents the handler: POST /transaction
-func (trs *TransactionsAPI) postTransaction(w http.ResponseWriter, r *http.Request) {
+func (trs *API) postTransaction(w http.ResponseWriter, r *http.Request) {
 	sig, sigErr := trs.sigBuilderFactory.Create().Create().WithRequest(r).Now()
 	if sigErr != nil {
 		str := fmt.Sprintf("there was an error while building an API Signature instance: %s", sigErr.Error())
@@ -125,7 +125,7 @@ func (trs *TransactionsAPI) postTransaction(w http.ResponseWriter, r *http.Reque
 }
 
 // PostAtomicTransaction represents the handler: POST /atomic-transaction
-func (trs *TransactionsAPI) postAtomicTransaction(w http.ResponseWriter, r *http.Request) {
+func (trs *API) postAtomicTransaction(w http.ResponseWriter, r *http.Request) {
 	sig, sigErr := trs.sigBuilderFactory.Create().Create().WithRequest(r).Now()
 	if sigErr != nil {
 		str := fmt.Sprintf("there was an error while building an API Signature instance: %s", sigErr.Error())

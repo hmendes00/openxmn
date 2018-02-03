@@ -11,16 +11,18 @@ import (
 
 // Transaction represents the concrete transaction
 type Transaction struct {
-	ID   *uuid.UUID          `json:"id"`
-	Bod  *concrete_body.Body `json:"body"`
-	CrOn time.Time           `json:"created_on"`
+	ID    *uuid.UUID          `json:"id"`
+	Karma int                 `json:"karma"`
+	Bod   *concrete_body.Body `json:"body"`
+	CrOn  time.Time           `json:"created_on"`
 }
 
-func createTransaction(id *uuid.UUID, body *concrete_body.Body, createdOn time.Time) trs.Transaction {
+func createTransaction(id *uuid.UUID, karma int, body *concrete_body.Body, createdOn time.Time) trs.Transaction {
 	out := Transaction{
-		ID:   id,
-		Bod:  body,
-		CrOn: createdOn,
+		ID:    id,
+		Bod:   body,
+		Karma: karma,
+		CrOn:  createdOn,
 	}
 
 	return &out
@@ -34,6 +36,11 @@ func (trs *Transaction) GetID() *uuid.UUID {
 // GetBody returns the Body of the transaction
 func (trs *Transaction) GetBody() body.Body {
 	return trs.Bod
+}
+
+// GetKarma returns the karma of the transaction
+func (trs *Transaction) GetKarma() int {
+	return trs.Karma
 }
 
 // CreatedOn returns the cresation time of the transaction
