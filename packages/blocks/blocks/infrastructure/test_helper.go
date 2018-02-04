@@ -18,7 +18,7 @@ func CreateBlockForTests(t *testing.T) *Block {
 	}
 
 	ht := concrete_hashtree.CreateHashTreeForTests(t)
-	neededKarma := rand.Int() % 500
+	neededKarma := rand.Int()%500 + 100
 
 	blk := createBlock(ht, trs, neededKarma)
 	return blk.(*Block)

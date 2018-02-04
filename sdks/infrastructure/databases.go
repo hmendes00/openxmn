@@ -44,7 +44,7 @@ func (sdkdb *databases) SaveBlock(serv servers.Server, blk blocks.Block) (blocks
 		"block": string(js),
 	}
 
-	userSig, userSigErr := sdkdb.sigBuilderFactory.Create().Create().WithUserID(*sdkdb.userID).WithPrivateKey(sdkdb.pk).WithInterface(blk).Now()
+	userSig, userSigErr := sdkdb.sigBuilderFactory.Create().Create().WithUserID(sdkdb.userID).WithPrivateKey(sdkdb.pk).WithInterface(blk).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)

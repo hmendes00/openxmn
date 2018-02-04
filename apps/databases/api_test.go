@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"reflect"
 	"testing"
+	"time"
 
 	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
 	concrete_block "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
@@ -21,8 +22,11 @@ import (
 )
 
 func TestPostBlock_Success(t *testing.T) {
+
+	t.Parallel()
+
 	//variables:
-	port := 8084
+	port := 8086
 	userID := uuid.NewV4()
 	dbURL, _ := url.Parse(fmt.Sprintf("http://127.0.0.1:%d", port))
 	serv, _ := concrete_server.CreateServerBuilderFactory().Create().Create().WithURL(dbURL).Now()
@@ -49,17 +53,22 @@ func TestPostBlock_Success(t *testing.T) {
 
 	//create application:
 	dbApp := CreateAPI(commonSigBuilderFactory, signedBlockBuilderFactory, newSignedBlock, port)
-
-	//create sdk:
-	dbSDK := concrete_sdk.CreateDatabases(userSigBuilderFactory, pk, &userID)
+	defer dbApp.Stop()
 
 	//execute:
 	go dbApp.Execute()
+
+	//sleep some time:
+	time.Sleep(time.Second * 2)
+
+	//create sdk:
+	dbSDK := concrete_sdk.CreateDatabases(userSigBuilderFactory, pk, &userID)
 
 	//save block:
 	signedBlk, signedBlkErr := dbSDK.SaveBlock(serv, blk)
 	if signedBlkErr != nil {
 		t.Errorf("there was an error while saving a block: %s", signedBlkErr.Error())
+		return
 	}
 
 	retBlk := signedBlk.GetBlock()
@@ -67,15 +76,19 @@ func TestPostBlock_Success(t *testing.T) {
 
 	if !reflect.DeepEqual(blk, retBlk) {
 		t.Errorf("the block inside the signed block is invalid")
+		return
 	}
 
 	if !reflect.DeepEqual(&userID, retUserID) {
 		t.Errorf("the userID inside the signature of the signed block is invalid.  Expected: %s, Returned: %s", userID.String(), retUserID.String())
+		return
 	}
 
 	//verify the channel:
 	assignedSignedBlk := <-newSignedBlock
 	if !reflect.DeepEqual(signedBlk, assignedSignedBlk) {
 		t.Errorf("the signed block assigned to the channel is invalid")
+		return
 	}
+
 }

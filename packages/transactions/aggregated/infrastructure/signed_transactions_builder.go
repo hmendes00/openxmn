@@ -102,7 +102,7 @@ func (build *signedTransactionsBuilder) Now() (aggregated.SignedTransactions, er
 	}
 
 	if build.sig == nil && build.usrID != nil && build.pk != nil {
-		sig, sigErr := build.sigBuilderFactory.Create().Create().WithUserID(*build.usrID).WithInterface(build.trs).WithPrivateKey(build.pk).Now()
+		sig, sigErr := build.sigBuilderFactory.Create().Create().WithUserID(build.usrID).WithInterface(build.trs).WithPrivateKey(build.pk).Now()
 		if sigErr != nil {
 			return nil, sigErr
 		}

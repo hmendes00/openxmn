@@ -8,7 +8,7 @@ import (
 
 // Block represents a block of transactions
 type Block interface {
-	GetHashTree() hashtree.Compact
+	GetHashTree() hashtree.HashTree
 	GetBlock() blocks.Block
 	GetLeaderSignatures() []users.Signature
 }

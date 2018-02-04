@@ -45,7 +45,7 @@ func (sdklead *leaders) SaveTrs(serv servers.Server, trs aggregated.Transactions
 		"transactions": string(js),
 	}
 
-	userSig, userSigErr := sdklead.sigBuilderFactory.Create().Create().WithUserID(*sdklead.userID).WithPrivateKey(sdklead.pk).WithInterface(trs).Now()
+	userSig, userSigErr := sdklead.sigBuilderFactory.Create().Create().WithUserID(sdklead.userID).WithPrivateKey(sdklead.pk).WithInterface(trs).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)

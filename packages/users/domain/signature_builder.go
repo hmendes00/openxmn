@@ -12,6 +12,6 @@ type SignatureBuilder interface {
 	WithInterface(v interface{}) SignatureBuilder
 	WithEncodedSignature(encodedSig string) SignatureBuilder
 	WithSignature(sig cryptography.Signature) SignatureBuilder
-	WithUserID(userID uuid.UUID) SignatureBuilder
+	WithUserID(userID *uuid.UUID) SignatureBuilder
 	Now() (Signature, error)
 }

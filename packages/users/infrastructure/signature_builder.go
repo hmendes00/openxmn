@@ -67,8 +67,8 @@ func (build *signatureBuilder) WithSignature(sig cryptography.Signature) users.S
 }
 
 // WithUserID adds a PointerID to the SignatureBuilder
-func (build *signatureBuilder) WithUserID(userID uuid.UUID) users.SignatureBuilder {
-	build.userID = &userID
+func (build *signatureBuilder) WithUserID(userID *uuid.UUID) users.SignatureBuilder {
+	build.userID = userID
 	return build
 }
 

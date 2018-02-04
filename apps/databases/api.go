@@ -18,6 +18,8 @@ type API struct {
 	sigBuilderFactory         commons.SignatureBuilderFactory
 	signedBlockBuilderFactory blocks.SignedBlockBuilderFactory
 	newSignedBlock            chan<- blocks.SignedBlock
+	stop                      bool
+	srv                       *http.Server
 	port                      int
 }
 
@@ -32,10 +34,23 @@ func CreateAPI(
 		sigBuilderFactory:         sigBuilderFactory,
 		signedBlockBuilderFactory: signedBlockBuilderFactory,
 		newSignedBlock:            newSignedBlock,
+		stop:                      false,
+		srv:                       nil,
 		port:                      port,
 	}
 
 	return &out
+}
+
+// Stop stops the database API application
+func (db *API) Stop() {
+	//log the stopping:
+	log.Println("stopping...")
+
+	//shutdown the server, panic on error:
+	if err := db.srv.Shutdown(nil); err != nil {
+		panic(err)
+	}
 }
 
 // Execute execute the databases API
@@ -47,8 +62,8 @@ func (db *API) Execute() {
 	//http handlers:
 	r.HandleFunc("/block", db.postBlock).Methods("POST")
 
-	//listen and serve:
-	srv := &http.Server{
+	//http server
+	db.srv = &http.Server{
 		Handler: r,
 		Addr:    fmt.Sprintf(":%d", db.port),
 		// Good practice: enforce timeouts for servers you create!
@@ -56,8 +71,10 @@ func (db *API) Execute() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	//listen and serve:
-	log.Fatal(srv.ListenAndServe())
+	if err := db.srv.ListenAndServe(); err != nil {
+		// log the intentional close:
+		log.Printf("Shutting down http server: %s", err.Error())
+	}
 }
 
 // postBlock represents the handler: POST /block

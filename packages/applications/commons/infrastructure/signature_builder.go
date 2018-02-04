@@ -58,7 +58,7 @@ func (build *signatureBuilder) Now() (commons.Signature, error) {
 		//retrieve the encoded signature:
 		encodedSignature := build.r.Header.Get("signature")
 
-		userSig, userSigErr := build.sigBuilderFactory.Create().Create().WithEncodedSignature(encodedSignature).WithUserID(userID).Now()
+		userSig, userSigErr := build.sigBuilderFactory.Create().Create().WithEncodedSignature(encodedSignature).WithUserID(&userID).Now()
 		if userSigErr != nil {
 			str := fmt.Sprintf("there was an error while building the wallet signature: %s", userSigErr.Error())
 			return nil, errors.New(str)

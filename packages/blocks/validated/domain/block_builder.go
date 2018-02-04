@@ -8,7 +8,7 @@ import (
 // BlockBuilder represents a block builder
 type BlockBuilder interface {
 	Create() BlockBuilder
-	WithBlock(trs blocks.Block) BlockBuilder
+	WithBlock(blk blocks.Block) BlockBuilder
 	WithSignatures(sigs []users.Signature) BlockBuilder
 	Now() (Block, error)
 }

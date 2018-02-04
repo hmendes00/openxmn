@@ -46,7 +46,7 @@ func (sdktrs *transactions) SaveTrs(serv servers.Server, trs trs.Transaction) (s
 		"transaction": string(js),
 	}
 
-	userSig, userSigErr := sdktrs.sigBuilderFactory.Create().Create().WithUserID(*sdktrs.userID).WithPrivateKey(sdktrs.pk).WithInterface(trs).Now()
+	userSig, userSigErr := sdktrs.sigBuilderFactory.Create().Create().WithUserID(sdktrs.userID).WithPrivateKey(sdktrs.pk).WithInterface(trs).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)
@@ -93,7 +93,7 @@ func (sdktrs *transactions) SaveAtomicTrs(serv servers.Server, trs []trs.Transac
 		"transactions": string(js),
 	}
 
-	userSig, userSigErr := sdktrs.sigBuilderFactory.Create().Create().WithUserID(*sdktrs.userID).WithPrivateKey(sdktrs.pk).WithInterface(trs).Now()
+	userSig, userSigErr := sdktrs.sigBuilderFactory.Create().Create().WithUserID(sdktrs.userID).WithPrivateKey(sdktrs.pk).WithInterface(trs).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)
