@@ -12,8 +12,8 @@ import (
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 
-	aggregated "github.com/XMNBlockchain/core/packages/transactions/aggregated/domain"
-	concrete_aggregated "github.com/XMNBlockchain/core/packages/transactions/aggregated/infrastructure"
+	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
+	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
 )
 
 type leaders struct {

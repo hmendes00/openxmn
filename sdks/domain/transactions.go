@@ -2,8 +2,8 @@ package domain
 
 import (
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	signed "github.com/XMNBlockchain/core/packages/transactions/signed/domain"
-	transactions "github.com/XMNBlockchain/core/packages/transactions/transactions/domain"
+	signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
+	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 )
 
 // Transactions represents the Transactions SDK

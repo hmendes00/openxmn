@@ -25,6 +25,6 @@ func (js *jsonifyParentLeaf) domainify() (*parentLeaf, error) {
 		return nil, rErr
 	}
 
-	out := createParentLeaf(*l, *r)
+	out := createParentLeaf(l, r)
 	return out, nil
 }

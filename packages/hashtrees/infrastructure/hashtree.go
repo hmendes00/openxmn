@@ -1,7 +1,11 @@
 package infrastructure
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 )
@@ -71,6 +75,37 @@ func (tree *HashTree) Compact() hashtrees.Compact {
 // GetHash returns the Hash
 func (tree *HashTree) GetHash() hashtrees.Hash {
 	return tree.H
+}
+
+// Order orders the given data according to the hash
+func (tree *HashTree) Order(data [][]byte) ([][]byte, error) {
+	hashed := map[string][]byte{}
+	for _, oneData := range data {
+		sha := sha256.New()
+		sha.Write(oneData)
+		hashAsString := hex.EncodeToString(sha.Sum(nil))
+		hashed[hashAsString] = oneData
+	}
+
+	out := [][]byte{}
+	leaves := tree.Parent.getBlockLeaves().leaves
+	for _, oneLeaf := range leaves {
+		leafHashAsString := oneLeaf.h.String()
+		if oneData, ok := hashed[leafHashAsString]; ok {
+			out = append(out, oneData)
+			continue
+		}
+
+		//must be a filling leaf, so continue:
+		continue
+	}
+
+	if len(out) != len(data) {
+		str := fmt.Sprintf("the length of the input data (%d) does not match the length of the output (%d), therefore, some data blocks could not be found in the hash leaves", len(data), len(out))
+		return nil, errors.New(str)
+	}
+
+	return out, nil
 }
 
 func (tree *HashTree) jsonify() *jsonifyHashTree {

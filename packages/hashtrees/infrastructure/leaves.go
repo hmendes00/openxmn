@@ -5,15 +5,15 @@ import (
 )
 
 type leaves struct {
-	leaves []leaf
+	leaves []*leaf
 }
 
-func createLeaves(l []leaf) leaves {
-	ret := leaves{
+func createLeaves(l []*leaf) *leaves {
+	out := leaves{
 		leaves: l,
 	}
 
-	return ret
+	return &out
 }
 
 func (leaves *leaves) createHashTree() hashtrees.HashTree {
@@ -31,8 +31,8 @@ func (leaves *leaves) createHashTree() hashtrees.HashTree {
 	return tree
 }
 
-func (leaves *leaves) createChildrenLeaves() leaves {
-	var childrenLeaves []leaf
+func (leaves *leaves) createChildrenLeaves() *leaves {
+	var childrenLeaves []*leaf
 	for index, oneLeaf := range leaves.leaves {
 
 		if index%2 != 0 {
@@ -44,13 +44,13 @@ func (leaves *leaves) createChildrenLeaves() leaves {
 		child := createChildLeaf(left, right)
 		parent := createParentLeaf(left, right)
 		child.setParent(parent)
-		childrenLeaves = append(childrenLeaves, *child)
+		childrenLeaves = append(childrenLeaves, child)
 	}
 
 	return createLeaves(childrenLeaves)
 }
 
-func (leaves *leaves) merge(newLeaves leaves) *leaves {
+func (leaves *leaves) merge(newLeaves *leaves) *leaves {
 	for _, oneLeaf := range newLeaves.leaves {
 		leaves.leaves = append(leaves.leaves, oneLeaf)
 	}

@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
-	validated_blocks "github.com/XMNBlockchain/core/packages/blocks/validated/domain"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 )
 
@@ -142,7 +142,7 @@ func (blk *ValidateBlock) Execute() {
 			firstBlk := signedBlks[0].GetBlock()
 			neededKarma := firstBlk.GetNeededKarma()
 			if receivedKarma >= neededKarma {
-				validatedBlk, validatedBlkErr := blk.valBlkBuilderFactory.Create().Create().WithBlock(firstBlk).WithSignatures(leaderSignatures).Now()
+				validatedBlk, validatedBlkErr := blk.valBlkBuilderFactory.Create().Create().WithBlock(signedBlks[0]).WithSignatures(leaderSignatures).Now()
 				if validatedBlkErr != nil {
 					log.Printf("there was an error while building a validated block: %s", validatedBlkErr.Error())
 					continue

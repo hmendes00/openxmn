@@ -7,11 +7,11 @@ import (
 )
 
 type parentLeaf struct {
-	left  leaf
-	right leaf
+	left  *leaf
+	right *leaf
 }
 
-func createParentLeaf(left leaf, right leaf) *parentLeaf {
+func createParentLeaf(left *leaf, right *leaf) *parentLeaf {
 	parent := parentLeaf{
 		left:  left,
 		right: right,
@@ -27,12 +27,12 @@ func (parent *parentLeaf) createHashTree() hashtrees.HashTree {
 	return out
 }
 
-func (parent *parentLeaf) getBlockLeaves() leaves {
+func (parent *parentLeaf) getBlockLeaves() *leaves {
 	left := parent.left
 	right := parent.right
 	leftLeaves := left.getBlockLeaves()
 	rightLeaves := right.getBlockLeaves()
-	return *leftLeaves.merge(rightLeaves)
+	return leftLeaves.merge(rightLeaves)
 }
 
 func (parent *parentLeaf) jsonify() *jsonifyParentLeaf {

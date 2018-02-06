@@ -1,7 +1,7 @@
 package domain
 
 import (
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
 )
 

@@ -8,9 +8,9 @@ import (
 	"time"
 
 	commons "github.com/XMNBlockchain/core/packages/applications/commons/domain"
-	signed_trs "github.com/XMNBlockchain/core/packages/transactions/signed/domain"
-	transactions "github.com/XMNBlockchain/core/packages/transactions/transactions/domain"
-	concrete_trs "github.com/XMNBlockchain/core/packages/transactions/transactions/infrastructure"
+	signed_trs "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
+	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
+	concrete_trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

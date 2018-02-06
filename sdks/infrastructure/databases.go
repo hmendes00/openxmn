@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
-	concrete_blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	concrete_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"

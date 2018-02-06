@@ -7,9 +7,9 @@ import (
 
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	signed_transactions "github.com/XMNBlockchain/core/packages/transactions/signed/domain"
-	concrete_signed_transactions "github.com/XMNBlockchain/core/packages/transactions/signed/infrastructure"
-	trs "github.com/XMNBlockchain/core/packages/transactions/transactions/domain"
+	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
+	concrete_signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
+	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 	sdk "github.com/XMNBlockchain/core/sdks/domain"
 	"github.com/go-resty/resty"

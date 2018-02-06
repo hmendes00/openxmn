@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
-	concrete_block "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	concrete_server "github.com/XMNBlockchain/core/packages/servers/infrastructure"

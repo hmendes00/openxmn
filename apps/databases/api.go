@@ -8,8 +8,8 @@ import (
 	"time"
 
 	commons "github.com/XMNBlockchain/core/packages/applications/commons/domain"
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
-	concrete_blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	concrete_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	"github.com/gorilla/mux"
 )
 

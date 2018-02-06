@@ -16,10 +16,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	concrete_commons "github.com/XMNBlockchain/core/packages/applications/commons/infrastructure"
-	signed_trs "github.com/XMNBlockchain/core/packages/transactions/signed/domain"
-	concrete_signed_trs "github.com/XMNBlockchain/core/packages/transactions/signed/infrastructure"
-	trs "github.com/XMNBlockchain/core/packages/transactions/transactions/domain"
-	concrete_trs "github.com/XMNBlockchain/core/packages/transactions/transactions/infrastructure"
+	signed_trs "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
+	concrete_signed_trs "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
+	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
+	concrete_trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 )
 
 func TestPostTransactions_PostAtomicTransactions_Success(t *testing.T) {

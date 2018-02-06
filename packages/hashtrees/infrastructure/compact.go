@@ -7,10 +7,10 @@ import (
 // Compact represents an HashTree, with only the root hash and the block leaves
 type Compact struct {
 	h      hashtrees.Hash
-	leaves leaves
+	leaves *leaves
 }
 
-func createCompactHashTree(h hashtrees.Hash, leaves leaves) hashtrees.Compact {
+func createCompactHashTree(h hashtrees.Hash, leaves *leaves) hashtrees.Compact {
 	out := Compact{
 		h:      h,
 		leaves: leaves,

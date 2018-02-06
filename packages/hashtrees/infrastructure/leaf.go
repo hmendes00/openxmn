@@ -20,9 +20,9 @@ func createLeaf(h hashtrees.Hash, parent *parentLeaf) *leaf {
 	return &out
 }
 
-func createChildLeaf(left leaf, right leaf) *leaf {
+func createChildLeaf(left *leaf, right *leaf) *leaf {
 	data := []byte(fmt.Sprintf("%v%v", left, right))
-	h := createSingleHashFromData(data)
+	h := createSingleHashFromData(data).(*singleHash)
 	l := h.createLeaf()
 	return l
 }
@@ -34,7 +34,7 @@ func (l *leaf) setParent(parent *parentLeaf) *leaf {
 
 func (l *leaf) getHeight() int {
 	cpt := 0
-	oneLeaf := *l
+	oneLeaf := l
 	for {
 
 		if oneLeaf.parent == nil {
@@ -46,14 +46,14 @@ func (l *leaf) getHeight() int {
 	}
 }
 
-func (l *leaf) getBlockLeaves() leaves {
+func (l *leaf) getBlockLeaves() *leaves {
 
 	if l.parent != nil {
 		return l.parent.getBlockLeaves()
 	}
 
-	singleLeaves := []leaf{
-		*l,
+	singleLeaves := []*leaf{
+		l,
 	}
 
 	output := createLeaves(singleLeaves)

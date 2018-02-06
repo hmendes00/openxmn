@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blocks/blocks/domain"
-	concrete_block "github.com/XMNBlockchain/core/packages/blocks/blocks/infrastructure"
-	validated_blocks "github.com/XMNBlockchain/core/packages/blocks/validated/domain"
-	concrete_validated_block "github.com/XMNBlockchain/core/packages/blocks/validated/infrastructure"
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
+	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
+	concrete_validated_block "github.com/XMNBlockchain/core/packages/lives/blocks/validated/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
@@ -38,7 +38,7 @@ func TestValidateBlock_Success(t *testing.T) {
 			return false
 		}
 
-		retBlk := validatedBlk.GetBlock()
+		retBlk := validatedBlk.GetBlock().GetBlock()
 		retLeaderSigs := validatedBlk.GetLeaderSignatures()
 
 		if !reflect.DeepEqual(retBlk, blk) {

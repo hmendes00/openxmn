@@ -12,7 +12,7 @@ type singleHash struct {
 	h []byte
 }
 
-func createSingleHashFromString(str string) (*singleHash, error) {
+func createSingleHashFromString(str string) (hashtrees.Hash, error) {
 
 	dec, decErr := hex.DecodeString(str)
 	if decErr != nil {
@@ -26,7 +26,7 @@ func createSingleHashFromString(str string) (*singleHash, error) {
 	return &out, nil
 }
 
-func createSingleHashFromData(data []byte) *singleHash {
+func createSingleHashFromData(data []byte) hashtrees.Hash {
 	sha := sha256.New()
 	sha.Write(data)
 

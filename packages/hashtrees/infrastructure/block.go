@@ -9,7 +9,7 @@ import (
 )
 
 type block struct {
-	hashes []singleHash
+	hashes []*singleHash
 }
 
 func createBlockHashes(data [][]byte) (*block, error) {
@@ -19,10 +19,10 @@ func createBlockHashes(data [][]byte) (*block, error) {
 		return nil, errors.New(str)
 	}
 
-	var hashes []singleHash
+	hashes := []*singleHash{}
 	for _, oneData := range data {
 		oneHash := createSingleHashFromData(oneData)
-		hashes = append(hashes, *oneHash)
+		hashes = append(hashes, oneHash.(*singleHash))
 	}
 
 	blk := block{
@@ -53,17 +53,17 @@ func (blk *block) resizeToNextPowerOfTwo() *block {
 	remaining := int(next) - int(lengthAsFloat)
 	for i := 0; i < remaining; i++ {
 		single := createSingleHashFromData(nil)
-		blk.hashes = append(blk.hashes, *single)
+		blk.hashes = append(blk.hashes, single.(*singleHash))
 	}
 
 	return blk
 }
 
-func (blk *block) createLeaves() leaves {
-	var leaves []leaf
+func (blk *block) createLeaves() *leaves {
+	leaves := []*leaf{}
 	for _, oneBlockHash := range blk.hashes {
 		l := oneBlockHash.createLeaf()
-		leaves = append(leaves, *l)
+		leaves = append(leaves, l)
 	}
 
 	return createLeaves(leaves)

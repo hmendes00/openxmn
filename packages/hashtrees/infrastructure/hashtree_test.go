@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"math"
+	"math/rand"
 	"reflect"
 	"testing"
+	"time"
 
 	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 )
@@ -13,6 +15,15 @@ import (
 // we must also split data, create a tree, create a compact tree, and pass the shuffled data to it, to get it back in order
 // when passing an invalid amount of blocks to the CreateHashTree, returns an error (1, for example.)
 func createTreeAndTest(t *testing.T, text string, delimiter string, height int) {
+
+	shuf := func(v [][]byte) {
+		f := reflect.Swapper(v)
+		n := len(v)
+		r := rand.New(rand.NewSource(time.Now().Unix()))
+		for i := 0; i < n; i++ {
+			f(r.Intn(n), r.Intn(n))
+		}
+	}
 
 	splittedData := bytes.Split([]byte(text), []byte(delimiter))
 	splittedDataLength := len(splittedData)
@@ -41,6 +52,19 @@ func createTreeAndTest(t *testing.T, text string, delimiter string, height int) 
 
 	if !tree.GetHash().Compare(compact.GetHash()) {
 		t.Errorf("the HashTree root hash: %x is not the same as the CompactHashTree root hash: %x", tree.GetHash().Get(), compact.GetHash().Get())
+	}
+
+	shuffledData := make([][]byte, len(splittedData))
+	copy(shuffledData, splittedData)
+	shuf(shuffledData)
+
+	reOrderedSplittedData, reOrderedSplittedDataErr := tree.Order(shuffledData)
+	if reOrderedSplittedDataErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", reOrderedSplittedDataErr.Error())
+	}
+
+	if !reflect.DeepEqual(splittedData, reOrderedSplittedData) {
+		t.Errorf("the re-ordered data is invalid")
 	}
 }
 

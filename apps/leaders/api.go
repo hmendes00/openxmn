@@ -8,8 +8,8 @@ import (
 	"time"
 
 	commons "github.com/XMNBlockchain/core/packages/applications/commons/domain"
-	aggregated_transactions "github.com/XMNBlockchain/core/packages/transactions/aggregated/domain"
-	concrete_aggregated_transactions "github.com/XMNBlockchain/core/packages/transactions/aggregated/infrastructure"
+	aggregated_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
+	concrete_aggregated_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

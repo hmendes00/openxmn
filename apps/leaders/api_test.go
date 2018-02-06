@@ -16,8 +16,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 
 	concrete_commons "github.com/XMNBlockchain/core/packages/applications/commons/infrastructure"
-	aggregated_trs "github.com/XMNBlockchain/core/packages/transactions/aggregated/domain"
-	concrete_aggregated_trs "github.com/XMNBlockchain/core/packages/transactions/aggregated/infrastructure"
+	aggregated_trs "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
+	concrete_aggregated_trs "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
 )
 
 func TestPostAggregatedTransactions_Success(t *testing.T) {

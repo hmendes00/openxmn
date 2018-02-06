@@ -6,4 +6,5 @@ type HashTree interface {
 	GetLength() int
 	GetHash() Hash
 	Compact() Compact
+	Order(data [][]byte) ([][]byte, error)
 }
