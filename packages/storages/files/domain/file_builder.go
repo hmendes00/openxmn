@@ -11,7 +11,6 @@ type FileBuilder interface {
 	WithPath(path string) FileBuilder
 	WithHash(h hash.Hash) FileBuilder
 	WithSizeInBytes(size int) FileBuilder
-	WithContentType(contentType string) FileBuilder
 	CreatedOn(ts time.Time) FileBuilder
 	Now() (File, error)
 }

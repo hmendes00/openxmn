@@ -1,8 +1,11 @@
 package domain
 
+import "hash"
+
 // File represents a stored file
 type File interface {
-	GetHash() string
-	GetData() []byte
+	GetHash() hash.Hash
 	GetSizeInBytes() int
+	GetData() []byte
+	GetExtension() string
 }
