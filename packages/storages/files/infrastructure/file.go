@@ -1,46 +1,46 @@
 package infrastructure
 
 import (
-	"hash"
 	"time"
 
 	files "github.com/XMNBlockchain/core/packages/storages/files/domain"
 )
 
-type file struct {
-	path        string
-	h           hash.Hash
-	sizeInBytes int
-	createdOn   time.Time
+// File represents a concrete file representation
+type File struct {
+	Path        string    `json:"path"`
+	Hash        string    `json:"hash"`
+	SizeInBytes int       `json:"size"`
+	CrOn        time.Time `json:"created_on"`
 }
 
-func createFile(path string, h hash.Hash, sizeInBytes int, createdOn time.Time) files.File {
-	out := file{
-		path:        path,
-		h:           h,
-		sizeInBytes: sizeInBytes,
-		createdOn:   createdOn,
+func createFile(path string, h string, sizeInBytes int, createdOn time.Time) files.File {
+	out := File{
+		Path:        path,
+		Hash:        h,
+		SizeInBytes: sizeInBytes,
+		CrOn:        createdOn,
 	}
 
 	return &out
 }
 
 // GetPath returns the Path
-func (fil *file) GetPath() string {
-	return fil.path
+func (fil *File) GetPath() string {
+	return fil.Path
 }
 
 // GetHash returns the hash
-func (fil *file) GetHash() hash.Hash {
-	return fil.h
+func (fil *File) GetHash() string {
+	return fil.Hash
 }
 
 // GetSizeInBytes returns the size in bytes
-func (fil *file) GetSizeInBytes() int {
-	return fil.sizeInBytes
+func (fil *File) GetSizeInBytes() int {
+	return fil.SizeInBytes
 }
 
 // CreatedOn returns the creation time
-func (fil *file) CreatedOn() time.Time {
-	return fil.createdOn
+func (fil *File) CreatedOn() time.Time {
+	return fil.CrOn
 }

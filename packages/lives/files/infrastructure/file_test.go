@@ -39,3 +39,14 @@ func TestCreateFile_Success(t *testing.T) {
 	}
 
 }
+
+func TestCreateFile_fromHelper_Success(t *testing.T) {
+
+	//execute:
+	fil := CreateFileForTests(t)
+
+	if fil == nil {
+		t.Errorf("the file was expected to be valid, nil returned")
+	}
+
+}

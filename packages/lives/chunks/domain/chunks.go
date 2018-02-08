@@ -2,7 +2,7 @@ package domain
 
 import (
 	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	files "github.com/XMNBlockchain/core/packages/storages/files/domain"
+	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )
 
 // Chunks represents a list of files to reproduce a total file

@@ -1,14 +1,13 @@
 package domain
 
 import (
-	"hash"
 	"time"
 )
 
 // File represents a file stored on disk
 type File interface {
 	GetPath() string
-	GetHash() hash.Hash
+	GetHash() string
 	GetSizeInBytes() int
 	CreatedOn() time.Time
 }

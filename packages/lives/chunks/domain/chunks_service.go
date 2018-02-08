@@ -6,8 +6,6 @@ import (
 
 // ChunksService represents a chunks service
 type ChunksService interface {
-	Save(dirPath, chk Chunks) (stored_chunks.Chunks, error)
-	SaveAll(dirPath, chks []Chunks) ([]stored_chunks.Chunks, error)
-	Delete(dirPath string, h string) error
-	DeleteAll(dirPath string, h []string) error
+	Save(dirPath string, chk Chunks) (stored_chunks.Chunks, error)
+	Delete(dirPath string, hash string) error
 }

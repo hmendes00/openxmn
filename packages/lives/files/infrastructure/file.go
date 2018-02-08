@@ -6,7 +6,8 @@ import (
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )
 
-type file struct {
+// File represents a concrete file representation
+type File struct {
 	h           hash.Hash
 	sizeInBytes int
 	data        []byte
@@ -14,7 +15,7 @@ type file struct {
 }
 
 func createFile(h hash.Hash, sizeInBytes int, data []byte, ext string) files.File {
-	out := file{
+	out := File{
 		h:           h,
 		sizeInBytes: sizeInBytes,
 		data:        data,
@@ -25,21 +26,21 @@ func createFile(h hash.Hash, sizeInBytes int, data []byte, ext string) files.Fil
 }
 
 // GetHash returns the hash
-func (fil *file) GetHash() hash.Hash {
+func (fil *File) GetHash() hash.Hash {
 	return fil.h
 }
 
 // GetSizeInBytes returns the size of the data in bytes
-func (fil *file) GetSizeInBytes() int {
+func (fil *File) GetSizeInBytes() int {
 	return fil.sizeInBytes
 }
 
 // GetData returns the data
-func (fil *file) GetData() []byte {
+func (fil *File) GetData() []byte {
 	return fil.data
 }
 
 // GetExtension returns the extension
-func (fil *file) GetExtension() string {
+func (fil *File) GetExtension() string {
 	return fil.ext
 }

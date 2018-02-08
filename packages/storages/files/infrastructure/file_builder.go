@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"errors"
-	"hash"
 	"time"
 
 	files "github.com/XMNBlockchain/core/packages/storages/files/domain"
@@ -10,7 +9,7 @@ import (
 
 type fileBuilder struct {
 	path        string
-	h           hash.Hash
+	h           string
 	sizeInBytes int
 	createdOn   *time.Time
 }
@@ -18,7 +17,7 @@ type fileBuilder struct {
 func createFileBuilder() files.FileBuilder {
 	out := fileBuilder{
 		path:        "",
-		h:           nil,
+		h:           "",
 		sizeInBytes: 0,
 		createdOn:   nil,
 	}
@@ -29,7 +28,7 @@ func createFileBuilder() files.FileBuilder {
 // Create initializes the file builder
 func (build *fileBuilder) Create() files.FileBuilder {
 	build.path = ""
-	build.h = nil
+	build.h = ""
 	build.sizeInBytes = 0
 	build.createdOn = nil
 	return build
@@ -42,7 +41,7 @@ func (build *fileBuilder) WithPath(path string) files.FileBuilder {
 }
 
 // WithHash adds an hash to the file builder
-func (build *fileBuilder) WithHash(h hash.Hash) files.FileBuilder {
+func (build *fileBuilder) WithHash(h string) files.FileBuilder {
 	build.h = h
 	return build
 }
@@ -65,7 +64,7 @@ func (build *fileBuilder) Now() (files.File, error) {
 		return nil, errors.New("the path is mandatory in order to build a File instance")
 	}
 
-	if build.h == nil {
+	if build.h == "" {
 		return nil, errors.New("the hash is mandatory in order to build a File instance")
 	}
 

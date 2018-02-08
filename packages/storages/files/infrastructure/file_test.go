@@ -1,11 +1,13 @@
 package infrastructure
 
 import (
-	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"math/rand"
 	"testing"
 	"time"
+
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 )
 
 func TestCreateFile_Success(t *testing.T) {
@@ -14,11 +16,12 @@ func TestCreateFile_Success(t *testing.T) {
 	path := "/tmp"
 	h := sha256.New()
 	h.Write([]byte(path))
+	hAsString := hex.EncodeToString(h.Sum(nil))
 	sizeInBytes := rand.Int()%5000 + 1000
 	createdOn := time.Now()
 
 	//execute:
-	fil := createFile(path, h, sizeInBytes, createdOn)
+	fil := createFile(path, hAsString, sizeInBytes, createdOn)
 	retPath := fil.GetPath()
 	retHash := fil.GetHash()
 	retSizeInBytes := fil.GetSizeInBytes()
@@ -28,8 +31,8 @@ func TestCreateFile_Success(t *testing.T) {
 		t.Errorf("the returned path is invalid.  Expected: %s, Returned: %s", path, retPath)
 	}
 
-	if !bytes.Equal(h.Sum(nil), retHash.Sum(nil)) {
-		t.Errorf("the returned hash is invalid")
+	if hAsString != retHash {
+		t.Errorf("the returned hash is invalid.  Expected: %s, Returned: %s", hAsString, retHash)
 	}
 
 	if sizeInBytes != retSizeInBytes {
@@ -40,4 +43,14 @@ func TestCreateFile_Success(t *testing.T) {
 		t.Errorf("the returned createdOn is invalid")
 	}
 
+}
+
+func TestCreateFile_convertToJS_convertToInstance_Success(t *testing.T) {
+
+	//variables:
+	empty := new(File)
+	obj := CreateFileForTests(t)
+
+	//execute:
+	convert.ConvertToJSON(t, obj, empty)
 }
