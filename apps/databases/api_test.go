@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
+	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	concrete_server "github.com/XMNBlockchain/core/packages/servers/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	concrete_sdk "github.com/XMNBlockchain/core/sdks/infrastructure"

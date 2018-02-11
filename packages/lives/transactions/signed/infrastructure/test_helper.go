@@ -15,8 +15,9 @@ func CreateTransactionForTests(t *testing.T) *Transaction {
 	id := uuid.NewV4()
 	trs := concrete_transactions.CreateTransactionForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
+	createdOn := time.Now().UTC()
 
-	sigTrs := createTransaction(&id, trs, sig)
+	sigTrs := createTransaction(&id, trs, sig, createdOn)
 	return sigTrs.(*Transaction)
 }
 

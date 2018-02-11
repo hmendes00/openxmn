@@ -22,6 +22,8 @@ import (
 
 func TestPostAggregatedTransactions_Success(t *testing.T) {
 
+	t.Parallel()
+
 	//variables:
 	port := 8082
 	userID := uuid.NewV4()

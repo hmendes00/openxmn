@@ -99,7 +99,8 @@ func (trs *API) postTransaction(w http.ResponseWriter, r *http.Request) {
 	//create the signed transaction builder:
 	id := uuid.NewV4()
 	userSig := sig.GetSignature()
-	signedTrs, signedTrsErr := trs.signedTrsBuilderFactory.Create().Create().WithID(&id).WithTransaction(newTrs).WithSignature(userSig).Now()
+	ts := time.Now()
+	signedTrs, signedTrsErr := trs.signedTrsBuilderFactory.Create().Create().WithID(&id).WithTransaction(newTrs).WithSignature(userSig).CreatedOn(ts).Now()
 	if signedTrsErr != nil {
 		str := fmt.Sprintf("there was an error while building a signed transaction: %s", signedTrsErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -161,7 +162,8 @@ func (trs *API) postAtomicTransaction(w http.ResponseWriter, r *http.Request) {
 	//create the signed transaction builder:
 	id := uuid.NewV4()
 	userSig := sig.GetSignature()
-	atomicSignedTrs, atomicSignedTrsErr := trs.atomicSignedTrsBuilderFactory.Create().Create().WithID(&id).WithTransactions(trsList).WithSignature(userSig).Now()
+	createdOn := time.Now()
+	atomicSignedTrs, atomicSignedTrsErr := trs.atomicSignedTrsBuilderFactory.Create().Create().WithID(&id).WithTransactions(trsList).WithSignature(userSig).CreatedOn(createdOn).Now()
 	if atomicSignedTrsErr != nil {
 		str := fmt.Sprintf("there was an error while building an atomic signed transaction: %s", atomicSignedTrsErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)

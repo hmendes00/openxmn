@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
@@ -20,8 +21,10 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 	}
 
 	sig := concrete_users.CreateSignatureForTests(t)
+	createdOn := time.Now().UTC()
+
 	build := createAtomicTransactionBuilder()
-	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).Now()
+	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", atomicTrsErr.Error())
@@ -30,6 +33,7 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 	retID := atomicTrs.GetID()
 	retTrs := atomicTrs.GetTrs()
 	retSig := atomicTrs.GetSignature()
+	retCreatedOn := atomicTrs.CreatedOn()
 
 	if !reflect.DeepEqual(&id, retID) {
 		t.Errorf("the returned ID was invalid")
@@ -45,6 +49,10 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 		t.Errorf("the returned user signature was invalid")
 	}
 
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
+		t.Errorf("the returned createdOn time was invalid")
+	}
+
 }
 
 func TestBuildAtomicTransaction_withoutID_returnsError(t *testing.T) {
@@ -56,8 +64,10 @@ func TestBuildAtomicTransaction_withoutID_returnsError(t *testing.T) {
 	}
 
 	sig := concrete_users.CreateSignatureForTests(t)
+	createdOn := time.Now().UTC()
+
 	build := createAtomicTransactionBuilder()
-	atomicTrs, atomicTrsErr := build.Create().WithTransactions(trs).WithSignature(sig).Now()
+	atomicTrs, atomicTrsErr := build.Create().WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
 		t.Errorf("the returned error was expected to be an error, nil returned")
@@ -74,8 +84,10 @@ func TestBuildAtomicTransaction_withoutTransactions_returnsError(t *testing.T) {
 	//execute:
 	id := uuid.NewV4()
 	sig := concrete_users.CreateSignatureForTests(t)
+	createdOn := time.Now().UTC()
+
 	build := createAtomicTransactionBuilder()
-	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithSignature(sig).Now()
+	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
 		t.Errorf("the returned error was expected to be an error, nil returned")
@@ -96,8 +108,10 @@ func TestBuildAtomicTransaction_withoutSignature_returnsError(t *testing.T) {
 		concrete_transactions.CreateTransactionForTests(t),
 	}
 
+	createdOn := time.Now().UTC()
+
 	build := createAtomicTransactionBuilder()
-	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).Now()
+	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
 		t.Errorf("the returned error was expected to be an error, nil returned")
@@ -107,4 +121,27 @@ func TestBuildAtomicTransaction_withoutSignature_returnsError(t *testing.T) {
 		t.Errorf("the returned atomicTrs was expected to be nil, instance returned")
 	}
 
+}
+
+func TestBuildAtomicTransaction_withoutCreatedOn_returnsError(t *testing.T) {
+
+	//execute:
+	id := uuid.NewV4()
+	trs := []transactions.Transaction{
+		concrete_transactions.CreateTransactionForTests(t),
+		concrete_transactions.CreateTransactionForTests(t),
+	}
+
+	sig := concrete_users.CreateSignatureForTests(t)
+
+	build := createAtomicTransactionBuilder()
+	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).Now()
+
+	if atomicTrsErr == nil {
+		t.Errorf("the returned error was expected to be an error, nil returned")
+	}
+
+	if atomicTrs != nil {
+		t.Errorf("the returned atomicTrs was expected to be nil, instance returned")
+	}
 }

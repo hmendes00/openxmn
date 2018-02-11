@@ -3,9 +3,10 @@ package infrastructure
 import (
 	"reflect"
 	"testing"
+	"time"
 
-	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
@@ -16,11 +17,13 @@ func TestCreateTransactionWithWalletSignature_Success(t *testing.T) {
 	id := uuid.NewV4()
 	trs := concrete_transactions.CreateTransactionForTests(t)
 	usrSig := concrete_users.CreateSignatureForTests(t)
-	signedTrs := createTransaction(&id, trs, usrSig)
+	createdOn := time.Now().UTC()
+	signedTrs := createTransaction(&id, trs, usrSig, createdOn)
 
 	retID := signedTrs.GetID()
 	retTrs := signedTrs.GetTrs()
 	retSig := signedTrs.GetSignature()
+	retCreatedOn := signedTrs.CreatedOn()
 
 	if !reflect.DeepEqual(&id, retID) {
 		t.Errorf("the returned id was invalid")
@@ -32,6 +35,10 @@ func TestCreateTransactionWithWalletSignature_Success(t *testing.T) {
 
 	if !reflect.DeepEqual(usrSig, retSig) {
 		t.Errorf("the returned wallet signature was invalid")
+	}
+
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
+		t.Errorf("the returned createdOn time was invalid")
 	}
 
 }

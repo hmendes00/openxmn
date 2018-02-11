@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 )
 
 // ChunksRepository represents a concrete ChunksRepository implementation
@@ -27,10 +27,10 @@ func CreateChunksRepository(fileRepository files.FileRepository, chksBuilderFact
 }
 
 // Retrieve retrieves a Chunks instance
-func (rep *ChunksRepository) Retrieve(dirPath string, hash string) (chunk.Chunks, error) {
+func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 
 	//create the paths:
-	chksDirPath := filepath.Join(dirPath, hash, "chunks")
+	chksDirPath := filepath.Join(dirPath)
 
 	// scan the chunk file names:
 	chkFilePaths := []string{}

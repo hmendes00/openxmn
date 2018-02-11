@@ -4,5 +4,6 @@ package domain
 type ChunksBuilder interface {
 	Create() ChunksBuilder
 	WithData(data []byte) ChunksBuilder
+	WithInstance(v interface{}) ChunksBuilder
 	Now() (Chunks, error)
 }

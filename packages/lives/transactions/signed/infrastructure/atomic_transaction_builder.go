@@ -13,16 +13,18 @@ import (
 )
 
 type atomicTransactionBuilder struct {
-	id  *uuid.UUID
-	trs []trs.Transaction
-	sig users.Signature
+	id        *uuid.UUID
+	trs       []trs.Transaction
+	sig       users.Signature
+	createdOn *time.Time
 }
 
 func createAtomicTransactionBuilder() signed_transactions.AtomicTransactionBuilder {
 	out := atomicTransactionBuilder{
-		id:  nil,
-		trs: nil,
-		sig: nil,
+		id:        nil,
+		trs:       nil,
+		sig:       nil,
+		createdOn: nil,
 	}
 
 	return &out
@@ -54,6 +56,12 @@ func (build *atomicTransactionBuilder) WithSignature(sig users.Signature) signed
 	return build
 }
 
+// CreatedOn adds a creation time to the AtomicTransactionBuilder
+func (build *atomicTransactionBuilder) CreatedOn(ts time.Time) signed_transactions.AtomicTransactionBuilder {
+	build.createdOn = &ts
+	return build
+}
+
 // Now builds a new AtomicTransaction instance
 func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransaction, error) {
 
@@ -73,20 +81,8 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 		return nil, errors.New("the []transaction cannot be empty")
 	}
 
-	isInit := false
-	createdOn := time.Now()
-	for _, oneTrs := range build.trs {
-
-		if !isInit {
-			createdOn = oneTrs.CreatedOn()
-			isInit = true
-			continue
-		}
-
-		oneCreatedOn := oneTrs.CreatedOn()
-		if oneCreatedOn.Before(createdOn) {
-			createdOn = oneCreatedOn
-		}
+	if build.createdOn == nil {
+		return nil, errors.New("the creation time is mandatory in order to build an AtomicTransaction instance")
 	}
 
 	trs := []*concrete_transactions.Transaction{}
@@ -94,6 +90,6 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 		trs = append(trs, oneTrs.(*concrete_transactions.Transaction))
 	}
 
-	out := createAtomicTransaction(build.id, trs, build.sig.(*concrete_users.Signature), createdOn)
+	out := createAtomicTransaction(build.id, trs, build.sig.(*concrete_users.Signature), *build.createdOn)
 	return out, nil
 }

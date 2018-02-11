@@ -24,6 +24,8 @@ import (
 
 func TestPostTransactions_PostAtomicTransactions_Success(t *testing.T) {
 
+	t.Parallel()
+
 	//variables:
 	port := 8080
 	userID := uuid.NewV4()

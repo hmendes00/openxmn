@@ -1,8 +1,10 @@
 package infrastructure
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )
@@ -22,15 +24,16 @@ func CreateFileRepository(fileBuilderFactory files.FileBuilderFactory, basePath 
 }
 
 // Retrieve retrieves a file from the repository
-func (rep *fileRepository) Retrieve(dirPath string, fileName string) (files.File, error) {
-	filePath := filepath.Join(rep.basePath, dirPath, fileName)
-	fileExt := filepath.Ext(filePath)
+func (rep *fileRepository) Retrieve(dirPath string, fileNameWithExt string) (files.File, error) {
+	filePath := filepath.Join(rep.basePath, dirPath, fileNameWithExt)
+	fileExt := strings.TrimLeft(filepath.Ext(filePath), ".")
+	fileName := strings.TrimRight(fileNameWithExt, fmt.Sprintf(".%s", fileExt))
 	content, contentErr := ioutil.ReadFile(filePath)
 	if contentErr != nil {
 		return nil, contentErr
 	}
 
-	fil, filErr := rep.fileBuilderFactory.Create().Create().WithData(content).WithExtension(fileExt).Now()
+	fil, filErr := rep.fileBuilderFactory.Create().Create().WithDirPath(dirPath).WithFileName(fileName).WithExtension(fileExt).WithData(content).Now()
 	if filErr != nil {
 		return nil, filErr
 	}

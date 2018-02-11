@@ -1,12 +1,14 @@
 package infrastructure
 
 import (
+	"bytes"
+	"encoding/gob"
 	"errors"
 	"math"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 )
 
 type chunksBuilder struct {
@@ -15,6 +17,7 @@ type chunksBuilder struct {
 	chkSizeInBytes     int
 	extension          string
 	data               []byte
+	v                  interface{}
 }
 
 func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, chkSizeInBytes int, extension string) chunk.ChunksBuilder {
@@ -24,6 +27,7 @@ func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderF
 		chkSizeInBytes:     chkSizeInBytes,
 		extension:          extension,
 		data:               nil,
+		v:                  nil,
 	}
 
 	return &out
@@ -41,8 +45,26 @@ func (build *chunksBuilder) WithData(data []byte) chunk.ChunksBuilder {
 	return build
 }
 
+// WithInstance adds an instance to the ChunksBuilder
+func (build *chunksBuilder) WithInstance(v interface{}) chunk.ChunksBuilder {
+	build.v = v
+	return build
+}
+
 // Now builds a Chunks instance
 func (build *chunksBuilder) Now() (chunk.Chunks, error) {
+
+	if build.v != nil {
+		buf := new(bytes.Buffer)
+		gobEnc := gob.NewEncoder(buf)
+		gobEncErr := gobEnc.Encode(build.v)
+		if gobEncErr != nil {
+			return nil, gobEncErr
+		}
+
+		build.data = buf.Bytes()
+	}
+
 	if build.data == nil {
 		return nil, errors.New("the data is mandatory in order to build a Chunks instance")
 	}

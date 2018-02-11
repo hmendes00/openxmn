@@ -1,11 +1,10 @@
 package infrastructure
 
 import (
-	"encoding/gob"
 	"encoding/hex"
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
@@ -30,34 +29,25 @@ func CreateFileService(storedFileBuilderFactory stored_files.FileBuilderFactory,
 func (serv *fileService) Save(dirPath string, fil files.File) (stored_files.File, error) {
 
 	//add the base path:
-	toCreateDirPath := filepath.Join(serv.basePath, dirPath)
+	toCreateDirPath := filepath.Join(serv.basePath, dirPath, fil.GetDirPath())
 
 	//create the directory recursively if the directory does not exists already:
-	mkDirErr := os.MkdirAll(toCreateDirPath, os.ModePerm)
-	if mkDirErr != nil {
-		return nil, mkDirErr
+	if _, err := os.Stat(toCreateDirPath); os.IsNotExist(err) {
+		mkDirErr := os.MkdirAll(toCreateDirPath, os.ModePerm)
+		if mkDirErr != nil {
+			return nil, mkDirErr
+		}
 	}
 
 	//create the file path:
-	ext := fil.GetExtension()
-	hashAsString := hex.EncodeToString(fil.GetHash().Sum(nil))
-	fileName := filepath.Join(hashAsString, ext)
-	filePath := filepath.Join(dirPath, fileName)
-	fullFilePath := filepath.Join(serv.basePath, filePath)
+	filePath := fil.GetFilePath()
+	fullFilePath := filepath.Join(serv.basePath, dirPath, filePath)
 
-	//open the file:
-	of, ofErr := os.Create(fullFilePath)
-	if ofErr != nil {
-		return nil, ofErr
-	}
-	defer of.Close()
-
-	//write the data to disk:
+	//write the data on file:
 	data := fil.GetData()
-	encoder := gob.NewEncoder(of)
-	encodeErr := encoder.Encode(data)
-	if encodeErr != nil {
-		return nil, encodeErr
+	wrErr := ioutil.WriteFile(fullFilePath, data, os.ModePerm)
+	if wrErr != nil {
+		return nil, wrErr
 	}
 
 	//build the stored file:
@@ -83,78 +73,21 @@ func (serv *fileService) Save(dirPath string, fil files.File) (stored_files.File
 
 // SaveAll atomically saves multiple files to disk
 func (serv *fileService) SaveAll(dirPath string, files []files.File) ([]stored_files.File, error) {
-	//create the tmp directory recursively:
-	tmpDirPath := filepath.Join(dirPath, "/tmp")
-	mkDirErr := os.MkdirAll(tmpDirPath, os.ModePerm)
-	if mkDirErr != nil {
-		return nil, mkDirErr
-	}
-
-	//save the files:
-	tmpStoredFiles := []stored_files.File{}
+	out := []stored_files.File{}
 	for _, oneFile := range files {
-		oneStoredFile, oneStoredFileErr := serv.Save(tmpDirPath, oneFile)
+		oneStoredFile, oneStoredFileErr := serv.Save(dirPath, oneFile)
 		if oneStoredFileErr != nil {
-
-			//delete the tmp directory
-			remErr := serv.DeleteAll(tmpDirPath)
-			if remErr != nil {
-				return nil, remErr
-			}
-
 			return nil, oneStoredFileErr
 		}
-
-		tmpStoredFiles = append(tmpStoredFiles, oneStoredFile)
+		out = append(out, oneStoredFile)
 	}
 
-	//build the new stored files according to the real dirPath:
-	output := []stored_files.File{}
-	for _, oneTmpStoredFile := range tmpStoredFiles {
-
-		//get the data:
-		h := oneTmpStoredFile.GetHash()
-		sizeInBytes := oneTmpStoredFile.GetSizeInBytes()
-		ts := oneTmpStoredFile.CreatedOn()
-
-		//create the new file path:
-		tmpFilePath := oneTmpStoredFile.GetPath()
-		newFilePath := strings.Replace(tmpFilePath, tmpDirPath, dirPath, 1)
-		oneStoredFile, oneStoredFileErr := serv.storedFileBuilderFactory.
-			Create().
-			Create().
-			WithPath(newFilePath).
-			WithHash(h).
-			WithSizeInBytes(sizeInBytes).
-			CreatedOn(ts).
-			Now()
-
-			//there was an error while building the new stored file, so delete the tmp directory and return the error:
-		if oneStoredFileErr != nil {
-			remErr := serv.DeleteAll(tmpDirPath)
-			if remErr != nil {
-				return nil, remErr
-			}
-
-			return nil, oneStoredFileErr
-		}
-
-		//add the new file to output:
-		output = append(output, oneStoredFile)
-	}
-
-	//rename the tmp file to the real path:
-	renErr := os.Rename(tmpDirPath, dirPath)
-	if renErr != nil {
-		return nil, renErr
-	}
-
-	return output, nil
+	return out, nil
 }
 
 // Delete deletes a file from disk
 func (serv *fileService) Delete(dirPath string, fileName string) error {
-	fullPath := filepath.Join(dirPath, fileName)
+	fullPath := filepath.Join(serv.basePath, dirPath, fileName)
 	remErr := os.Remove(fullPath)
 	if remErr != nil {
 		return remErr
@@ -165,7 +98,8 @@ func (serv *fileService) Delete(dirPath string, fileName string) error {
 
 // Delete atomically deletes files from disk
 func (serv *fileService) DeleteAll(dirPath string) error {
-	remErr := os.RemoveAll(dirPath)
+	fullPath := filepath.Join(serv.basePath, dirPath)
+	remErr := os.RemoveAll(fullPath)
 	if remErr != nil {
 		return remErr
 	}

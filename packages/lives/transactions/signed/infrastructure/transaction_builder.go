@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"errors"
+	"time"
 
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
@@ -12,16 +13,18 @@ import (
 )
 
 type transactionBuilder struct {
-	id  *uuid.UUID
-	trs trs.Transaction
-	sig users.Signature
+	id   *uuid.UUID
+	trs  trs.Transaction
+	sig  users.Signature
+	crOn *time.Time
 }
 
 func createTransactionBuilder() signed_transactions.TransactionBuilder {
 	out := transactionBuilder{
-		id:  nil,
-		trs: nil,
-		sig: nil,
+		id:   nil,
+		trs:  nil,
+		sig:  nil,
+		crOn: nil,
 	}
 
 	return &out
@@ -32,6 +35,7 @@ func (build *transactionBuilder) Create() signed_transactions.TransactionBuilder
 	build.id = nil
 	build.trs = nil
 	build.sig = nil
+	build.crOn = nil
 	return build
 }
 
@@ -52,6 +56,12 @@ func (build *transactionBuilder) WithSignature(sig users.Signature) signed_trans
 	return build
 }
 
+// CreatedOn adds the creation time to the TransactionBuilder
+func (build *transactionBuilder) CreatedOn(ts time.Time) signed_transactions.TransactionBuilder {
+	build.crOn = &ts
+	return build
+}
+
 // Now builds a signed Transaction instance
 func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) {
 
@@ -67,6 +77,10 @@ func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) 
 		return nil, errors.New("the user signature is mandatory in order to build a signed Transaction instance")
 	}
 
-	out := createTransaction(build.id, build.trs.(*concrete_transactions.Transaction), build.sig.(*concrete_users.Signature))
+	if build.crOn == nil {
+		return nil, errors.New("the creation time is mandatory in order to build a signed Transaction instance")
+	}
+
+	out := createTransaction(build.id, build.trs.(*concrete_transactions.Transaction), build.sig.(*concrete_users.Signature), *build.crOn)
 	return out, nil
 }

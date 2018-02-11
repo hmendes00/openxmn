@@ -12,6 +12,7 @@ import (
 // CreateTransactionsForTests creates an Transactions instance for tests
 func CreateTransactionsForTests(t *testing.T) *Transactions {
 	//variables:
+	id := uuid.NewV4()
 	trs := []*concrete_signed.Transaction{
 		concrete_signed.CreateTransactionForTests(t),
 		concrete_signed.CreateTransactionForTests(t),
@@ -23,7 +24,9 @@ func CreateTransactionsForTests(t *testing.T) *Transactions {
 		concrete_signed.CreateAtomicTransactionForTests(t),
 	}
 
-	aggregatedTrs := createTransactions(trs, atomicTrs)
+	createdOn := time.Now().UTC()
+
+	aggregatedTrs := createTransactions(&id, trs, atomicTrs, createdOn)
 	return aggregatedTrs.(*Transactions)
 }
 

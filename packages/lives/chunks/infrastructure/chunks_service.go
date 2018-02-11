@@ -33,11 +33,10 @@ func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks
 	//create the paths:
 	h := chk.GetHashTree().GetHash().String()
 	dirPathWithHash := filepath.Join(dirPath, h)
-	chksDirPath := filepath.Join(dirPathWithHash, "chunks")
 
 	//save the chunks:
 	files := chk.GetChunks()
-	storedFiles, storedFilesErr := serv.fileService.SaveAll(chksDirPath, files)
+	storedFiles, storedFilesErr := serv.fileService.SaveAll(dirPathWithHash, files)
 	if storedFilesErr != nil {
 		return nil, storedFilesErr
 	}

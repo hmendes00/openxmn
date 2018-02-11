@@ -3,14 +3,18 @@ package infrastructure
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	concrete_signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
+	uuid "github.com/satori/go.uuid"
 )
 
 func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Success(t *testing.T) {
 
 	//execute:
+	id := uuid.NewV4()
+	createdOn := time.Now().UTC()
 	trs := []signed_transactions.Transaction{
 		concrete_signed.CreateTransactionForTests(t),
 		concrete_signed.CreateTransactionForTests(t),
@@ -23,13 +27,19 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 	}
 
 	build := createTransactionsBuilder()
-	aggTrs, aggTrsErr := build.Create().WithAtomicTransactions(atomicTrs).WithTransactions(trs).Now()
+	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).WithTransactions(trs).CreatedOn(createdOn).Now()
 	if aggTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned")
 	}
 
+	retID := aggTrs.GetID()
 	retTrs := aggTrs.GetTrs()
 	retAtomicTrs := aggTrs.GetAtomicTrs()
+	retCreatedOn := aggTrs.CreatedOn()
+
+	if !reflect.DeepEqual(&id, retID) {
+		t.Errorf("the returned ID is invalid.  Expected: %s, Returned: %s", id.String(), retID.String())
+	}
 
 	for index, oneTrs := range trs {
 		if !reflect.DeepEqual(retTrs[index], oneTrs) {
@@ -43,11 +53,17 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 		}
 	}
 
+	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+		t.Errorf("the returned creation time is invalid")
+	}
+
 }
 
 func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) {
 
 	//execute:
+	id := uuid.NewV4()
+	createdOn := time.Now().UTC()
 	atomicTrs := []signed_transactions.AtomicTransaction{
 		concrete_signed.CreateAtomicTransactionForTests(t),
 		concrete_signed.CreateAtomicTransactionForTests(t),
@@ -55,13 +71,19 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 	}
 
 	build := createTransactionsBuilder()
-	aggTrs, aggTrsErr := build.Create().WithAtomicTransactions(atomicTrs).Now()
+	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).CreatedOn(createdOn).Now()
 	if aggTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned")
 	}
 
+	retID := aggTrs.GetID()
 	retTrs := aggTrs.GetTrs()
 	retAtomicTrs := aggTrs.GetAtomicTrs()
+	retCreatedOn := aggTrs.CreatedOn()
+
+	if !reflect.DeepEqual(&id, retID) {
+		t.Errorf("the returned ID is invalid.  Expected: %s, Returned: %s", id.String(), retID.String())
+	}
 
 	for index, oneAtomicTrs := range atomicTrs {
 		if !reflect.DeepEqual(retAtomicTrs[index], oneAtomicTrs) {
@@ -72,11 +94,17 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 	if len(retTrs) > 0 {
 		t.Errorf("the returned Transactions was expected to be empty.  Returned length: %d", len(retTrs))
 	}
+
+	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+		t.Errorf("the returned creation time is invalid")
+	}
 }
 
 func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 
 	//execute:
+	id := uuid.NewV4()
+	createdOn := time.Now().UTC()
 	trs := []signed_transactions.Transaction{
 		concrete_signed.CreateTransactionForTests(t),
 		concrete_signed.CreateTransactionForTests(t),
@@ -88,8 +116,14 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned")
 	}
 
+	retID := aggTrs.GetID()
 	retTrs := aggTrs.GetTrs()
 	retAtomicTrs := aggTrs.GetAtomicTrs()
+	retCreatedOn := aggTrs.CreatedOn()
+
+	if !reflect.DeepEqual(&id, retID) {
+		t.Errorf("the returned ID is invalid.  Expected: %s, Returned: %s", id.String(), retID.String())
+	}
 
 	for index, oneTrs := range trs {
 		if !reflect.DeepEqual(retTrs[index], oneTrs) {
@@ -99,6 +133,10 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 
 	if len(retAtomicTrs) > 0 {
 		t.Errorf("the returned AtomicTransactions was expected to be empty.  Returned length: %d", len(retAtomicTrs))
+	}
+
+	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+		t.Errorf("the returned creation time is invalid")
 	}
 
 }
