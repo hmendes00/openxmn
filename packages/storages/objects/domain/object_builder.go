@@ -11,7 +11,6 @@ import (
 // ObjectBuilder represents a stored ObjectBuilder
 type ObjectBuilder interface {
 	Create() ObjectBuilder
-	WithHashTree(ht stored_files.File) ObjectBuilder
 	WithID(id *uuid.UUID) ObjectBuilder
 	WithSignature(sig stored_files.File) ObjectBuilder
 	WithChunks(chks stored_chunks.Chunks) ObjectBuilder

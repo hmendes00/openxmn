@@ -11,7 +11,6 @@ import (
 )
 
 type objectBuilder struct {
-	ht   stored_files.File
 	id   *uuid.UUID
 	crOn *time.Time
 	sig  stored_files.File
@@ -20,7 +19,6 @@ type objectBuilder struct {
 
 func createObjectBuilder() objects.ObjectBuilder {
 	out := objectBuilder{
-		ht:   nil,
 		id:   nil,
 		crOn: nil,
 		sig:  nil,
@@ -32,17 +30,10 @@ func createObjectBuilder() objects.ObjectBuilder {
 
 // Create initializes the ObjectBuilder
 func (build *objectBuilder) Create() objects.ObjectBuilder {
-	build.ht = nil
 	build.id = nil
 	build.crOn = nil
 	build.sig = nil
 	build.chks = nil
-	return build
-}
-
-// WithHashTree adds an HashTree file to the ObjectBuilder
-func (build *objectBuilder) WithHashTree(ht stored_files.File) objects.ObjectBuilder {
-	build.ht = ht
 	return build
 }
 
@@ -72,33 +63,24 @@ func (build *objectBuilder) CreatedOn(ts time.Time) objects.ObjectBuilder {
 
 // Now builds a new Object instance
 func (build *objectBuilder) Now() (objects.Object, error) {
-	if build.ht == nil {
-		return nil, errors.New("the hashtree is mandatory in order to build an Object instance")
-	}
 
 	if build.id == nil {
 		return nil, errors.New("the ID is mandatory in order to build an Object instance")
+	}
+
+	if build.chks == nil {
+		return nil, errors.New("the chunks are mandatory in order to build an Object instance")
 	}
 
 	if build.crOn == nil {
 		return nil, errors.New("the creation time is mandatory in order to build an Object instance")
 	}
 
-	if build.sig != nil && build.chks != nil {
-		out := createObjectWithSignatureWithChunks(build.ht, build.id, *build.crOn, build.sig, build.chks)
-		return out, nil
-	}
-
 	if build.sig != nil {
-		out := createObjectWithSignature(build.ht, build.id, *build.crOn, build.sig)
+		out := createObjectWithSignature(build.id, build.chks, build.sig, *build.crOn)
 		return out, nil
 	}
 
-	if build.chks != nil {
-		out := createObjectWithChunks(build.ht, build.id, *build.crOn, build.chks)
-		return out, nil
-	}
-
-	out := createObject(build.ht, build.id, *build.crOn)
+	out := createObject(build.id, build.chks, *build.crOn)
 	return out, nil
 }

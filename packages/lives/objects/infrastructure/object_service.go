@@ -9,7 +9,6 @@ import (
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
-	stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/domain"
 	stored_files "github.com/XMNBlockchain/core/packages/storages/files/domain"
 	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
 )
@@ -43,15 +42,11 @@ func CreateObjectService(
 
 // Save saves a Object instance
 func (serv *ObjectService) Save(dirPath string, obj objects.Object) (stored_objects.Object, error) {
-
 	//add the id to the path:
 	id := obj.GetID()
-	fullDirPath := filepath.Join(dirPath, obj.GetPath())
-
-	//create the hashtree data:
-	htData := [][]byte{
-		id.Bytes(),
-	}
+	crOn := obj.CreatedOn()
+	objDirName := fmt.Sprintf("%s_%d", id.String(), crOn.UnixNano())
+	fullDirPath := filepath.Join(dirPath, objDirName)
 
 	//if there is a signature:
 	var storedSigFile stored_files.File
@@ -73,61 +68,22 @@ func (serv *ObjectService) Save(dirPath string, obj objects.Object) (stored_obje
 		}
 
 		storedSigFile = storedSig
-		htData = append(htData, js)
 	}
 
-	//if there is chunks, save it:
-	var storedChunks stored_chunks.Chunks
-	if obj.HasChunks() {
-		chks := obj.GetChunks()
-		storedChks, saveChkErr := serv.chkService.Save(fullDirPath, chks)
-		if saveChkErr != nil {
-			return nil, saveChkErr
-		}
-
-		storedChunks = storedChks
-		htData = append(htData, chks.GetHashTree().GetHash().Get())
+	//we save the chunks:
+	chks := obj.GetChunks()
+	storedChunks, storedChunksErr := serv.chkService.Save(fullDirPath, chks)
+	if storedChunksErr != nil {
+		return nil, storedChunksErr
 	}
 
 	//create the ts:
 	createdOn := obj.CreatedOn()
 
-	//add the ts to the hashtree data:
-	crAsStr := fmt.Sprintf("%d", createdOn.Unix())
-	htData = append(htData, []byte(crAsStr))
-
-	//build the hashtree:
-	ht, htErr := serv.htBuilderFactory.Create().Create().WithBlocks(htData).Now()
-	if htErr != nil {
-		return nil, htErr
-	}
-
-	//convert the hashtree to json:
-	js, jsErr := json.Marshal(ht)
-	if jsErr != nil {
-		return nil, jsErr
-	}
-
-	//build the hashtree file:
-	hFile, hFileErr := serv.fileBuilderFactory.Create().Create().WithData(js).WithFileName("hashtree").WithExtension("json").Now()
-	if hFileErr != nil {
-		return nil, hFileErr
-	}
-
-	//save the hashtree file:
-	storedHtFile, storedHtFileErr := serv.fileService.Save(fullDirPath, hFile)
-	if storedHtFileErr != nil {
-		return nil, storedHtFileErr
-	}
-
 	//build the stored object:
-	storedObjBuilder := serv.objBuilderFactory.Create().Create().CreatedOn(createdOn).WithHashTree(storedHtFile).WithID(id)
+	storedObjBuilder := serv.objBuilderFactory.Create().Create().CreatedOn(createdOn).WithID(id).WithChunks(storedChunks)
 	if storedSigFile != nil {
 		storedObjBuilder.WithSignature(storedSigFile)
-	}
-
-	if storedChunks != nil {
-		storedObjBuilder.WithChunks(storedChunks)
 	}
 
 	storedObj, storedObjErr := storedObjBuilder.Now()

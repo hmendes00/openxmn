@@ -8,7 +8,8 @@ import (
 type ObjectBuilderFactory struct {
 }
 
-func createObjectBuilderFactory() objects.ObjectBuilderFactory {
+// CreateObjectBuilderFactory creates a new ObjectBuilderFactory instance
+func CreateObjectBuilderFactory() objects.ObjectBuilderFactory {
 	out := ObjectBuilderFactory{}
 	return &out
 }

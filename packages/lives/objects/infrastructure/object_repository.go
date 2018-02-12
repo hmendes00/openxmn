@@ -37,7 +37,6 @@ func CreateObjectRepository(objBuilderFactory objects.ObjectBuilderFactory, chkR
 
 // Retrieve retrieves a Object instance
 func (rep *ObjectRepository) Retrieve(dirPath string) (objects.Object, error) {
-
 	//get the ID from the path:
 	fileName := filepath.Base(dirPath)
 	parts := strings.Split(fileName, "_")
@@ -51,25 +50,26 @@ func (rep *ObjectRepository) Retrieve(dirPath string) (objects.Object, error) {
 		return nil, idErr
 	}
 
-	unixTs, unixTsErr := strconv.Atoi(parts[1])
-	if unixTsErr != nil {
-		return nil, unixTsErr
+	unixNanoTs, unixNanoTsErr := strconv.ParseInt(parts[1], 10, 64)
+	if unixNanoTsErr != nil {
+		return nil, unixNanoTsErr
 	}
 
-	createdOn := time.Unix(int64(unixTs), 0)
+	sec := int64(unixNanoTs / int64(time.Second))
+	nanoSec := unixNanoTs - (sec * int64(time.Second))
+	createdOn := time.Unix(int64(sec), int64(nanoSec)).UTC()
 
-	//retrieve the chunks, if any:
+	//retrieve the chunks:
 	chks, chksErr := rep.chkRepository.Retrieve(dirPath)
+	if chksErr != nil {
+		return nil, chksErr
+	}
 
 	//retrieve the signature, if any:
-	fSig, fSigErr := rep.fileRepository.Retrieve(dirPath, "hashtree.json")
+	fSig, fSigErr := rep.fileRepository.Retrieve(dirPath, "signature.json")
 
 	//build the object:
-	objBuilder := rep.objBuilderFactory.Create().Create().WithID(&id).CreatedOn(createdOn)
-
-	if chksErr == nil {
-		objBuilder.WithChunks(chks)
-	}
+	objBuilder := rep.objBuilderFactory.Create().Create().WithID(&id).CreatedOn(createdOn).WithChunks(chks)
 
 	if fSigErr == nil {
 		sigData := fSig.GetData()

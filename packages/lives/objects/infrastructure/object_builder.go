@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
@@ -13,24 +12,20 @@ import (
 )
 
 type objectBuilder struct {
-	htBuilderFactory hashtrees.HashTreeBuilderFactory
-	id               *uuid.UUID
-	path             string
-	ht               hashtrees.HashTree
-	crOn             *time.Time
-	sig              users.Signature
-	chks             chunks.Chunks
+	id   *uuid.UUID
+	ht   hashtrees.HashTree
+	crOn *time.Time
+	sig  users.Signature
+	chks chunks.Chunks
 }
 
-func createObjectBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) objects.ObjectBuilder {
+func createObjectBuilder() objects.ObjectBuilder {
 	out := objectBuilder{
-		htBuilderFactory: htBuilderFactory,
-		id:               nil,
-		path:             "",
-		ht:               nil,
-		crOn:             nil,
-		sig:              nil,
-		chks:             nil,
+		id:   nil,
+		ht:   nil,
+		crOn: nil,
+		sig:  nil,
+		chks: nil,
 	}
 
 	return &out
@@ -39,7 +34,6 @@ func createObjectBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) obje
 // Create initializes the ObjectBuilder
 func (build *objectBuilder) Create() objects.ObjectBuilder {
 	build.id = nil
-	build.path = ""
 	build.ht = nil
 	build.crOn = nil
 	build.sig = nil
@@ -50,12 +44,6 @@ func (build *objectBuilder) Create() objects.ObjectBuilder {
 // WithID adds an ID to the ObjectBuilder
 func (build *objectBuilder) WithID(id *uuid.UUID) objects.ObjectBuilder {
 	build.id = id
-	return build
-}
-
-// WithPath adds a path to the ObjectBuilder
-func (build *objectBuilder) WithPath(path string) objects.ObjectBuilder {
-	build.path = path
 	return build
 }
 
@@ -83,51 +71,19 @@ func (build *objectBuilder) Now() (objects.Object, error) {
 		return nil, errors.New("the ID is mandatory in order to build an Object instance")
 	}
 
-	if build.path == "" {
-		return nil, errors.New("the path is mandatory in order to build an Object instance")
+	if build.chks == nil {
+		return nil, errors.New("the chunks are mandatory in order to build an Object instance")
 	}
 
 	if build.crOn == nil {
 		return nil, errors.New("the creation time is mandatory in order to build an Object instance")
 	}
 
-	crOnAsString := strconv.Itoa(int(build.crOn.Unix()))
-
-	htData := [][]byte{
-		build.id.Bytes(),
-		[]byte(build.path),
-		[]byte(crOnAsString),
-	}
-
-	if build.chks != nil {
-		htData = append(htData, build.chks.GetHashTree().GetHash().Get())
-	}
-
 	if build.sig != nil {
-		htData = append(htData, []byte(build.sig.GetSig().String()))
-	}
-
-	//build the hash tree:
-	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htData).Now()
-	if htErr != nil {
-		return nil, htErr
-	}
-
-	if build.chks != nil && build.sig != nil {
-		out := createObjectWithChunksWithSignature(build.id, build.path, ht, *build.crOn, build.chks, build.sig)
+		out := createObjectWithSignature(build.id, build.chks, build.sig, *build.crOn)
 		return out, nil
 	}
 
-	if build.chks != nil {
-		out := createObjectWithSignature(build.id, build.path, ht, *build.crOn, build.sig)
-		return out, nil
-	}
-
-	if build.sig != nil {
-		out := createObjectWithSignature(build.id, build.path, ht, *build.crOn, build.sig)
-		return out, nil
-	}
-
-	out := createObject(build.id, build.path, ht, *build.crOn)
+	out := createObject(build.id, build.chks, *build.crOn)
 	return out, nil
 }

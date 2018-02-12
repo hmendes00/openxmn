@@ -10,11 +10,9 @@ import (
 
 // Object represents a stored object
 type Object interface {
-	GetHashTree() stored_files.File
 	GetID() *uuid.UUID
 	CreatedOn() time.Time
+	GetChunks() stored_chunks.Chunks
 	HasSignature() bool
 	GetSignature() stored_files.File
-	HasChunks() bool
-	GetChunks() stored_chunks.Chunks
 }

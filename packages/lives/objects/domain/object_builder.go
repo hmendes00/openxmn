@@ -12,7 +12,6 @@ import (
 type ObjectBuilder interface {
 	Create() ObjectBuilder
 	WithID(id *uuid.UUID) ObjectBuilder
-	WithPath(path string) ObjectBuilder
 	WithSignature(sig users.Signature) ObjectBuilder
 	WithChunks(chks chunks.Chunks) ObjectBuilder
 	CreatedOn(ts time.Time) ObjectBuilder
