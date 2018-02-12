@@ -19,7 +19,7 @@ func createFileForTests(data []byte, fileName string, ext string) files.File {
 	return fil
 }
 
-func verifyFilesInServiceForTests(t *testing.T, basePath string, saveInPath string, fils []files.File, storedFiles []stored_files.File) {
+func verifyFilesInServiceForTests(t *testing.T, saveInPath string, fils []files.File, storedFiles []stored_files.File) {
 	for index, oneFile := range fils {
 		storedFile := storedFiles[index]
 		retFirstHash := storedFile.GetHash()
@@ -43,7 +43,7 @@ func verifyFilesInServiceForTests(t *testing.T, basePath string, saveInPath stri
 		}
 
 		//get the data from the file and compare it to the real data:
-		toReadFilePath := filepath.Join(basePath, saveInPath, oneFile.GetFilePath())
+		toReadFilePath := filepath.Join(saveInPath, oneFile.GetFilePath())
 		readContent, _ := ioutil.ReadFile(toReadFilePath)
 		if !bytes.Equal(readContent, oneFile.GetData()) {
 			t.Errorf("the written content is invalid.  Expected: %s, Read: %s", oneFile.GetData(), readContent)
@@ -54,15 +54,14 @@ func verifyFilesInServiceForTests(t *testing.T, basePath string, saveInPath stri
 func TestSave_withTextFile_thenDelete_Success(t *testing.T) {
 
 	//file variables:
-	basePath := "test_files"
-	saveInPath := "files"
+	saveInPath := filepath.Join("test_files", "files")
 	files := []files.File{
 		createFileForTests([]byte("this is some data"), "first_file", "txt"),
 	}
 
 	//service:
 	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
-	service := CreateFileService(storedFileBuilderFactory, basePath)
+	service := CreateFileService(storedFileBuilderFactory)
 
 	//execute:
 	storedFiles := []stored_files.File{}
@@ -76,7 +75,7 @@ func TestSave_withTextFile_thenDelete_Success(t *testing.T) {
 	}
 
 	//verify:
-	verifyFilesInServiceForTests(t, basePath, saveInPath, files, storedFiles)
+	verifyFilesInServiceForTests(t, saveInPath, files, storedFiles)
 
 	//delete:
 	for _, oneFile := range files {
@@ -94,20 +93,19 @@ func TestSave_withTextFile_thenDelete_Success(t *testing.T) {
 		}
 
 		//verify that the folder still exists:
-		toDelDirPath := filepath.Join(basePath, saveInPath)
-		if _, err := os.Stat(toDelDirPath); os.IsNotExist(err) {
-			t.Errorf("the directory (%s) should exists", toDelDirPath)
+		if _, err := os.Stat(saveInPath); os.IsNotExist(err) {
+			t.Errorf("the directory (%s) should exists", saveInPath)
 		}
 
 		//delete the dir:
-		delAllErr := service.DeleteAll(toDelDirPath)
+		delAllErr := service.DeleteAll(saveInPath)
 		if delAllErr != nil {
 			t.Errorf("the error was expected to be nil, error returned: %s", delAllErr.Error())
 		}
 
 		//the directory should now no longer exists:
-		if _, err := os.Stat(toDelDirPath); os.IsNotExist(err) {
-			t.Errorf("the directory was expected to be deleted: %s", toDelDirPath)
+		if _, err := os.Stat(saveInPath); !os.IsNotExist(err) {
+			t.Errorf("the directory was expected to be deleted: %s", saveInPath)
 		}
 	}
 }
@@ -115,10 +113,9 @@ func TestSave_withTextFile_thenDelete_Success(t *testing.T) {
 func TestSave_withBinaryFile_Success(t *testing.T) {
 
 	//file variables:
-	basePath := "test_files"
-	saveInPath := "files"
+	saveInPath := filepath.Join("test_files", "files")
 
-	inputFilePath := filepath.Join(basePath, "input", "montreal.jpg")
+	inputFilePath := filepath.Join("test_files", "input", "montreal.jpg")
 	readData, readErr := ioutil.ReadFile(inputFilePath)
 	if readErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", readErr.Error())
@@ -130,7 +127,7 @@ func TestSave_withBinaryFile_Success(t *testing.T) {
 
 	//service:
 	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
-	service := CreateFileService(storedFileBuilderFactory, basePath)
+	service := CreateFileService(storedFileBuilderFactory)
 
 	//execute:
 	storedFiles := []stored_files.File{}
@@ -144,7 +141,7 @@ func TestSave_withBinaryFile_Success(t *testing.T) {
 	}
 
 	//verify:
-	verifyFilesInServiceForTests(t, basePath, saveInPath, files, storedFiles)
+	verifyFilesInServiceForTests(t, saveInPath, files, storedFiles)
 
 	//delete:
 	for _, oneFile := range files {
@@ -162,20 +159,19 @@ func TestSave_withBinaryFile_Success(t *testing.T) {
 		}
 
 		//verify that the folder still exists:
-		toDelDirPath := filepath.Join(basePath, saveInPath)
-		if _, err := os.Stat(toDelDirPath); os.IsNotExist(err) {
-			t.Errorf("the directory (%s) should exists", toDelDirPath)
+		if _, err := os.Stat(saveInPath); os.IsNotExist(err) {
+			t.Errorf("the directory (%s) should exists", saveInPath)
 		}
 
 		//delete the dir:
-		delAllErr := service.DeleteAll(toDelDirPath)
+		delAllErr := service.DeleteAll(saveInPath)
 		if delAllErr != nil {
 			t.Errorf("the error was expected to be nil, error returned: %s", delAllErr.Error())
 		}
 
 		//the directory should now no longer exists:
-		if _, err := os.Stat(toDelDirPath); os.IsNotExist(err) {
-			t.Errorf("the directory was expected to be deleted: %s", toDelDirPath)
+		if _, err := os.Stat(saveInPath); !os.IsNotExist(err) {
+			t.Errorf("the directory was expected to be deleted: %s", saveInPath)
 		}
 	}
 }
@@ -183,18 +179,17 @@ func TestSave_withBinaryFile_Success(t *testing.T) {
 func TestSaveAll_thenDeleteAll_Success(t *testing.T) {
 
 	//file variables:
-	basePath := "test_files"
-	saveInPath := "files"
+	saveInPath := filepath.Join("test_files", "files")
 
 	//read the first file:
-	firstInputFile := filepath.Join(basePath, "input", "montreal.jpg")
+	firstInputFile := filepath.Join("test_files", "input", "montreal.jpg")
 	firstReadData, firstReadDataErr := ioutil.ReadFile(firstInputFile)
 	if firstReadDataErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", firstReadDataErr.Error())
 	}
 
 	//read the second file:
-	secondInputFile := filepath.Join(basePath, "input", "montreal_second.jpg")
+	secondInputFile := filepath.Join("test_files", "input", "montreal_second.jpg")
 	secondReadData, secondReadDataErr := ioutil.ReadFile(secondInputFile)
 	if secondReadDataErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", secondReadDataErr.Error())
@@ -207,7 +202,7 @@ func TestSaveAll_thenDeleteAll_Success(t *testing.T) {
 
 	//service:
 	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
-	service := CreateFileService(storedFileBuilderFactory, basePath)
+	service := CreateFileService(storedFileBuilderFactory)
 
 	//execute:
 	storedFiles, storedFilesErr := service.SaveAll(saveInPath, files)
@@ -216,7 +211,7 @@ func TestSaveAll_thenDeleteAll_Success(t *testing.T) {
 	}
 
 	//verify:
-	verifyFilesInServiceForTests(t, basePath, saveInPath, files, storedFiles)
+	verifyFilesInServiceForTests(t, saveInPath, files, storedFiles)
 
 	//delete all:
 	toDelErr := service.DeleteAll(saveInPath)
@@ -225,10 +220,9 @@ func TestSaveAll_thenDeleteAll_Success(t *testing.T) {
 	}
 
 	//verify that the directory no longer exists:
-	toDelDirPath := filepath.Join(basePath, saveInPath)
-	if _, toDelErr := os.Stat(toDelDirPath); toDelErr != nil {
+	if _, toDelErr := os.Stat(saveInPath); toDelErr != nil {
 		if !os.IsNotExist(toDelErr) {
-			t.Errorf("the directory was expected to be deleted: %s.  The error was: %s", toDelDirPath, toDelErr.Error())
+			t.Errorf("the directory was expected to be deleted: %s.  The error was: %s", saveInPath, toDelErr.Error())
 		}
 	}
 }

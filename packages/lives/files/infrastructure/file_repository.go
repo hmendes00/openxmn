@@ -11,21 +11,19 @@ import (
 
 type fileRepository struct {
 	fileBuilderFactory files.FileBuilderFactory
-	basePath           string
 }
 
 // CreateFileRepository creates a new FileRepository instance
-func CreateFileRepository(fileBuilderFactory files.FileBuilderFactory, basePath string) files.FileRepository {
+func CreateFileRepository(fileBuilderFactory files.FileBuilderFactory) files.FileRepository {
 	out := fileRepository{
 		fileBuilderFactory: fileBuilderFactory,
-		basePath:           basePath,
 	}
 	return &out
 }
 
 // Retrieve retrieves a file from the repository
 func (rep *fileRepository) Retrieve(dirPath string, fileNameWithExt string) (files.File, error) {
-	filePath := filepath.Join(rep.basePath, dirPath, fileNameWithExt)
+	filePath := filepath.Join(dirPath, fileNameWithExt)
 	fileExt := strings.TrimLeft(filepath.Ext(filePath), ".")
 	fileName := strings.TrimRight(fileNameWithExt, fmt.Sprintf(".%s", fileExt))
 	content, contentErr := ioutil.ReadFile(filePath)

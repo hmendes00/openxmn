@@ -13,14 +13,12 @@ import (
 
 type fileService struct {
 	storedFileBuilderFactory stored_files.FileBuilderFactory
-	basePath                 string
 }
 
 // CreateFileService creates a new FileService instance
-func CreateFileService(storedFileBuilderFactory stored_files.FileBuilderFactory, basePath string) files.FileService {
+func CreateFileService(storedFileBuilderFactory stored_files.FileBuilderFactory) files.FileService {
 	out := fileService{
 		storedFileBuilderFactory: storedFileBuilderFactory,
-		basePath:                 basePath,
 	}
 	return &out
 }
@@ -29,7 +27,7 @@ func CreateFileService(storedFileBuilderFactory stored_files.FileBuilderFactory,
 func (serv *fileService) Save(dirPath string, fil files.File) (stored_files.File, error) {
 
 	//add the base path:
-	toCreateDirPath := filepath.Join(serv.basePath, dirPath, fil.GetDirPath())
+	toCreateDirPath := filepath.Join(dirPath, fil.GetDirPath())
 
 	//create the directory recursively if the directory does not exists already:
 	if _, err := os.Stat(toCreateDirPath); os.IsNotExist(err) {
@@ -41,7 +39,7 @@ func (serv *fileService) Save(dirPath string, fil files.File) (stored_files.File
 
 	//create the file path:
 	filePath := fil.GetFilePath()
-	fullFilePath := filepath.Join(serv.basePath, dirPath, filePath)
+	fullFilePath := filepath.Join(dirPath, filePath)
 
 	//write the data on file:
 	data := fil.GetData()
@@ -87,7 +85,7 @@ func (serv *fileService) SaveAll(dirPath string, files []files.File) ([]stored_f
 
 // Delete deletes a file from disk
 func (serv *fileService) Delete(dirPath string, fileName string) error {
-	fullPath := filepath.Join(serv.basePath, dirPath, fileName)
+	fullPath := filepath.Join(dirPath, fileName)
 	remErr := os.Remove(fullPath)
 	if remErr != nil {
 		return remErr
@@ -98,8 +96,7 @@ func (serv *fileService) Delete(dirPath string, fileName string) error {
 
 // Delete atomically deletes files from disk
 func (serv *fileService) DeleteAll(dirPath string) error {
-	fullPath := filepath.Join(serv.basePath, dirPath)
-	remErr := os.RemoveAll(fullPath)
+	remErr := os.RemoveAll(dirPath)
 	if remErr != nil {
 		return remErr
 	}

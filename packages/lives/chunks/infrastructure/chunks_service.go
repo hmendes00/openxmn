@@ -30,13 +30,12 @@ func CreateChunksService(fileService files.FileService, fileBuilderFactory files
 // Save saves a Chunks instance to disk
 func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks.Chunks, error) {
 
-	//create the paths:
-	h := chk.GetHashTree().GetHash().String()
-	dirPathWithHash := filepath.Join(dirPath, h)
+	//create the chunks path:
+	chksPath := filepath.Join(dirPath, "chunks")
 
 	//save the chunks:
 	files := chk.GetChunks()
-	storedFiles, storedFilesErr := serv.fileService.SaveAll(dirPathWithHash, files)
+	storedFiles, storedFilesErr := serv.fileService.SaveAll(chksPath, files)
 	if storedFilesErr != nil {
 		return nil, storedFilesErr
 	}
@@ -49,13 +48,13 @@ func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks
 	}
 
 	//build the hashtree file:
-	htFile, htFileErr := serv.fileBuilderFactory.Create().Create().WithData(js).WithExtension("json").Now()
+	htFile, htFileErr := serv.fileBuilderFactory.Create().Create().WithData(js).WithFileName("hashtree").WithExtension("json").Now()
 	if htFileErr != nil {
 		return nil, htFileErr
 	}
 
 	//save the hashtree:
-	storedHt, storedHtErr := serv.fileService.Save(dirPathWithHash, htFile)
+	storedHt, storedHtErr := serv.fileService.Save(dirPath, htFile)
 	if storedHtErr != nil {
 		return nil, storedHtErr
 	}
@@ -68,15 +67,4 @@ func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks
 	}
 
 	return storedChk, nil
-}
-
-// Delete deletes a Chunks instance from disk
-func (serv *ChunksService) Delete(dirPath string, hash string) error {
-	dirPathWithHash := filepath.Join(dirPath, hash)
-	delErr := serv.fileService.DeleteAll(dirPathWithHash)
-	if delErr != nil {
-		return delErr
-	}
-
-	return nil
 }

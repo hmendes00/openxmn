@@ -41,14 +41,13 @@ func TestRetrieve_Success(t *testing.T) {
 	fileBuilderFactory := CreateFileBuilderFactory()
 
 	//file variabkles:
-	basePath := "test_files"
-	retrieveInPath := "input"
+	retrieveInPath := filepath.Join("test_files", "input")
 	fileName := "montreal"
 	ext := "jpg"
 	fileNameWithExt := fmt.Sprintf("%s.%s", fileName, ext)
 
 	//read data:
-	filePath := filepath.Join(basePath, retrieveInPath, fileNameWithExt)
+	filePath := filepath.Join(retrieveInPath, fileNameWithExt)
 	readData, readErr := ioutil.ReadFile(filePath)
 	if readErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", readErr.Error())
@@ -61,7 +60,7 @@ func TestRetrieve_Success(t *testing.T) {
 	}
 
 	//execute:
-	rep := CreateFileRepository(fileBuilderFactory, basePath)
+	rep := CreateFileRepository(fileBuilderFactory)
 	retFile, retFileErr := rep.Retrieve(retrieveInPath, fileNameWithExt)
 	if retFileErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retFileErr.Error())
@@ -81,14 +80,13 @@ func TestRetrieveAll_Success(t *testing.T) {
 	fileBuilderFactory := CreateFileBuilderFactory()
 
 	//file variabkles:
-	basePath := "test_files"
-	retrieveInPath := "input"
+	retrieveInPath := filepath.Join("test_files", "input")
 	ext := "jpg"
 
 	//first read data:
 	firstFileName := "montreal"
 	firstFileNameWithExt := fmt.Sprintf("%s.%s", firstFileName, ext)
-	firstFilePath := filepath.Join(basePath, retrieveInPath, firstFileNameWithExt)
+	firstFilePath := filepath.Join(retrieveInPath, firstFileNameWithExt)
 	firstReadData, firstReadDataErr := ioutil.ReadFile(firstFilePath)
 	if firstReadDataErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", firstReadDataErr.Error())
@@ -97,7 +95,7 @@ func TestRetrieveAll_Success(t *testing.T) {
 	//second read data:
 	secondFileName := "montreal_second"
 	secondFileNameWithExt := fmt.Sprintf("%s.%s", secondFileName, ext)
-	secondFilePath := filepath.Join(basePath, retrieveInPath, secondFileNameWithExt)
+	secondFilePath := filepath.Join(retrieveInPath, secondFileNameWithExt)
 	secondReadData, secondReadDataErr := ioutil.ReadFile(secondFilePath)
 	if secondReadDataErr != nil {
 		t.Errorf("there was an error while reading the input binary file: %s", secondReadDataErr.Error())
@@ -118,7 +116,7 @@ func TestRetrieveAll_Success(t *testing.T) {
 	}
 
 	//execute:
-	rep := CreateFileRepository(fileBuilderFactory, basePath)
+	rep := CreateFileRepository(fileBuilderFactory)
 	retFiles, retFilesErr := rep.RetrieveAll(retrieveInPath, fileNamesWithExt)
 
 	if retFilesErr != nil {

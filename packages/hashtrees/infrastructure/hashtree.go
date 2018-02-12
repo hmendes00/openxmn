@@ -26,25 +26,6 @@ func createHashTreeFromBlocks(blocks [][]byte) (hashtrees.HashTree, error) {
 	return tree, nil
 }
 
-func createHashTreeFromJSON(jsData []byte) (hashtrees.HashTree, error) {
-	if string(jsData) == "" {
-		return nil, nil
-	}
-
-	jsHashTree := new(jsonifyHashTree)
-	jsErr := json.Unmarshal(jsData, jsHashTree)
-	if jsErr != nil {
-		return nil, jsErr
-	}
-
-	hTree, hTreeErr := jsHashTree.domainify()
-	if hTreeErr != nil {
-		return nil, hTreeErr
-	}
-
-	return hTree, nil
-}
-
 func createHashTree(h hashtrees.Hash, parent *parentLeaf) hashtrees.HashTree {
 	out := HashTree{
 		H:      h,

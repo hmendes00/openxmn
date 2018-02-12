@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"bytes"
-	"encoding/json"
 	"math"
 	"math/rand"
 	"reflect"
@@ -32,6 +31,15 @@ func createTreeAndTest(t *testing.T, text string, delimiter string, height int) 
 
 	if treeErr != nil {
 		t.Errorf("the returned error was expected to be nil, valid error returned: %s", treeErr.Error())
+	}
+
+	secondTree, secondTreeErr := createHashTreeFromBlocks(splittedData)
+	if secondTreeErr != nil {
+		t.Errorf("the returned error was expected to be nil, valid error returned: %s", secondTreeErr.Error())
+	}
+
+	if tree.GetHash().String() != secondTree.GetHash().String() {
+		t.Errorf("the tree hashes changed even if they were build with the same data: First: %s, Second: %s", tree.GetHash().String(), secondTree.GetHash().String())
 	}
 
 	treeHeight := tree.GetHeight()
@@ -74,45 +82,6 @@ func TestCreateHashTree_Success(t *testing.T) {
 	createTreeAndTest(t, "this|is|some|data|separated|by|delimiters|asfsf|another", "|", 5)                                                                       //9 blocks, rounded up to 16
 	createTreeAndTest(t, "this|is|some|data|separated|by|delimiters|asfsf|asfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasfd|sdfasd", "|", 5)          //16 blocks
 	createTreeAndTest(t, "this|is|some|data|separated|by|delimiters|asfsf|asfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasdf|asdfasfd|sdfasd|dafgsagf", "|", 6) //17 blocks, rounded up to 32
-}
-
-func TestCreateHashTree_convertsToJSON_convertsToInstance_Success(t *testing.T) {
-
-	//variables:
-	text := "this|is|some|data|separated|by|delimiters|asfsf"
-	delimiter := "|"
-
-	splittedData := bytes.Split([]byte(text), []byte(delimiter))
-	tree, treeErr := createHashTreeFromBlocks(splittedData)
-	if treeErr != nil {
-		t.Errorf("the returned error was expected to be nil, valid error returned: %s", treeErr.Error())
-	}
-
-	js, jsErr := json.Marshal(tree)
-	if jsErr != nil {
-		t.Errorf("the returned error was expected to be nil, returned: %s", jsErr.Error())
-	}
-
-	conHt, conHtErr := createHashTreeFromJSON(js)
-	if conHtErr != nil {
-		t.Errorf("the returned error was expected to be nil, valid error returned: %s", conHtErr.Error())
-	}
-
-	if !tree.GetHash().Compare(conHt.GetHash()) {
-		t.Errorf("the hashtree hashes were expected to be equal.  Initial: %s, Converted: %s", tree.GetHash().String(), conHt.GetHash().String())
-	}
-
-	if tree.GetHeight() != conHt.GetHeight() {
-		t.Errorf("the hashtree heights were expected to be equal.  Initial: %d, Converted: %d", tree.GetHeight(), conHt.GetHeight())
-	}
-
-	if tree.GetLength() != conHt.GetLength() {
-		t.Errorf("the hashtree heights were expected to be equal.  Initial: %d, Converted: %d", tree.GetLength(), conHt.GetLength())
-	}
-
-	if !reflect.DeepEqual(tree, conHt) {
-		t.Errorf("the converted hashtree was invalid")
-	}
 }
 
 func TestCreateHashTree_withOneBlock_returnsError(t *testing.T) {

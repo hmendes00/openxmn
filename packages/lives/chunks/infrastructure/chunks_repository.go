@@ -1,14 +1,13 @@
 package infrastructure
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 )
 
 // ChunksRepository represents a concrete ChunksRepository implementation
@@ -30,17 +29,17 @@ func CreateChunksRepository(fileRepository files.FileRepository, chksBuilderFact
 func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 
 	//create the paths:
-	chksDirPath := filepath.Join(dirPath)
+	chksDirPath := filepath.Join(dirPath, "chunks")
 
 	// scan the chunk file names:
-	chkFilePaths := []string{}
+	chkNames := []string{}
 	walkErr := filepath.Walk(chksDirPath, func(path string, info os.FileInfo, err error) error {
 
 		if info.IsDir() {
 			return nil
 		}
 
-		chkFilePaths = append(chkFilePaths, path)
+		chkNames = append(chkNames, info.Name())
 		return nil
 	})
 
@@ -49,7 +48,7 @@ func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 	}
 
 	//retrieve the files:
-	files, filesErr := rep.fileRepository.RetrieveAll(dirPath, chkFilePaths)
+	files, filesErr := rep.fileRepository.RetrieveAll(chksDirPath, chkNames)
 	if filesErr != nil {
 		return nil, filesErr
 	}
@@ -78,8 +77,7 @@ func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 		return nil, orderedErr
 	}
 
-	joinedData := bytes.Join(orderedData, []byte(""))
-	chks, chksErr := rep.chksBuilderFactory.Create().Create().WithData(joinedData).Now()
+	chks, chksErr := rep.chksBuilderFactory.Create().Create().WithBlocksData(orderedData).Now()
 	if chksErr != nil {
 		return nil, chksErr
 	}

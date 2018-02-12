@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"fmt"
+	"bytes"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 )
@@ -21,7 +21,11 @@ func createParentLeaf(left *leaf, right *leaf) *parentLeaf {
 }
 
 func (parent *parentLeaf) createHashTree() hashtrees.HashTree {
-	data := []byte(fmt.Sprintf("%v%v", parent.left, parent.right))
+	data := bytes.Join([][]byte{
+		parent.left.h.Get(),
+		parent.right.h.Get(),
+	}, []byte{})
+
 	hash := createSingleHashFromData(data)
 	out := createHashTree(hash, parent)
 	return out

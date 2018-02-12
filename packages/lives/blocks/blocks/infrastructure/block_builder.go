@@ -1,26 +1,31 @@
 package infrastructure
 
 import (
-	"encoding/json"
 	"errors"
+	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	concrete_hashtree "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
 	"github.com/montanaflynn/stats"
+	uuid "github.com/satori/go.uuid"
 )
 
 type blockBuilder struct {
-	htBuilderFactory hashtree.HashTreeBuilderFactory
+	htBuilderFactory hashtrees.HashTreeBuilderFactory
+	id               *uuid.UUID
 	trs              []aggregated.SignedTransactions
+	createdOn        *time.Time
 }
 
-func createBlockBuilder(htBuilderFactory hashtree.HashTreeBuilderFactory) blocks.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) blocks.BlockBuilder {
 	out := blockBuilder{
 		htBuilderFactory: htBuilderFactory,
+		id:               nil,
 		trs:              nil,
+		createdOn:        nil,
 	}
 
 	return &out
@@ -28,7 +33,15 @@ func createBlockBuilder(htBuilderFactory hashtree.HashTreeBuilderFactory) blocks
 
 // Create initializes the BlockBuilder instance
 func (build *blockBuilder) Create() blocks.BlockBuilder {
+	build.id = nil
 	build.trs = nil
+	build.createdOn = nil
+	return build
+}
+
+// WithID adds an ID to the BlockBuilder instance
+func (build *blockBuilder) WithID(id *uuid.UUID) blocks.BlockBuilder {
+	build.id = id
 	return build
 }
 
@@ -38,8 +51,22 @@ func (build *blockBuilder) WithTransactions(trs []aggregated.SignedTransactions)
 	return build
 }
 
+// CreatedOn adds a creation time to the BlockBuilder instance
+func (build *blockBuilder) CreatedOn(ts time.Time) blocks.BlockBuilder {
+	build.createdOn = &ts
+	return build
+}
+
 // Now builds a new Block instance
 func (build *blockBuilder) Now() (blocks.Block, error) {
+
+	if build.id == nil {
+		return nil, errors.New("the ID is mandatory in order to build a Block instance")
+	}
+
+	if build.createdOn == nil {
+		return nil, errors.New("the creation time is mandatory in order to build a Block instance")
+	}
 
 	if build.trs == nil {
 		return nil, errors.New("the aggregated signed transactions are mandatory in order to build a Block instance")
@@ -80,23 +107,19 @@ func (build *blockBuilder) Now() (blocks.Block, error) {
 		return nil, neededKarmaErr
 	}
 
-	//convert the trs to json:
-	js, jsErr := json.Marshal(build.trs)
-	if jsErr != nil {
-		return nil, jsErr
+	htBlocks := [][]byte{}
+	agregatedSignedTrs := []*concrete_aggregated.SignedTransactions{}
+	for _, oneAggSignedTrs := range build.trs {
+		agregatedSignedTrs = append(agregatedSignedTrs, oneAggSignedTrs.(*concrete_aggregated.SignedTransactions))
+		htBlocks = append(htBlocks, oneAggSignedTrs.GetID().Bytes())
 	}
 
 	//build the hashtree:
-	ht, htErr := build.htBuilderFactory.Create().Create().WithJSON(js).Now()
+	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htBlocks).Now()
 	if htErr != nil {
 		return nil, htErr
 	}
 
-	agregatedSignedTrs := []*concrete_aggregated.SignedTransactions{}
-	for _, oneAggSignedTrs := range build.trs {
-		agregatedSignedTrs = append(agregatedSignedTrs, oneAggSignedTrs.(*concrete_aggregated.SignedTransactions))
-	}
-
-	out := createBlock(ht.(*concrete_hashtree.HashTree), agregatedSignedTrs, int(neededKarma))
+	out := createBlock(build.id, ht.(*concrete_hashtrees.HashTree), agregatedSignedTrs, int(neededKarma), *build.createdOn)
 	return out, nil
 }

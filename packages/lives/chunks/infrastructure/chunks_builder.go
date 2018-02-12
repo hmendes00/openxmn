@@ -6,9 +6,9 @@ import (
 	"errors"
 	"math"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 )
 
 type chunksBuilder struct {
@@ -17,6 +17,7 @@ type chunksBuilder struct {
 	chkSizeInBytes     int
 	extension          string
 	data               []byte
+	blocks             [][]byte
 	v                  interface{}
 }
 
@@ -27,6 +28,7 @@ func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderF
 		chkSizeInBytes:     chkSizeInBytes,
 		extension:          extension,
 		data:               nil,
+		blocks:             nil,
 		v:                  nil,
 	}
 
@@ -36,12 +38,20 @@ func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderF
 // Create creates a new ChunksBuilder instance
 func (build *chunksBuilder) Create() chunk.ChunksBuilder {
 	build.data = nil
+	build.blocks = nil
+	build.v = nil
 	return build
 }
 
 // WithData adds data to the ChunksBuilder instance
 func (build *chunksBuilder) WithData(data []byte) chunk.ChunksBuilder {
 	build.data = data
+	return build
+}
+
+// WithBlocksData adds data blocks to the ChunksBuilder instance
+func (build *chunksBuilder) WithBlocksData(blocks [][]byte) chunk.ChunksBuilder {
+	build.blocks = blocks
 	return build
 }
 
@@ -65,22 +75,34 @@ func (build *chunksBuilder) Now() (chunk.Chunks, error) {
 		build.data = buf.Bytes()
 	}
 
-	if build.data == nil {
-		return nil, errors.New("the data is mandatory in order to build a Chunks instance")
+	if build.data != nil {
+		if len(build.data) <= 0 {
+			return nil, errors.New("the data cannot be empty in order to build a Chunks instance")
+		}
+
+		blocks := [][]byte{}
+		amountLoops := int(math.Ceil(float64(len(build.data)) / float64(build.chkSizeInBytes)))
+		for i := 0; i < amountLoops; i++ {
+			begin := i * build.chkSizeInBytes
+			end := begin + build.chkSizeInBytes
+			if end > len(build.data) {
+				end = len(build.data)
+			}
+
+			//append the hash block:
+			blocks = append(blocks, build.data[begin:end])
+		}
+
+		//assign the blocks:
+		build.blocks = blocks
 	}
 
-	if len(build.data) <= 0 {
-		return nil, errors.New("the data cannot be empty in order to build a Chunks instance")
+	if build.blocks == nil {
+		return nil, errors.New("the blocks are mandatory in order to build a Chunks instance")
 	}
 
-	blocks := [][]byte{}
 	chksFiles := []files.File{}
-	amountLoops := int(math.Ceil(float64(len(build.data) / build.chkSizeInBytes)))
-	for i := 0; i < amountLoops; i++ {
-		begin := i * build.chkSizeInBytes
-		end := begin + build.chkSizeInBytes
-		oneBlock := build.data[begin:end]
-
+	for _, oneBlock := range build.blocks {
 		//build the file:
 		oneFile, oneFileErr := build.fileBuilderFactory.Create().Create().WithData(oneBlock).WithExtension(build.extension).Now()
 		if oneFileErr != nil {
@@ -89,13 +111,10 @@ func (build *chunksBuilder) Now() (chunk.Chunks, error) {
 
 		//append the files:
 		chksFiles = append(chksFiles, oneFile)
-
-		//append the file hash in the blocks:
-		blocks = append(blocks, oneFile.GetHash().Sum(nil))
 	}
 
 	//build the hashtree:
-	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(build.blocks).Now()
 	if htErr != nil {
 		return nil, htErr
 	}

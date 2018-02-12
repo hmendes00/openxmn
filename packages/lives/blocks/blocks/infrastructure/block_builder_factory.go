@@ -1,21 +1,20 @@
 package infrastructure
 
 import (
+	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 )
 
 // BlockBuilderFactory represents a concrete BlockBuilderFactory implementation
 type BlockBuilderFactory struct {
-	htBuilderFactory hashtree.HashTreeBuilderFactory
+	htBuilderFactory hashtrees.HashTreeBuilderFactory
 }
 
 // CreateBlockBuilderFactory creates a BlockBuilderFactory instance
-func CreateBlockBuilderFactory(htBuilderFactory hashtree.HashTreeBuilderFactory) blocks.BlockBuilderFactory {
+func CreateBlockBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory) blocks.BlockBuilderFactory {
 	out := BlockBuilderFactory{
 		htBuilderFactory: htBuilderFactory,
 	}
-
 	return &out
 }
 
