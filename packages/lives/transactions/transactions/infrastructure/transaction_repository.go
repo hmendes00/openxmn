@@ -61,11 +61,6 @@ func (rep *TransactionRepository) fromObjectToTransaction(obj objects.Object) (t
 		return nil, errors.New(str)
 	}
 
-	if !obj.HasChunks() {
-		str := fmt.Sprintf("the transaction (id: %s) must contains chunks", obj.GetID().String())
-		return nil, errors.New(str)
-	}
-
 	chks := obj.GetChunks()
 	newTrs := new(Transaction)
 	marErr := chks.Marshal(newTrs)

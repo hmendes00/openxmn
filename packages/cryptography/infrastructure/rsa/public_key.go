@@ -14,7 +14,7 @@ import (
 
 // PublicKey represents a concrete PublicKey
 type PublicKey struct {
-	key *rsa.PublicKey
+	Key *rsa.PublicKey
 }
 
 type jsonifyPublicKey struct {
@@ -23,7 +23,7 @@ type jsonifyPublicKey struct {
 
 func createPublicKey(key *rsa.PublicKey) cryptography.PublicKey {
 	out := PublicKey{
-		key: key,
+		Key: key,
 	}
 
 	return &out
@@ -51,7 +51,7 @@ func createPublicKeyFromEncodedString(encodedStr string) (cryptography.PublicKey
 
 // String returns the string representaton of the public key
 func (pub *PublicKey) String() (string, error) {
-	public, publicErr := x509.MarshalPKIXPublicKey(pub.key)
+	public, publicErr := x509.MarshalPKIXPublicKey(pub.Key)
 	if publicErr != nil {
 		return "", publicErr
 	}
@@ -73,7 +73,7 @@ func (pub *PublicKey) String() (string, error) {
 
 // GetKey returns the *rsa.PublicKey associated with the public key
 func (pub *PublicKey) GetKey() *rsa.PublicKey {
-	return pub.key
+	return pub.Key
 }
 
 // Compare returns true if the given PublicKey is the same as the current PublicKey
@@ -124,6 +124,6 @@ func (pub *PublicKey) UnmarshalJSON(data []byte) error {
 		return pubKeyErr
 	}
 
-	pub.key = pubKey.GetKey()
+	pub.Key = pubKey.GetKey()
 	return nil
 }
