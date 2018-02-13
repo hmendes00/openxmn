@@ -7,4 +7,5 @@ import (
 // ObjectService represents an object service
 type ObjectService interface {
 	Save(dirPath string, obj Object) (stored_objects.Object, error)
+	SaveAll(dirPath string, objs []Object) ([]stored_objects.Object, error)
 }

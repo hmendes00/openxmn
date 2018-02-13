@@ -12,7 +12,8 @@ import (
 type Object interface {
 	GetID() *uuid.UUID
 	CreatedOn() time.Time
-	GetChunks() chunks.Chunks
 	HasSignature() bool
 	GetSignature() users.Signature
+	HasChunks() bool
+	GetChunks() chunks.Chunks
 }

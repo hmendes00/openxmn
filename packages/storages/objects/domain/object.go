@@ -12,7 +12,8 @@ import (
 type Object interface {
 	GetID() *uuid.UUID
 	CreatedOn() time.Time
-	GetChunks() stored_chunks.Chunks
 	HasSignature() bool
 	GetSignature() stored_files.File
+	HasChunks() bool
+	GetChunks() stored_chunks.Chunks
 }

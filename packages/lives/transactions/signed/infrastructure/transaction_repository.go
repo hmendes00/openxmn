@@ -68,12 +68,12 @@ func (rep *TransactionRepository) fromObjectToTransaction(obj objects.Object) (s
 	}
 
 	if obj.HasChunks() {
-		str := fmt.Sprintf("the signed transaction (object id: %s) must not contains chunks", obj.GetID().String())
+		str := fmt.Sprintf("the signed transaction (object id: %s) must not contain chunks", obj.GetID().String())
 		return nil, errors.New(str)
 	}
 
 	//retrieve the transaction:
-	trsDirPath := filepath.Join(obj.GetPath(), "transaction")
+	trsDirPath := filepath.Join("transaction")
 	trs, trsErr := rep.transactionRepository.Retrieve(trsDirPath)
 	if trsErr != nil {
 		str := fmt.Sprintf("the signed transaction (id: %s) must contain a transaction in directory: %s", obj.GetID().String(), trsDirPath)

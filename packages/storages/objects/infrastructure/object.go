@@ -5,7 +5,7 @@ import (
 
 	stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/domain"
 	stored_files "github.com/XMNBlockchain/core/packages/storages/files/domain"
-	objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/storages/objects/domain"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -16,7 +16,29 @@ type object struct {
 	chks stored_chunks.Chunks
 }
 
-func createObject(id *uuid.UUID, chks stored_chunks.Chunks, crOn time.Time) objects.Object {
+func createObject(id *uuid.UUID, crOn time.Time) objs.Object {
+	out := object{
+		id:   id,
+		crOn: crOn,
+		sig:  nil,
+		chks: nil,
+	}
+
+	return &out
+}
+
+func createObjectWithSignature(id *uuid.UUID, crOn time.Time, sig stored_files.File) objs.Object {
+	out := object{
+		id:   id,
+		crOn: crOn,
+		sig:  sig,
+		chks: nil,
+	}
+
+	return &out
+}
+
+func createObjectWithChunks(id *uuid.UUID, crOn time.Time, chks stored_chunks.Chunks) objs.Object {
 	out := object{
 		id:   id,
 		crOn: crOn,
@@ -27,7 +49,7 @@ func createObject(id *uuid.UUID, chks stored_chunks.Chunks, crOn time.Time) obje
 	return &out
 }
 
-func createObjectWithSignature(id *uuid.UUID, chks stored_chunks.Chunks, sig stored_files.File, crOn time.Time) objects.Object {
+func createObjectWithSignatureWithChunks(id *uuid.UUID, crOn time.Time, sig stored_files.File, chks stored_chunks.Chunks) objs.Object {
 	out := object{
 		id:   id,
 		crOn: crOn,
@@ -48,11 +70,6 @@ func (obj *object) CreatedOn() time.Time {
 	return obj.crOn
 }
 
-// GetChunks returns the chunks file, if any
-func (obj *object) GetChunks() stored_chunks.Chunks {
-	return obj.chks
-}
-
 // HasSignature returns true if there is a signature, false otherwise
 func (obj *object) HasSignature() bool {
 	return obj.sig != nil
@@ -61,4 +78,14 @@ func (obj *object) HasSignature() bool {
 // GetSignature returns the signature file, if any
 func (obj *object) GetSignature() stored_files.File {
 	return obj.sig
+}
+
+// HasChunks returns true if there is chunks, false otherwise
+func (obj *object) HasChunks() bool {
+	return obj.chks != nil
+}
+
+// GetChunks returns the chunks file, if any
+func (obj *object) GetChunks() stored_chunks.Chunks {
+	return obj.chks
 }

@@ -12,20 +12,20 @@ import (
 
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
 // ObjectRepository represents a concrete ObjectRepository implementation
 type ObjectRepository struct {
-	objBuilderFactory objects.ObjectBuilderFactory
+	objBuilderFactory objs.ObjectBuilderFactory
 	chkRepository     chunks.ChunksRepository
 	fileRepository    files.FileRepository
 }
 
 // CreateObjectRepository creates a new ObjectRepository instance
-func CreateObjectRepository(objBuilderFactory objects.ObjectBuilderFactory, chkRepository chunks.ChunksRepository, fileRepository files.FileRepository) objects.ObjectRepository {
+func CreateObjectRepository(objBuilderFactory objs.ObjectBuilderFactory, chkRepository chunks.ChunksRepository, fileRepository files.FileRepository) objs.ObjectRepository {
 	out := ObjectRepository{
 		objBuilderFactory: objBuilderFactory,
 		chkRepository:     chkRepository,
@@ -36,7 +36,7 @@ func CreateObjectRepository(objBuilderFactory objects.ObjectBuilderFactory, chkR
 }
 
 // Retrieve retrieves a Object instance
-func (rep *ObjectRepository) Retrieve(dirPath string) (objects.Object, error) {
+func (rep *ObjectRepository) Retrieve(dirPath string) (objs.Object, error) {
 	//get the ID from the path:
 	fileName := filepath.Base(dirPath)
 	parts := strings.Split(fileName, "_")
@@ -59,17 +59,18 @@ func (rep *ObjectRepository) Retrieve(dirPath string) (objects.Object, error) {
 	nanoSec := unixNanoTs - (sec * int64(time.Second))
 	createdOn := time.Unix(int64(sec), int64(nanoSec)).UTC()
 
-	//retrieve the chunks:
+	//retrieve the chunks, if any:
 	chks, chksErr := rep.chkRepository.Retrieve(dirPath)
-	if chksErr != nil {
-		return nil, chksErr
-	}
 
 	//retrieve the signature, if any:
 	fSig, fSigErr := rep.fileRepository.Retrieve(dirPath, "signature.json")
 
 	//build the object:
-	objBuilder := rep.objBuilderFactory.Create().Create().WithID(&id).CreatedOn(createdOn).WithChunks(chks)
+	objBuilder := rep.objBuilderFactory.Create().Create().WithID(&id).CreatedOn(createdOn)
+
+	if chksErr == nil {
+		objBuilder.WithChunks(chks)
+	}
 
 	if fSigErr == nil {
 		sigData := fSig.GetData()
@@ -91,13 +92,13 @@ func (rep *ObjectRepository) Retrieve(dirPath string) (objects.Object, error) {
 }
 
 // RetrieveAll retrieves []Object instance
-func (rep *ObjectRepository) RetrieveAll(dirPath string) ([]objects.Object, error) {
+func (rep *ObjectRepository) RetrieveAll(dirPath string) ([]objs.Object, error) {
 	files, filesErr := ioutil.ReadDir(dirPath)
 	if filesErr != nil {
 		return nil, filesErr
 	}
 
-	objs := []objects.Object{}
+	objs := []objs.Object{}
 	for _, oneFile := range files {
 		if !oneFile.IsDir() {
 			continue

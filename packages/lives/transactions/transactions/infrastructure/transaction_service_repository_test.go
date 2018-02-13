@@ -26,6 +26,11 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 		secondTrs,
 	}
 
+	multipleTrsMap := map[string]transactions.Transaction{
+		trs.GetID().String():       trs,
+		secondTrs.GetID().String(): secondTrs,
+	}
+
 	//variables:
 	basePath := filepath.Join("test_files", "transactions")
 	lastDirPath := fmt.Sprintf("%s_%d", trs.GetID().String(), trs.CreatedOn().UnixNano())
@@ -97,7 +102,20 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retMultipleTrsErr.Error())
 	}
 
-	if !reflect.DeepEqual(multipleTrs, retMultipleTrs) {
-		t.Errorf("the retrieved []Transaction are invalid")
+	if len(retMultipleTrs) != len(multipleTrs) {
+		t.Errorf("the amount of retrieved transactions is invalid.  Expected: %d, Received: %d", len(multipleTrs), len(retMultipleTrs))
+	}
+
+	for index, oneRetTrs := range retMultipleTrs {
+		retIDAsString := oneRetTrs.GetID().String()
+		if oneTrs, ok := multipleTrsMap[retIDAsString]; ok {
+			if !reflect.DeepEqual(oneTrs, oneRetTrs) {
+				t.Errorf("the retrieved transaction at index: %d (ID: %s) is invalid", index, retIDAsString)
+			}
+
+			continue
+		}
+
+		t.Errorf("the retrieved transaction (ID: %s) should not exists", retIDAsString)
 	}
 }

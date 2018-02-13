@@ -1,17 +1,17 @@
 package infrastructure
 
 import (
-	objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/storages/objects/domain"
 )
 
 type tree struct {
 	name    string
-	obj     objects.Object
-	subObj  objects.Object
-	subObjs []objects.Object
+	obj     objs.Object
+	subObj  objs.Object
+	subObjs []objs.Object
 }
 
-func createTreeWithObject(name string, obj objects.Object) objects.Tree {
+func createTreeWithObject(name string, obj objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -22,7 +22,7 @@ func createTreeWithObject(name string, obj objects.Object) objects.Tree {
 	return &out
 }
 
-func createTreeWithSubObject(name string, subObj objects.Object) objects.Tree {
+func createTreeWithSubObject(name string, subObj objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     nil,
@@ -33,7 +33,7 @@ func createTreeWithSubObject(name string, subObj objects.Object) objects.Tree {
 	return &out
 }
 
-func createTreeWithSubObjects(name string, subObjs []objects.Object) objects.Tree {
+func createTreeWithSubObjects(name string, subObjs []objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     nil,
@@ -44,7 +44,7 @@ func createTreeWithSubObjects(name string, subObjs []objects.Object) objects.Tre
 	return &out
 }
 
-func createTreeWithObjectWithSubObject(name string, obj objects.Object, subObj objects.Object) objects.Tree {
+func createTreeWithObjectWithSubObject(name string, obj objs.Object, subObj objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -55,7 +55,7 @@ func createTreeWithObjectWithSubObject(name string, obj objects.Object, subObj o
 	return &out
 }
 
-func createTreeWithObjectWithSubObjects(name string, obj objects.Object, subObjs []objects.Object) objects.Tree {
+func createTreeWithObjectWithSubObjects(name string, obj objs.Object, subObjs []objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -66,7 +66,7 @@ func createTreeWithObjectWithSubObjects(name string, obj objects.Object, subObjs
 	return &out
 }
 
-func createTreeWithSubObjectWithSubObjects(name string, subObj objects.Object, subObjs []objects.Object) objects.Tree {
+func createTreeWithSubObjectWithSubObjects(name string, subObj objs.Object, subObjs []objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     nil,
@@ -77,7 +77,7 @@ func createTreeWithSubObjectWithSubObjects(name string, subObj objects.Object, s
 	return &out
 }
 
-func createTreeWithObjectWithSubObjectWithSubObjects(name string, obj objects.Object, subObj objects.Object, subObjs []objects.Object) objects.Tree {
+func createTreeWithObjectWithSubObjectWithSubObjects(name string, obj objs.Object, subObj objs.Object, subObjs []objs.Object) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -99,7 +99,7 @@ func (tr *tree) HasObject() bool {
 }
 
 // GetObject returns the object, if any
-func (tr *tree) GetObject() objects.Object {
+func (tr *tree) GetObject() objs.Object {
 	return tr.obj
 }
 
@@ -109,7 +109,7 @@ func (tr *tree) HasSubObject() bool {
 }
 
 // GetSubObject returns the sub object, if any
-func (tr *tree) GetSubObject() objects.Object {
+func (tr *tree) GetSubObject() objs.Object {
 	return tr.subObj
 }
 
@@ -119,6 +119,6 @@ func (tr *tree) HasSubObjects() bool {
 }
 
 // GetSubObjects returns the sub objects, if any
-func (tr *tree) GetSubObjects() []objects.Object {
+func (tr *tree) GetSubObjects() []objs.Object {
 	return tr.subObjs
 }

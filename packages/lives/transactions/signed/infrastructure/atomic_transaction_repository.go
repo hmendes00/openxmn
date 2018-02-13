@@ -69,13 +69,8 @@ func (rep *AtomicTransactionRepository) fromObjectToAtomicTransaction(obj object
 		return nil, errors.New(str)
 	}
 
-	if obj.HasChunks() {
-		str := fmt.Sprintf("the signed transaction (id: %s) must not contains chunks", obj.GetID().String())
-		return nil, errors.New(str)
-	}
-
 	//retrieve the transactions:
-	trsDirPath := filepath.Join(obj.GetPath(), "transactions")
+	trsDirPath := filepath.Join("transactions")
 	trs, trsErr := rep.transactionRepository.RetrieveAll(trsDirPath)
 	if trsErr != nil {
 		str := fmt.Sprintf("the signed transactions (object id: %s) must contain []AtomicTransaction in directory: %s", obj.GetID().String(), trsDirPath)

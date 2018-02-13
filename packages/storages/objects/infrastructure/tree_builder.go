@@ -3,17 +3,17 @@ package infrastructure
 import (
 	"errors"
 
-	objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/storages/objects/domain"
 )
 
 type treeBuilder struct {
 	name    string
-	obj     objects.Object
-	subObj  objects.Object
-	subObjs []objects.Object
+	obj     objs.Object
+	subObj  objs.Object
+	subObjs []objs.Object
 }
 
-func createTreeBuilder() objects.TreeBuilder {
+func createTreeBuilder() objs.TreeBuilder {
 	out := treeBuilder{
 		name:    "",
 		obj:     nil,
@@ -24,7 +24,7 @@ func createTreeBuilder() objects.TreeBuilder {
 }
 
 // Create initializes the TreeBuilder
-func (build *treeBuilder) Create() objects.TreeBuilder {
+func (build *treeBuilder) Create() objs.TreeBuilder {
 	build.name = ""
 	build.obj = nil
 	build.subObj = nil
@@ -33,31 +33,31 @@ func (build *treeBuilder) Create() objects.TreeBuilder {
 }
 
 // WithName adds a name to the TreeBuilder
-func (build *treeBuilder) WithName(name string) objects.TreeBuilder {
+func (build *treeBuilder) WithName(name string) objs.TreeBuilder {
 	build.name = name
 	return build
 }
 
 // WithObject adds an object to the TreeBuilder
-func (build *treeBuilder) WithObject(obj objects.Object) objects.TreeBuilder {
+func (build *treeBuilder) WithObject(obj objs.Object) objs.TreeBuilder {
 	build.obj = obj
 	return build
 }
 
 // WithSubObject adds a sub object to the TreeBuilder
-func (build *treeBuilder) WithSubObject(subObj objects.Object) objects.TreeBuilder {
+func (build *treeBuilder) WithSubObject(subObj objs.Object) objs.TreeBuilder {
 	build.subObj = subObj
 	return build
 }
 
 // WithSubObjects adds sub objects to the TreeBuilder
-func (build *treeBuilder) WithSubObjects(subObjs []objects.Object) objects.TreeBuilder {
+func (build *treeBuilder) WithSubObjects(subObjs []objs.Object) objs.TreeBuilder {
 	build.subObjs = subObjs
 	return build
 }
 
 // Now builds a new Tree instance
-func (build *treeBuilder) Now() (objects.Tree, error) {
+func (build *treeBuilder) Now() (objs.Tree, error) {
 	if build.name == "" {
 		return nil, errors.New("the name is mandatory in order to build a Tree instance")
 	}

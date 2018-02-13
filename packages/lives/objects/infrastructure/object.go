@@ -4,7 +4,7 @@ import (
 	"time"
 
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 	uuid "github.com/satori/go.uuid"
 )
@@ -16,7 +16,18 @@ type object struct {
 	chks chunks.Chunks
 }
 
-func createObject(id *uuid.UUID, chks chunks.Chunks, createdOn time.Time) objects.Object {
+func createObject(id *uuid.UUID, createdOn time.Time) objs.Object {
+	out := object{
+		id:   id,
+		crOn: createdOn,
+		sig:  nil,
+		chks: nil,
+	}
+
+	return &out
+}
+
+func createObjectWithChunks(id *uuid.UUID, createdOn time.Time, chks chunks.Chunks) objs.Object {
 	out := object{
 		id:   id,
 		crOn: createdOn,
@@ -27,12 +38,23 @@ func createObject(id *uuid.UUID, chks chunks.Chunks, createdOn time.Time) object
 	return &out
 }
 
-func createObjectWithSignature(id *uuid.UUID, chks chunks.Chunks, sig users.Signature, createdOn time.Time) objects.Object {
+func createObjectWithChunksWithSignature(id *uuid.UUID, createdOn time.Time, chks chunks.Chunks, sig users.Signature) objs.Object {
 	out := object{
 		id:   id,
 		crOn: createdOn,
 		sig:  sig,
 		chks: chks,
+	}
+
+	return &out
+}
+
+func createObjectWithSignature(id *uuid.UUID, createdOn time.Time, sig users.Signature) objs.Object {
+	out := object{
+		id:   id,
+		crOn: createdOn,
+		sig:  sig,
+		chks: nil,
 	}
 
 	return &out

@@ -10,7 +10,7 @@ import (
 	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
 	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 	conncrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
 	conncrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
 	conncrete_stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/infrastructure"
@@ -24,7 +24,7 @@ type testObj struct {
 	CrOn time.Time
 }
 
-func TestSave_thenRetrieve_Success(t *testing.T) {
+func TestSaveObject_thenRetrieve_Success(t *testing.T) {
 
 	//variables:
 	basePath := filepath.Join("test_files", "files")
@@ -94,7 +94,7 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 
 }
 
-func TestSave_withSignature_thenRetrieve_Success(t *testing.T) {
+func TestSaveObject_withSignature_thenRetrieve_Success(t *testing.T) {
 
 	//variables:
 	basePath := filepath.Join("test_files", "files")
@@ -167,7 +167,7 @@ func TestSave_withSignature_thenRetrieve_Success(t *testing.T) {
 
 }
 
-func TestSave_thenRetrieveAll_Success(t *testing.T) {
+func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 
 	//variables:
 	basePath := filepath.Join("test_files", "files")
@@ -230,13 +230,18 @@ func TestSave_thenRetrieveAll_Success(t *testing.T) {
 	}
 
 	//create the slice:
-	objs := []objects.Object{
+	objsList := []objs.Object{
 		firstObj,
 		secondObj,
 	}
 
+	objsMap := map[string]objs.Object{
+		firstObj.GetID().String():  firstObj,
+		secondObj.GetID().String(): secondObj,
+	}
+
 	//save the objects
-	for _, oneObj := range objs {
+	for _, oneObj := range objsList {
 		_, storedObjErr := service.Save(basePath, oneObj)
 		if storedObjErr != nil {
 			t.Errorf("the error was expected to be nil, error returned: %s", storedObjErr.Error())
@@ -248,8 +253,21 @@ func TestSave_thenRetrieveAll_Success(t *testing.T) {
 		t.Errorf("the error was expected to be nil, error returned: %s", retrievedObjsErr.Error())
 	}
 
-	if !reflect.DeepEqual(objs, retrievedObjs) {
-		t.Errorf("the retrieved objects are invalid")
+	if len(retrievedObjs) != len(objsList) {
+		t.Errorf("the amount of retrieved objects is invalid.  Expected: %d, Received: %d", len(objsList), len(retrievedObjs))
+	}
+
+	for index, oneRetObj := range retrievedObjs {
+		retIDAsString := oneRetObj.GetID().String()
+		if oneObj, ok := objsMap[retIDAsString]; ok {
+			if !reflect.DeepEqual(oneObj, oneRetObj) {
+				t.Errorf("the retrieved object at index: %d (ID: %s) is invalid", index, retIDAsString)
+			}
+
+			continue
+		}
+
+		t.Errorf("the retrieved object (ID: %s) should not exists", retIDAsString)
 	}
 
 }

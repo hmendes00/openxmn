@@ -8,7 +8,8 @@ import (
 	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/domain"
 	stored_files "github.com/XMNBlockchain/core/packages/storages/files/domain"
 	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
 )
@@ -29,7 +30,7 @@ func CreateObjectService(
 	fileService files.FileService,
 	chkService chunks.ChunksService,
 	htBuilderFactory hashtrees.HashTreeBuilderFactory,
-) objects.ObjectService {
+) objs.ObjectService {
 	out := ObjectService{
 		objBuilderFactory:  objBuilderFactory,
 		fileBuilderFactory: fileBuilderFactory,
@@ -41,7 +42,7 @@ func CreateObjectService(
 }
 
 // Save saves a Object instance
-func (serv *ObjectService) Save(dirPath string, obj objects.Object) (stored_objects.Object, error) {
+func (serv *ObjectService) Save(dirPath string, obj objs.Object) (stored_objects.Object, error) {
 	//add the id to the path:
 	id := obj.GetID()
 	crOn := obj.CreatedOn()
@@ -70,20 +71,29 @@ func (serv *ObjectService) Save(dirPath string, obj objects.Object) (stored_obje
 		storedSigFile = storedSig
 	}
 
-	//we save the chunks:
-	chks := obj.GetChunks()
-	storedChunks, storedChunksErr := serv.chkService.Save(fullDirPath, chks)
-	if storedChunksErr != nil {
-		return nil, storedChunksErr
+	//if there is chunks, save it:
+	var storedChunks stored_chunks.Chunks
+	if obj.HasChunks() {
+		chks := obj.GetChunks()
+		storedChks, saveChkErr := serv.chkService.Save(fullDirPath, chks)
+		if saveChkErr != nil {
+			return nil, saveChkErr
+		}
+
+		storedChunks = storedChks
 	}
 
 	//create the ts:
 	createdOn := obj.CreatedOn()
 
 	//build the stored object:
-	storedObjBuilder := serv.objBuilderFactory.Create().Create().CreatedOn(createdOn).WithID(id).WithChunks(storedChunks)
+	storedObjBuilder := serv.objBuilderFactory.Create().Create().CreatedOn(createdOn).WithID(id)
 	if storedSigFile != nil {
 		storedObjBuilder.WithSignature(storedSigFile)
+	}
+
+	if storedChunks != nil {
+		storedObjBuilder.WithChunks(storedChunks)
 	}
 
 	storedObj, storedObjErr := storedObjBuilder.Now()
@@ -92,4 +102,19 @@ func (serv *ObjectService) Save(dirPath string, obj objects.Object) (stored_obje
 	}
 
 	return storedObj, nil
+}
+
+// SaveAll saves multiple Object instances
+func (serv *ObjectService) SaveAll(dirPath string, objs []objs.Object) ([]stored_objects.Object, error) {
+	out := []stored_objects.Object{}
+	for _, oneObj := range objs {
+		oneStoredObj, oneStoredObjErr := serv.Save(dirPath, oneObj)
+		if oneStoredObjErr != nil {
+			return nil, oneStoredObjErr
+		}
+
+		out = append(out, oneStoredObj)
+	}
+
+	return out, nil
 }
