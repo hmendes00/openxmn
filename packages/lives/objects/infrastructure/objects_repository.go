@@ -64,7 +64,7 @@ func (rep *ObjectsRepository) Retrieve(dirPath string) (objs.Objects, error) {
 	//create the blocks:
 	blocks := [][]byte{}
 	for _, oneObj := range retObjs {
-		idAsBytes := oneObj.GetID().Bytes()
+		idAsBytes := oneObj.GetMetaData().GetID().Bytes()
 		blocks = append(blocks, idAsBytes)
 	}
 
@@ -79,7 +79,7 @@ func (rep *ObjectsRepository) Retrieve(dirPath string) (objs.Objects, error) {
 	for _, oneBlk := range orderedBlks {
 		var rightObj objs.Object
 		for _, oneObj := range retObjs {
-			objIDAsBytes := oneObj.GetID().Bytes()
+			objIDAsBytes := oneObj.GetMetaData().GetID().Bytes()
 			if bytes.Equal(oneBlk, objIDAsBytes) {
 				rightObj = oneObj
 				continue

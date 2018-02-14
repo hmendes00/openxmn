@@ -10,7 +10,7 @@ type treeBuilder struct {
 	name    string
 	obj     objs.Object
 	subObj  objs.Object
-	subObjs []objs.Object
+	subObjs objs.Objects
 }
 
 func createTreeBuilder() objs.TreeBuilder {
@@ -51,7 +51,7 @@ func (build *treeBuilder) WithSubObject(subObj objs.Object) objs.TreeBuilder {
 }
 
 // WithSubObjects adds sub objects to the TreeBuilder
-func (build *treeBuilder) WithSubObjects(subObjs []objs.Object) objs.TreeBuilder {
+func (build *treeBuilder) WithSubObjects(subObjs objs.Objects) objs.TreeBuilder {
 	build.subObjs = subObjs
 	return build
 }

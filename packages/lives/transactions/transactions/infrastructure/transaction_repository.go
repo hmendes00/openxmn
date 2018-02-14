@@ -56,13 +56,9 @@ func (rep *TransactionRepository) fromObjectsToTransactions(objs []objects.Objec
 }
 
 func (rep *TransactionRepository) fromObjectToTransaction(obj objects.Object) (trs.Transaction, error) {
-	if obj.HasSignature() {
-		str := fmt.Sprintf("the transaction (id: %s) must not contain a signature", obj.GetID().String())
-		return nil, errors.New(str)
-	}
 
 	if !obj.HasChunks() {
-		str := fmt.Sprintf("the transaction (id: %s) must contain chunks", obj.GetID().String())
+		str := fmt.Sprintf("the transaction (id: %s) must contain chunks", obj.GetMetaData().GetID().String())
 		return nil, errors.New(str)
 	}
 

@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"path/filepath"
+
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
@@ -10,15 +12,23 @@ import (
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
 	objService              objects.ObjectService
+	metaDataBuilderFactory  objects.MetaDataBuilderFactory
 	chkBuilderFactory       chunks.ChunksBuilderFactory
 	objBuilderFactory       objects.ObjectBuilderFactory
 	storedObjBuilderFactory stored_objects.ObjectBuilderFactory
 }
 
 // CreateTransactionService creates a new TransactionService instance
-func CreateTransactionService(objService objects.ObjectService, chkBuilderFactory chunks.ChunksBuilderFactory, objBuilderFactory objects.ObjectBuilderFactory, storedObjBuilderFactory stored_objects.ObjectBuilderFactory) trs.TransactionService {
+func CreateTransactionService(
+	objService objects.ObjectService,
+	metaDataBuilderFactory objects.MetaDataBuilderFactory,
+	chkBuilderFactory chunks.ChunksBuilderFactory,
+	objBuilderFactory objects.ObjectBuilderFactory,
+	storedObjBuilderFactory stored_objects.ObjectBuilderFactory,
+) trs.TransactionService {
 	out := TransactionService{
 		objService:              objService,
+		metaDataBuilderFactory:  metaDataBuilderFactory,
 		chkBuilderFactory:       chkBuilderFactory,
 		objBuilderFactory:       objBuilderFactory,
 		storedObjBuilderFactory: storedObjBuilderFactory,
@@ -34,10 +44,16 @@ func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (store
 		return nil, chksErr
 	}
 
-	//build the object:
+	//build the metaData:
 	id := trs.GetID()
 	createdOn := trs.CreatedOn()
-	obj, objErr := serv.objBuilderFactory.Create().Create().WithID(id).WithChunks(chks).CreatedOn(createdOn).Now()
+	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(createdOn).Now()
+	if metErr != nil {
+		return nil, metErr
+	}
+
+	//build the object:
+	obj, objErr := serv.objBuilderFactory.Create().Create().WithMetaData(met).WithChunks(chks).Now()
 	if objErr != nil {
 		return nil, objErr
 	}
@@ -55,7 +71,8 @@ func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (store
 func (serv *TransactionService) SaveAll(dirPath string, trs []trs.Transaction) ([]stored_objects.Object, error) {
 	out := []stored_objects.Object{}
 	for _, oneTrs := range trs {
-		oneObj, oneObjErr := serv.Save(dirPath, oneTrs)
+		oneObjDirPath := filepath.Join(dirPath, oneTrs.GetID().String())
+		oneObj, oneObjErr := serv.Save(oneObjDirPath, oneTrs)
 		if oneObjErr != nil {
 			return nil, oneObjErr
 		}

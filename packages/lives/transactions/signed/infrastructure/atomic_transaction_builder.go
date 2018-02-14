@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
@@ -13,18 +15,20 @@ import (
 )
 
 type atomicTransactionBuilder struct {
-	id        *uuid.UUID
-	trs       []trs.Transaction
-	sig       users.Signature
-	createdOn *time.Time
+	htBuilderFactory hashtrees.HashTreeBuilderFactory
+	id               *uuid.UUID
+	trs              []trs.Transaction
+	sig              users.Signature
+	createdOn        *time.Time
 }
 
-func createAtomicTransactionBuilder() signed_transactions.AtomicTransactionBuilder {
+func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) signed_transactions.AtomicTransactionBuilder {
 	out := atomicTransactionBuilder{
-		id:        nil,
-		trs:       nil,
-		sig:       nil,
-		createdOn: nil,
+		htBuilderFactory: htBuilderFactory,
+		id:               nil,
+		trs:              nil,
+		sig:              nil,
+		createdOn:        nil,
 	}
 
 	return &out
@@ -85,11 +89,22 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 		return nil, errors.New("the creation time is mandatory in order to build an AtomicTransaction instance")
 	}
 
+	htBlocks := [][]byte{}
 	trs := []*concrete_transactions.Transaction{}
 	for _, oneTrs := range build.trs {
+		//add the ID in the block:
+		htBlocks = append(htBlocks, oneTrs.GetID().Bytes())
+
+		//add the trs in the list:
 		trs = append(trs, oneTrs.(*concrete_transactions.Transaction))
 	}
 
-	out := createAtomicTransaction(build.id, trs, build.sig.(*concrete_users.Signature), *build.createdOn)
+	//build the hashtree:
+	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htBlocks).Now()
+	if htErr != nil {
+		return nil, htErr
+	}
+
+	out := createAtomicTransaction(build.id, ht.(*concrete_hashtrees.HashTree), trs, build.sig.(*concrete_users.Signature), *build.createdOn)
 	return out, nil
 }

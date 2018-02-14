@@ -8,7 +8,7 @@ type tree struct {
 	name    string
 	obj     objs.Object
 	subObj  objs.Object
-	subObjs []objs.Object
+	subObjs objs.Objects
 }
 
 func createTreeWithObject(name string, obj objs.Object) objs.Tree {
@@ -33,7 +33,7 @@ func createTreeWithSubObject(name string, subObj objs.Object) objs.Tree {
 	return &out
 }
 
-func createTreeWithSubObjects(name string, subObjs []objs.Object) objs.Tree {
+func createTreeWithSubObjects(name string, subObjs objs.Objects) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     nil,
@@ -55,7 +55,7 @@ func createTreeWithObjectWithSubObject(name string, obj objs.Object, subObj objs
 	return &out
 }
 
-func createTreeWithObjectWithSubObjects(name string, obj objs.Object, subObjs []objs.Object) objs.Tree {
+func createTreeWithObjectWithSubObjects(name string, obj objs.Object, subObjs objs.Objects) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -66,7 +66,7 @@ func createTreeWithObjectWithSubObjects(name string, obj objs.Object, subObjs []
 	return &out
 }
 
-func createTreeWithSubObjectWithSubObjects(name string, subObj objs.Object, subObjs []objs.Object) objs.Tree {
+func createTreeWithSubObjectWithSubObjects(name string, subObj objs.Object, subObjs objs.Objects) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     nil,
@@ -77,7 +77,7 @@ func createTreeWithSubObjectWithSubObjects(name string, subObj objs.Object, subO
 	return &out
 }
 
-func createTreeWithObjectWithSubObjectWithSubObjects(name string, obj objs.Object, subObj objs.Object, subObjs []objs.Object) objs.Tree {
+func createTreeWithObjectWithSubObjectWithSubObjects(name string, obj objs.Object, subObj objs.Object, subObjs objs.Objects) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
@@ -119,6 +119,6 @@ func (tr *tree) HasSubObjects() bool {
 }
 
 // GetSubObjects returns the sub objects, if any
-func (tr *tree) GetSubObjects() []objs.Object {
+func (tr *tree) GetSubObjects() objs.Objects {
 	return tr.subObjs
 }

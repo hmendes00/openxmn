@@ -6,6 +6,6 @@ type TreeBuilder interface {
 	WithName(name string) TreeBuilder
 	WithObject(obj Object) TreeBuilder
 	WithSubObject(subObj Object) TreeBuilder
-	WithSubObjects(subObjs []Object) TreeBuilder
+	WithSubObjects(subObjs Objects) TreeBuilder
 	Now() (Tree, error)
 }

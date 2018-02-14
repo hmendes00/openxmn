@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
-	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
@@ -22,8 +23,16 @@ func TestCreateAtomicTransaction_Success(t *testing.T) {
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
+	htBlocks := [][]byte{}
+	for _, onTrs := range trs {
+		htBlocks = append(htBlocks, onTrs.GetID().Bytes())
+	}
+
+	//create hashtree:
+	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
+
 	//execute:
-	atomicTrs := createAtomicTransaction(&id, trs, sig, createdOn)
+	atomicTrs := createAtomicTransaction(&id, ht.(*concrete_hashtrees.HashTree), trs, sig, createdOn)
 
 	retID := atomicTrs.GetID()
 	retTrs := atomicTrs.GetTrs()

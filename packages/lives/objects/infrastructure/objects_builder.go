@@ -47,7 +47,7 @@ func (build *objectsBuilder) Now() (objs.Objects, error) {
 	//create the blocks:
 	blocks := [][]byte{}
 	for _, oneObj := range build.objs {
-		idAsBytes := oneObj.GetID().Bytes()
+		idAsBytes := oneObj.GetMetaData().GetID().Bytes()
 		blocks = append(blocks, idAsBytes)
 	}
 

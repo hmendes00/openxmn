@@ -8,5 +8,5 @@ type Tree interface {
 	HasSubObject() bool
 	GetSubObject() Object
 	HasSubObjects() bool
-	GetSubObjects() []Object
+	GetSubObjects() Objects
 }

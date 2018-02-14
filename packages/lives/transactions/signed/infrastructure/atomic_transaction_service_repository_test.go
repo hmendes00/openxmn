@@ -9,29 +9,30 @@ import (
 	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
 	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
 	conncrete_objects "github.com/XMNBlockchain/core/packages/lives/objects/infrastructure"
-	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
+	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
+	conncrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	conncrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
 	conncrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
 	conncrete_stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/infrastructure"
 )
 
-func TestSave_thenRetrieve_Success(t *testing.T) {
+func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 
 	//create the transaction:
-	trs := CreateTransactionForTests(t)
-	secondTrs := CreateTransactionForTests(t)
-	multipleTrs := []transactions.Transaction{
+	trs := CreateAtomicTransactionForTests(t)
+	secondTrs := CreateAtomicTransactionForTests(t)
+	multipleTrs := []signed_transactions.AtomicTransaction{
 		trs,
 		secondTrs,
 	}
 
-	multipleTrsMap := map[string]transactions.Transaction{
+	multipleTrsMap := map[string]signed_transactions.AtomicTransaction{
 		trs.GetID().String():       trs,
 		secondTrs.GetID().String(): secondTrs,
 	}
 
 	//variables:
-	basePath := filepath.Join("test_files", "transactions")
+	basePath := filepath.Join("test_files", "files")
 	chkSizeInBytes := 8
 	extension := "chk"
 
@@ -40,6 +41,7 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	fileBuilderFactory := conncrete_files.CreateFileBuilderFactory()
 	fileRepository := conncrete_files.CreateFileRepository(fileBuilderFactory)
 	htBuilderFactory := conncrete_hashtrees.CreateHashTreeBuilderFactory()
+	objsBuilderFactory := conncrete_objects.CreateObjectsBuilderFactory(htBuilderFactory)
 	chksBuilderFactory := conncrete_chunks.CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	chkRepository := conncrete_chunks.CreateChunksRepository(fileRepository, chksBuilderFactory)
 	storedFileBuilderFactory := conncrete_stored_files.CreateFileBuilderFactory()
@@ -52,6 +54,12 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	metaDataService := conncrete_objects.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
 	objectRepository := conncrete_objects.CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
 	objectService := conncrete_objects.CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
+	trsRepository := conncrete_transactions.CreateTransactionRepository(objectRepository)
+	trsService := conncrete_transactions.CreateTransactionService(objectService, metaDataBuilderFactory, chksBuilderFactory, objBuilderFactory, storedObjBuilderFactory)
+	signedTrsBuilderFactory := CreateTransactionBuilderFactory()
+	storedTreeBuilderFactory := conncrete_stored_objects.CreateTreeBuilderFactory()
+	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactory(htBuilderFactory)
+	storedObjsBuilderFactory := conncrete_stored_objects.CreateObjectsBuilderFactory()
 
 	//delete the files folder at the end:
 	defer func() {
@@ -59,23 +67,23 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	trsRepository := CreateTransactionRepository(objectRepository)
-	trsService := CreateTransactionService(objectService, metaDataBuilderFactory, chksBuilderFactory, objBuilderFactory, storedObjBuilderFactory)
+	repository := CreateAtomicTransactionRepository(objectRepository, fileRepository, trsRepository, signedTrsBuilderFactory, atomicTrsBuilderFactory)
+	service := CreateAtomicTransactionService(metaDataBuilderFactory, fileBuilderFactory, fileService, storedTreeBuilderFactory, trsService, objectService, objBuilderFactory, objsBuilderFactory, storedObjsBuilderFactory)
 
 	//make sure there is no transactions:
-	_, noTrsErr := trsRepository.RetrieveAll(basePath)
+	_, noTrsErr := repository.RetrieveAll(basePath)
 	if noTrsErr == nil {
 		t.Errorf("there was supposed to be no transaction.")
 	}
 
 	//save the transaction:
-	_, storedTrsErr := trsService.Save(basePath, trs)
+	_, storedTrsErr := service.Save(basePath, trs)
 	if storedTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", storedTrsErr.Error())
 	}
 
 	//retrieve the transaction:
-	retTrs, retTrsErr := trsRepository.Retrieve(basePath)
+	retTrs, retTrsErr := repository.Retrieve(basePath)
 	if retTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retTrsErr.Error())
 	}
@@ -91,31 +99,31 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}
 
 	//save multiple transactions:
-	_, multipleSaveErr := trsService.SaveAll(basePath, multipleTrs)
+	_, multipleSaveErr := service.SaveAll(basePath, multipleTrs)
 	if multipleSaveErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", multipleSaveErr.Error())
 	}
 
 	//retrieve multiple trs:
-	retMultipleTrs, retMultipleTrsErr := trsRepository.RetrieveAll(basePath)
+	retMultipleTrs, retMultipleTrsErr := repository.RetrieveAll(basePath)
 	if retMultipleTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retMultipleTrsErr.Error())
 	}
 
 	if len(retMultipleTrs) != len(multipleTrs) {
-		t.Errorf("the amount of retrieved transactions is invalid.  Expected: %d, Received: %d", len(multipleTrs), len(retMultipleTrs))
+		t.Errorf("the amount of retrieved atomic transactions is invalid.  Expected: %d, Received: %d", len(multipleTrs), len(retMultipleTrs))
 	}
 
 	for index, oneRetTrs := range retMultipleTrs {
 		retIDAsString := oneRetTrs.GetID().String()
 		if oneTrs, ok := multipleTrsMap[retIDAsString]; ok {
 			if !reflect.DeepEqual(oneTrs, oneRetTrs) {
-				t.Errorf("the retrieved transaction at index: %d (ID: %s) is invalid", index, retIDAsString)
+				t.Errorf("the retrieved atomic transaction at index: %d (ID: %s) is invalid", index, retIDAsString)
 			}
 
 			continue
 		}
 
-		t.Errorf("the retrieved transaction (ID: %s) should not exists", retIDAsString)
+		t.Errorf("the retrieved atomic transaction (ID: %s) should not exists", retIDAsString)
 	}
 }

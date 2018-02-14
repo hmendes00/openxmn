@@ -1,35 +1,30 @@
 package infrastructure
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"strconv"
-	"strings"
-	"time"
 
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
-	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
-	uuid "github.com/satori/go.uuid"
 )
 
 // ObjectRepository represents a concrete ObjectRepository implementation
 type ObjectRepository struct {
-	objBuilderFactory objs.ObjectBuilderFactory
-	chkRepository     chunks.ChunksRepository
-	fileRepository    files.FileRepository
+	metaDataRepository objs.MetaDataRepository
+	objBuilderFactory  objs.ObjectBuilderFactory
+	chkRepository      chunks.ChunksRepository
 }
 
 // CreateObjectRepository creates a new ObjectRepository instance
-func CreateObjectRepository(objBuilderFactory objs.ObjectBuilderFactory, chkRepository chunks.ChunksRepository, fileRepository files.FileRepository) objs.ObjectRepository {
+func CreateObjectRepository(
+	metaDataRepository objs.MetaDataRepository,
+	objBuilderFactory objs.ObjectBuilderFactory,
+	chkRepository chunks.ChunksRepository,
+) objs.ObjectRepository {
 	out := ObjectRepository{
-		objBuilderFactory: objBuilderFactory,
-		chkRepository:     chkRepository,
-		fileRepository:    fileRepository,
+		metaDataRepository: metaDataRepository,
+		objBuilderFactory:  objBuilderFactory,
+		chkRepository:      chkRepository,
 	}
 
 	return &out
@@ -37,50 +32,19 @@ func CreateObjectRepository(objBuilderFactory objs.ObjectBuilderFactory, chkRepo
 
 // Retrieve retrieves a Object instance
 func (rep *ObjectRepository) Retrieve(dirPath string) (objs.Object, error) {
-	//get the ID from the path:
-	fileName := filepath.Base(dirPath)
-	parts := strings.Split(fileName, "_")
-	if len(parts) != 2 {
-		str := fmt.Sprintf("the directory path is invalid.  The last directory should contain an ID combined with a unix timestamp. Ex: %s  Given: %s", "8d4b3faf-7445-426e-9568-6199be2e3391_1518153603", fileName)
-		return nil, errors.New(str)
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
 	}
 
-	id, idErr := uuid.FromString(parts[0])
-	if idErr != nil {
-		return nil, idErr
-	}
-
-	unixNanoTs, unixNanoTsErr := strconv.ParseInt(parts[1], 10, 64)
-	if unixNanoTsErr != nil {
-		return nil, unixNanoTsErr
-	}
-
-	sec := int64(unixNanoTs / int64(time.Second))
-	nanoSec := unixNanoTs - (sec * int64(time.Second))
-	createdOn := time.Unix(int64(sec), int64(nanoSec)).UTC()
+	//build the object:
+	objBuilder := rep.objBuilderFactory.Create().Create().WithMetaData(met)
 
 	//retrieve the chunks, if any:
 	chks, chksErr := rep.chkRepository.Retrieve(dirPath)
-
-	//retrieve the signature, if any:
-	fSig, fSigErr := rep.fileRepository.Retrieve(dirPath, "signature.json")
-
-	//build the object:
-	objBuilder := rep.objBuilderFactory.Create().Create().WithID(&id).CreatedOn(createdOn)
-
 	if chksErr == nil {
 		objBuilder.WithChunks(chks)
-	}
-
-	if fSigErr == nil {
-		sigData := fSig.GetData()
-		newSig := new(concrete_users.Signature)
-		jsErr := json.Unmarshal(sigData, newSig)
-		if jsErr != nil {
-			return nil, jsErr
-		}
-
-		objBuilder.WithSignature(newSig)
 	}
 
 	newObj, newObjErr := objBuilder.Now()
@@ -107,7 +71,7 @@ func (rep *ObjectRepository) RetrieveAll(dirPath string) ([]objs.Object, error) 
 		objDirPath := filepath.Join(dirPath, oneFile.Name())
 		oneObj, oneObjErr := rep.Retrieve(objDirPath)
 		if oneObjErr != nil {
-			continue
+			return nil, oneObjErr
 		}
 
 		objs = append(objs, oneObj)

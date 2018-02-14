@@ -31,10 +31,14 @@ func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 	//create the paths:
 	chksDirPath := filepath.Join(dirPath, "chunks")
 
+	//make sure the dir exists:
+	if _, err := os.Stat(chksDirPath); os.IsNotExist(err) {
+		return nil, err
+	}
+
 	// scan the chunk file names:
 	chkNames := []string{}
 	walkErr := filepath.Walk(chksDirPath, func(path string, info os.FileInfo, err error) error {
-
 		if info.IsDir() {
 			return nil
 		}

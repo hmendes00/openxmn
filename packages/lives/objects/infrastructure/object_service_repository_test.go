@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"fmt"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -51,6 +50,9 @@ func TestSaveObject_thenRetrieve_Success(t *testing.T) {
 	storedChkBuilderFactory := conncrete_stored_chunks.CreateChunksBuilderFactory()
 	chkService := conncrete_chunks.CreateChunksService(fileService, fileBuilderFactory, storedChkBuilderFactory)
 	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
+	metaDataBuilderFactory := CreateMetaDataBuilderFactory()
+	metaDataRepository := CreateMetaDataRepository(fileRepository)
+	metaDataService := CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
 
 	//delete the files folder at the end:
 	defer func() {
@@ -58,8 +60,8 @@ func TestSaveObject_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateObjectRepository(objBuilderFactory, chkRepository, fileRepository)
-	service := CreateObjectService(storedObjBuilderFactory, fileBuilderFactory, fileService, chkService, htBuilderFactory)
+	repository := CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
+	service := CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
 
 	//create the chunks:
 	chks, chksErr := chksBuilderFactory.Create().Create().WithInstance(objToStore).Now()
@@ -67,10 +69,16 @@ func TestSaveObject_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the error was expected to be nil, error returned: %s", chksErr.Error())
 	}
 
-	//create the object:
+	//create the metaData:
 	id := uuid.NewV4()
 	ts := time.Now().UTC()
-	obj, objErr := objBuilderFactory.Create().Create().WithID(&id).WithChunks(chks).CreatedOn(ts).Now()
+	met, metErr := metaDataBuilderFactory.Create().Create().WithID(&id).CreatedOn(ts).Now()
+	if metErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", metErr.Error())
+	}
+
+	//create the object:
+	obj, objErr := objBuilderFactory.Create().Create().WithMetaData(met).WithChunks(chks).Now()
 	if objErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", objErr.Error())
 	}
@@ -81,9 +89,7 @@ func TestSaveObject_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the error was expected to be nil, error returned: %s", storedObjErr.Error())
 	}
 
-	retDirPath := fmt.Sprintf("%s_%d", obj.GetID().String(), obj.CreatedOn().UnixNano())
-	retPath := filepath.Join(basePath, retDirPath)
-	retrievedObj, retrievedObjErr := repository.Retrieve(retPath)
+	retrievedObj, retrievedObjErr := repository.Retrieve(basePath)
 	if retrievedObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", retrievedObjErr.Error())
 	}
@@ -121,6 +127,9 @@ func TestSaveObject_withSignature_thenRetrieve_Success(t *testing.T) {
 	storedChkBuilderFactory := conncrete_stored_chunks.CreateChunksBuilderFactory()
 	chkService := conncrete_chunks.CreateChunksService(fileService, fileBuilderFactory, storedChkBuilderFactory)
 	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
+	metaDataBuilderFactory := CreateMetaDataBuilderFactory()
+	metaDataRepository := CreateMetaDataRepository(fileRepository)
+	metaDataService := CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
 
 	//delete the files folder at the end:
 	defer func() {
@@ -128,8 +137,8 @@ func TestSaveObject_withSignature_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateObjectRepository(objBuilderFactory, chkRepository, fileRepository)
-	service := CreateObjectService(storedObjBuilderFactory, fileBuilderFactory, fileService, chkService, htBuilderFactory)
+	repository := CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
+	service := CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
 
 	//create the chunks:
 	chks, chksErr := chksBuilderFactory.Create().Create().WithInstance(objToStore).Now()
@@ -140,10 +149,16 @@ func TestSaveObject_withSignature_thenRetrieve_Success(t *testing.T) {
 	//create the signature:
 	sig := conncrete_users.CreateSignatureForTests(t)
 
-	//create the object:
+	//create the metaData:
 	id := uuid.NewV4()
 	ts := time.Now().UTC()
-	obj, objErr := objBuilderFactory.Create().Create().WithID(&id).WithChunks(chks).CreatedOn(ts).WithSignature(sig).Now()
+	met, metErr := metaDataBuilderFactory.Create().Create().WithID(&id).CreatedOn(ts).WithSignature(sig).Now()
+	if metErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", metErr.Error())
+	}
+
+	//create the object:
+	obj, objErr := objBuilderFactory.Create().Create().WithChunks(chks).WithMetaData(met).Now()
 	if objErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", objErr.Error())
 	}
@@ -154,9 +169,7 @@ func TestSaveObject_withSignature_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the error was expected to be nil, error returned: %s", storedObjErr.Error())
 	}
 
-	retDirPath := fmt.Sprintf("%s_%d", obj.GetID().String(), obj.CreatedOn().UnixNano())
-	retPath := filepath.Join(basePath, retDirPath)
-	retrievedObj, retrievedObjErr := repository.Retrieve(retPath)
+	retrievedObj, retrievedObjErr := repository.Retrieve(basePath)
 	if retrievedObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", retrievedObjErr.Error())
 	}
@@ -194,6 +207,9 @@ func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 	storedChkBuilderFactory := conncrete_stored_chunks.CreateChunksBuilderFactory()
 	chkService := conncrete_chunks.CreateChunksService(fileService, fileBuilderFactory, storedChkBuilderFactory)
 	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
+	metaDataBuilderFactory := CreateMetaDataBuilderFactory()
+	metaDataRepository := CreateMetaDataRepository(fileRepository)
+	metaDataService := CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
 
 	//delete the files folder at the end:
 	defer func() {
@@ -201,8 +217,8 @@ func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateObjectRepository(objBuilderFactory, chkRepository, fileRepository)
-	service := CreateObjectService(storedObjBuilderFactory, fileBuilderFactory, fileService, chkService, htBuilderFactory)
+	repository := CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
+	service := CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
 
 	//create the chunks:
 	chks, chksErr := chksBuilderFactory.Create().Create().WithInstance(objToStore).Now()
@@ -213,18 +229,30 @@ func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 	//create the signature:
 	sig := conncrete_users.CreateSignatureForTests(t)
 
+	//create the first metaData:
+	id := uuid.NewV4()
+	ts := time.Now().UTC()
+	met, metErr := metaDataBuilderFactory.Create().Create().WithID(&id).CreatedOn(ts).WithSignature(sig).Now()
+	if metErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", metErr.Error())
+	}
+
 	//create the first object:
-	firstID := uuid.NewV4()
-	firstTs := time.Now().UTC()
-	firstObj, firstObjErr := objBuilderFactory.Create().Create().WithID(&firstID).WithChunks(chks).CreatedOn(firstTs).WithSignature(sig).Now()
+	firstObj, firstObjErr := objBuilderFactory.Create().Create().WithMetaData(met).WithChunks(chks).Now()
 	if firstObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", firstObjErr.Error())
 	}
 
-	//create the second object:
+	//create the first metaData:
 	secondID := uuid.NewV4()
 	secondTs := time.Now().UTC()
-	secondObj, secondObjErr := objBuilderFactory.Create().Create().WithID(&secondID).WithChunks(chks).CreatedOn(secondTs).Now()
+	secondMet, secondMetErr := metaDataBuilderFactory.Create().Create().WithID(&secondID).CreatedOn(secondTs).Now()
+	if secondMetErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", secondMetErr.Error())
+	}
+
+	//create the second object:
+	secondObj, secondObjErr := objBuilderFactory.Create().Create().WithChunks(chks).WithMetaData(secondMet).Now()
 	if secondObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", secondObjErr.Error())
 	}
@@ -236,13 +264,14 @@ func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 	}
 
 	objsMap := map[string]objs.Object{
-		firstObj.GetID().String():  firstObj,
-		secondObj.GetID().String(): secondObj,
+		firstObj.GetMetaData().GetID().String():  firstObj,
+		secondObj.GetMetaData().GetID().String(): secondObj,
 	}
 
 	//save the objects
 	for _, oneObj := range objsList {
-		_, storedObjErr := service.Save(basePath, oneObj)
+		savePath := filepath.Join(basePath, oneObj.GetMetaData().GetID().String())
+		_, storedObjErr := service.Save(savePath, oneObj)
 		if storedObjErr != nil {
 			t.Errorf("the error was expected to be nil, error returned: %s", storedObjErr.Error())
 		}
@@ -258,7 +287,7 @@ func TestSaveObject_thenRetrieveAll_Success(t *testing.T) {
 	}
 
 	for index, oneRetObj := range retrievedObjs {
-		retIDAsString := oneRetObj.GetID().String()
+		retIDAsString := oneRetObj.GetMetaData().GetID().String()
 		if oneObj, ok := objsMap[retIDAsString]; ok {
 			if !reflect.DeepEqual(oneObj, oneRetObj) {
 				t.Errorf("the retrieved object at index: %d (ID: %s) is invalid", index, retIDAsString)

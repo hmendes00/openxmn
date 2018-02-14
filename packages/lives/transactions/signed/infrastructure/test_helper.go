@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
@@ -32,6 +33,14 @@ func CreateAtomicTransactionForTests(t *testing.T) *AtomicTransaction {
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Unix(1515467177, 0)
 
-	atomicTrs := createAtomicTransaction(&id, trs, sig, createdOn)
+	htBlocks := [][]byte{}
+	for _, onTrs := range trs {
+		htBlocks = append(htBlocks, onTrs.GetID().Bytes())
+	}
+
+	//create hashtree:
+	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
+
+	atomicTrs := createAtomicTransaction(&id, ht.(*concrete_hashtrees.HashTree), trs, sig, createdOn)
 	return atomicTrs.(*AtomicTransaction)
 }

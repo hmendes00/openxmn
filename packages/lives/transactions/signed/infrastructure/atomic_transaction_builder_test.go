@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
@@ -23,7 +24,10 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
-	build := createAtomicTransactionBuilder()
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+
+	build := createAtomicTransactionBuilder(htBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr != nil {
@@ -66,7 +70,10 @@ func TestBuildAtomicTransaction_withoutID_returnsError(t *testing.T) {
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
-	build := createAtomicTransactionBuilder()
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+
+	build := createAtomicTransactionBuilder(htBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -86,7 +93,10 @@ func TestBuildAtomicTransaction_withoutTransactions_returnsError(t *testing.T) {
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
-	build := createAtomicTransactionBuilder()
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+
+	build := createAtomicTransactionBuilder(htBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -110,7 +120,10 @@ func TestBuildAtomicTransaction_withoutSignature_returnsError(t *testing.T) {
 
 	createdOn := time.Now().UTC()
 
-	build := createAtomicTransactionBuilder()
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+
+	build := createAtomicTransactionBuilder(htBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -134,7 +147,10 @@ func TestBuildAtomicTransaction_withoutCreatedOn_returnsError(t *testing.T) {
 
 	sig := concrete_users.CreateSignatureForTests(t)
 
-	build := createAtomicTransactionBuilder()
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+
+	build := createAtomicTransactionBuilder(htBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).Now()
 
 	if atomicTrsErr == nil {

@@ -18,7 +18,11 @@ type TransactionRepository struct {
 }
 
 // CreateTransactionRepository creates a new TransactionRepository instance
-func CreateTransactionRepository(objRepository objects.ObjectRepository, transactionRepository trs.TransactionRepository, signedTrsBuilderFactory signed_trs.TransactionBuilderFactory) signed_trs.TransactionRepository {
+func CreateTransactionRepository(
+	objRepository objects.ObjectRepository,
+	transactionRepository trs.TransactionRepository,
+	signedTrsBuilderFactory signed_trs.TransactionBuilderFactory,
+) signed_trs.TransactionRepository {
 	out := TransactionRepository{
 		objRepository:           objRepository,
 		transactionRepository:   transactionRepository,
@@ -34,7 +38,12 @@ func (rep *TransactionRepository) Retrieve(dirPath string) (signed_trs.Transacti
 		return nil, objErr
 	}
 
-	return rep.fromObjectToTransaction(obj)
+	signedTrs, signedTrsErr := rep.fromObjectToTransaction(dirPath, obj)
+	if signedTrsErr != nil {
+		return nil, signedTrsErr
+	}
+
+	return signedTrs, nil
 }
 
 // RetrieveAll retrieves a []Transaction instances
@@ -44,13 +53,19 @@ func (rep *TransactionRepository) RetrieveAll(dirPath string) ([]signed_trs.Tran
 		return nil, objsErr
 	}
 
-	return rep.fromObjectsToTransactions(objs)
+	signedTrs, signedTrsErr := rep.fromObjectsToTransactions(dirPath, objs)
+	if signedTrsErr != nil {
+		return nil, signedTrsErr
+	}
+
+	return signedTrs, nil
 }
 
-func (rep *TransactionRepository) fromObjectsToTransactions(objs []objects.Object) ([]signed_trs.Transaction, error) {
+func (rep *TransactionRepository) fromObjectsToTransactions(dirPath string, objs []objects.Object) ([]signed_trs.Transaction, error) {
 	out := []signed_trs.Transaction{}
 	for _, oneObj := range objs {
-		oneTrs, oneTrsErr := rep.fromObjectToTransaction(oneObj)
+		oneTrsDirPath := filepath.Join(dirPath, oneObj.GetMetaData().GetID().String())
+		oneTrs, oneTrsErr := rep.fromObjectToTransaction(oneTrsDirPath, oneObj)
 		if oneTrsErr != nil {
 			return nil, oneTrsErr
 		}
@@ -61,28 +76,23 @@ func (rep *TransactionRepository) fromObjectsToTransactions(objs []objects.Objec
 	return out, nil
 }
 
-func (rep *TransactionRepository) fromObjectToTransaction(obj objects.Object) (signed_trs.Transaction, error) {
-	if !obj.HasSignature() {
-		str := fmt.Sprintf("the signed transaction (object id: %s) must contain a signature", obj.GetID().String())
-		return nil, errors.New(str)
-	}
-
+func (rep *TransactionRepository) fromObjectToTransaction(dirPath string, obj objects.Object) (signed_trs.Transaction, error) {
 	if obj.HasChunks() {
-		str := fmt.Sprintf("the signed transaction (object id: %s) must not contain chunks", obj.GetID().String())
+		str := fmt.Sprintf("the signed transaction (object id: %s) must not contain chunks", obj.GetMetaData().GetID().String())
 		return nil, errors.New(str)
 	}
 
 	//retrieve the transaction:
-	trsDirPath := filepath.Join("transaction")
+	trsDirPath := filepath.Join(dirPath, "transaction")
 	trs, trsErr := rep.transactionRepository.Retrieve(trsDirPath)
 	if trsErr != nil {
-		str := fmt.Sprintf("the signed transaction (id: %s) must contain a transaction in directory: %s", obj.GetID().String(), trsDirPath)
-		return nil, errors.New(str)
+		return nil, trsErr
 	}
 
-	id := obj.GetID()
-	sig := obj.GetSignature()
-	createdOn := obj.CreatedOn()
+	metaData := obj.GetMetaData()
+	id := metaData.GetID()
+	sig := metaData.GetSignature()
+	createdOn := metaData.CreatedOn()
 
 	//build the signed transaction:
 	signedTrs, signedTrsErr := rep.signedTrsBuilderFactory.Create().Create().WithID(id).WithSignature(sig).WithTransaction(trs).CreatedOn(createdOn).Now()

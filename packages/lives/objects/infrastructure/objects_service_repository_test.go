@@ -58,8 +58,11 @@ func TestSaveObjects_thenRetrieve_Success(t *testing.T) {
 	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
 	objectsBuilderFactory := CreateObjectsBuilderFactory(htBuilderFactory)
 	storedObjsBuilderFactory := conncrete_stored_objects.CreateObjectsBuilderFactory()
-	objectRepository := CreateObjectRepository(objBuilderFactory, chkRepository, fileRepository)
-	objectService := CreateObjectService(storedObjBuilderFactory, fileBuilderFactory, fileService, chkService, htBuilderFactory)
+	metaDataBuilderFactory := CreateMetaDataBuilderFactory()
+	metaDataRepository := CreateMetaDataRepository(fileRepository)
+	metaDataService := CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	objectRepository := CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
+	objectService := CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
 
 	//delete the files folder at the end:
 	defer func() {
@@ -81,17 +84,29 @@ func TestSaveObjects_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the error was expected to be nil, error returned: %s", secondChksErr.Error())
 	}
 
-	//create the objects:
+	//create the first metaData:
 	firstID := uuid.NewV4()
-	firstTS := time.Now().UTC()
-	firstObj, firstObjErr := objBuilderFactory.Create().Create().WithID(&firstID).WithChunks(firstChks).CreatedOn(firstTS).Now()
+	firstTs := time.Now().UTC()
+	firstMet, firstMetErr := metaDataBuilderFactory.Create().Create().WithID(&firstID).CreatedOn(firstTs).Now()
+	if firstMetErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", firstMetErr.Error())
+	}
+
+	//create the objects:
+	firstObj, firstObjErr := objBuilderFactory.Create().Create().WithMetaData(firstMet).WithChunks(firstChks).Now()
 	if firstObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", firstObjErr.Error())
 	}
 
+	//create the second metaData:
 	secondID := uuid.NewV4()
-	secondTS := time.Now().UTC()
-	secondObj, secondObjErr := objBuilderFactory.Create().Create().WithID(&secondID).WithChunks(secondChks).CreatedOn(secondTS).Now()
+	secondTs := time.Now().UTC()
+	secondMet, secondMetErr := metaDataBuilderFactory.Create().Create().WithID(&secondID).CreatedOn(secondTs).Now()
+	if secondMetErr != nil {
+		t.Errorf("the error was expected to be nil, error returned: %s", secondMetErr.Error())
+	}
+
+	secondObj, secondObjErr := objBuilderFactory.Create().Create().WithMetaData(secondMet).WithChunks(secondChks).Now()
 	if secondObjErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", secondObjErr.Error())
 	}
