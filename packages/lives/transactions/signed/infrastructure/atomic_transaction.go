@@ -3,8 +3,8 @@ package infrastructure
 import (
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"

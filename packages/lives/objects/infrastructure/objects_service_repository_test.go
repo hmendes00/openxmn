@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
 	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
 	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"

@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	validated "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // BlockBuilderFactory represents a concrete BlockBuilderFactory implementation

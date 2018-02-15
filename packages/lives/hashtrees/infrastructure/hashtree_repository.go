@@ -3,8 +3,8 @@ package infrastructure
 import (
 	"encoding/json"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // HashTreeRepository represents a concrete HashTree service

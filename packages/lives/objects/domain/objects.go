@@ -1,7 +1,7 @@
 package domain
 
 import (
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // Objects represents an Objects

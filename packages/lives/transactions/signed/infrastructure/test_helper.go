@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"

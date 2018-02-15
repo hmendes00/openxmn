@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // HashTree represents the concrete implementation of the HashTree

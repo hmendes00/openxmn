@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtree "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )

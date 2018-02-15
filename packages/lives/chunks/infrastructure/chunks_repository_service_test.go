@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
 	concrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
 	concrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"

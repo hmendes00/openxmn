@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"encoding/json"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 	stored_file "github.com/XMNBlockchain/core/packages/storages/files/domain"
 )

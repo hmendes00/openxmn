@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"bytes"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 type leaf struct {

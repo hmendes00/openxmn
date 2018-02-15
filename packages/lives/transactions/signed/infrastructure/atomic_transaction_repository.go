@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 	signed_trs "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"

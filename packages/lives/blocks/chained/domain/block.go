@@ -4,7 +4,7 @@ import (
 	"time"
 
 	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // Block represents a chained block

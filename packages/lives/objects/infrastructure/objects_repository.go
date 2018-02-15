@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 	objs "github.com/XMNBlockchain/core/packages/lives/objects/domain"
 )

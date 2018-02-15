@@ -8,11 +8,11 @@ import (
 	"time"
 
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
 	concrete_validated_block "github.com/XMNBlockchain/core/packages/lives/blocks/validated/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"

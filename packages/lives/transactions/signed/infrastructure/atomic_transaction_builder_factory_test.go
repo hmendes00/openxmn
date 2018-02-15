@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 )
 
 func TestCreateBuilderFactory_Success(t *testing.T) {

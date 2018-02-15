@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
 	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"

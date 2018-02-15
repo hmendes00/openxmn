@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )

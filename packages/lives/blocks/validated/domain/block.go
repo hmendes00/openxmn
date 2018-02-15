@@ -2,7 +2,7 @@ package domain
 
 import (
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtree "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 )
 

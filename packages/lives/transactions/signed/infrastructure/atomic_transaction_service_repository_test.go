@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
 	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
+	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	conncrete_objects "github.com/XMNBlockchain/core/packages/lives/objects/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	conncrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"

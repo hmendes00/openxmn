@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 // Compact represents an HashTree, with only the root hash and the block leaves

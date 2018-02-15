@@ -4,8 +4,8 @@ import (
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	concrete_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	validated "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
-	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
-	concrete_hashtree "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	hashtree "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	concrete_hashtree "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	users "github.com/XMNBlockchain/core/packages/users/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 )

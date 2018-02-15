@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"errors"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 type hashTreeBuilder struct {

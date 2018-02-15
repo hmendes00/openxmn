@@ -10,7 +10,7 @@ import (
 
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_server "github.com/XMNBlockchain/core/packages/servers/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	concrete_sdk "github.com/XMNBlockchain/core/sdks/infrastructure"
