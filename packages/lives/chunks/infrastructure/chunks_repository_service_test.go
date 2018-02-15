@@ -38,6 +38,8 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	storedChkBuilderFactory := concrete_stored_chunks.CreateChunksBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	chksBuilderFactory := CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	htService := concrete_hashtrees.CreateHashTreeService(fileService, fileBuilderFactory)
+	htRepository := concrete_hashtrees.CreateHashTreeRepository(fileRepository)
 
 	//delete the files at the end:
 	defer func() {
@@ -48,8 +50,8 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	chks, _ := chksBuilderFactory.Create().Create().WithData(readData).Now()
 
 	//execute:
-	service := CreateChunksService(fileService, fileBuilderFactory, storedChkBuilderFactory)
-	repository := CreateChunksRepository(fileRepository, chksBuilderFactory)
+	service := CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
+	repository := CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
 
 	//verify that the chunks do not exists:
 	if _, err := os.Stat(saveInPath); !os.IsNotExist(err) {

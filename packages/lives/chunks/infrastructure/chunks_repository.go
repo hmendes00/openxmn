@@ -1,24 +1,29 @@
 package infrastructure
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
 
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
+	hashtree "github.com/XMNBlockchain/core/packages/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
 )
 
 // ChunksRepository represents a concrete ChunksRepository implementation
 type ChunksRepository struct {
+	htRepository       hashtree.HashTreeRepository
 	fileRepository     files.FileRepository
 	chksBuilderFactory chunk.ChunksBuilderFactory
 }
 
 // CreateChunksRepository creates a new ChunksRepository instance
-func CreateChunksRepository(fileRepository files.FileRepository, chksBuilderFactory chunk.ChunksBuilderFactory) chunk.ChunksRepository {
+func CreateChunksRepository(
+	htRepository hashtree.HashTreeRepository,
+	fileRepository files.FileRepository,
+	chksBuilderFactory chunk.ChunksBuilderFactory,
+) chunk.ChunksRepository {
 	out := ChunksRepository{
+		htRepository:       htRepository,
 		fileRepository:     fileRepository,
 		chksBuilderFactory: chksBuilderFactory,
 	}
@@ -58,16 +63,9 @@ func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 	}
 
 	//read the hashtree:
-	htFile, htFileErr := rep.fileRepository.Retrieve(dirPath, "hashtree.json")
-	if htFileErr != nil {
-		return nil, htFileErr
-	}
-
-	//unmarshal the hashtree:
-	newHt := new(concrete_hashtrees.HashTree)
-	jsonErr := json.Unmarshal(htFile.GetData(), newHt)
-	if jsonErr != nil {
-		return nil, jsonErr
+	ht, htErr := rep.htRepository.Retrieve(dirPath)
+	if htErr != nil {
+		return nil, htErr
 	}
 
 	//re-order the files data:
@@ -76,7 +74,7 @@ func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
 		filesData = append(filesData, oneFile.GetData())
 	}
 
-	orderedData, orderedErr := newHt.Order(filesData)
+	orderedData, orderedErr := ht.Order(filesData)
 	if orderedErr != nil {
 		return nil, orderedErr
 	}

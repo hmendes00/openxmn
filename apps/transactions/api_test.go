@@ -10,6 +10,7 @@ import (
 
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/hashtrees/infrastructure"
 	concrete_server "github.com/XMNBlockchain/core/packages/servers/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	concrete_sdk "github.com/XMNBlockchain/core/sdks/infrastructure"
@@ -53,6 +54,10 @@ func TestPostTransactions_PostAtomicTransactions_Success(t *testing.T) {
 		},
 		{
 			concrete_trs.CreateTransactionForTests(t),
+			concrete_trs.CreateTransactionForTests(t),
+			concrete_trs.CreateTransactionForTests(t),
+			concrete_trs.CreateTransactionForTests(t),
+			concrete_trs.CreateTransactionForTests(t),
 		},
 		{
 			concrete_trs.CreateTransactionForTests(t),
@@ -73,7 +78,8 @@ func TestPostTransactions_PostAtomicTransactions_Success(t *testing.T) {
 	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactory(sigBuilderFactory, userBuilderFactory)
 	commonSigBuilderFactory := concrete_commons.CreateSignatureBuilderFactory(userSigBuilderFactory)
 	signedTrsBuilderFactory := concrete_signed_trs.CreateTransactionBuilderFactory()
-	atomicSignedTrsBuilderFactory := concrete_signed_trs.CreateAtomicTransactionBuilderFactory()
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	atomicSignedTrsBuilderFactory := concrete_signed_trs.CreateAtomicTransactionBuilderFactory(htBuilderFactory)
 
 	//create application:
 	trsApp := CreateAPI(commonSigBuilderFactory, signedTrsBuilderFactory, atomicSignedTrsBuilderFactory, newSignedTrs, newAtomicSignedTrs, port)
