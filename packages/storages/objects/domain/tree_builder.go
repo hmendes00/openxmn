@@ -7,6 +7,7 @@ type TreeBuilder interface {
 	WithObject(obj Object) TreeBuilder
 	WithSubObject(subObj Object) TreeBuilder
 	WithSubObjects(subObjs Objects) TreeBuilder
+	WithSubTree(trs Tree) TreeBuilder
 	WithSubTrees(trs Trees) TreeBuilder
 	Now() (Tree, error)
 }

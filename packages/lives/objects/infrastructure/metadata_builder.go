@@ -17,7 +17,11 @@ type metaDataBuilder struct {
 }
 
 func createMetaDataBuilder() objs.MetaDataBuilder {
-	out := metaDataBuilder{}
+	out := metaDataBuilder{
+		id:   nil,
+		sig:  nil,
+		crOn: nil,
+	}
 	return &out
 }
 

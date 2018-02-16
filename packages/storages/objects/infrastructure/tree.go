@@ -9,15 +9,17 @@ type tree struct {
 	obj     objs.Object
 	subObj  objs.Object
 	subObjs objs.Objects
+	subTr   objs.Tree
 	subTrs  objs.Trees
 }
 
-func createTree(name string, obj objs.Object, subObj objs.Object, subObjs objs.Objects, subTrs objs.Trees) objs.Tree {
+func createTree(name string, obj objs.Object, subObj objs.Object, subObjs objs.Objects, subTr objs.Tree, subTrs objs.Trees) objs.Tree {
 	out := tree{
 		name:    name,
 		obj:     obj,
 		subObj:  subObj,
 		subObjs: subObjs,
+		subTr:   subTr,
 		subTrs:  subTrs,
 	}
 
@@ -32,6 +34,16 @@ func (tr *tree) HasSubTrees() bool {
 // GetSubTrees returns the sub Trees
 func (tr *tree) GetSubTrees() objs.Trees {
 	return tr.subTrs
+}
+
+// HasSubTree returns true if there is a sub tree, false otherwise
+func (tr *tree) HasSubTree() bool {
+	return tr.subTr != nil
+}
+
+// GetSubTree returns the sub Tree
+func (tr *tree) GetSubTree() objs.Tree {
+	return tr.subTr
 }
 
 // GetName returns the name
