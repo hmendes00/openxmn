@@ -5,12 +5,16 @@ import (
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	concrete_signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
 func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Success(t *testing.T) {
+
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -26,10 +30,10 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 		concrete_signed.CreateAtomicTransactionForTests(t),
 	}
 
-	build := createTransactionsBuilder()
+	build := createTransactionsBuilder(htBuilderFactory)
 	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).WithTransactions(trs).CreatedOn(createdOn).Now()
 	if aggTrsErr != nil {
-		t.Errorf("the returned error was expected to be nil, error returned")
+		t.Errorf("the returned error was expected to be nil, error returned %s", aggTrsErr.Error())
 	}
 
 	retID := aggTrs.GetID()
@@ -53,13 +57,16 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 		}
 	}
 
-	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
 		t.Errorf("the returned creation time is invalid")
 	}
 
 }
 
 func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) {
+
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -70,10 +77,10 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 		concrete_signed.CreateAtomicTransactionForTests(t),
 	}
 
-	build := createTransactionsBuilder()
+	build := createTransactionsBuilder(htBuilderFactory)
 	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).CreatedOn(createdOn).Now()
 	if aggTrsErr != nil {
-		t.Errorf("the returned error was expected to be nil, error returned")
+		t.Errorf("the returned error was expected to be nil, error returned %s", aggTrsErr.Error())
 	}
 
 	retID := aggTrs.GetID()
@@ -95,12 +102,15 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 		t.Errorf("the returned Transactions was expected to be empty.  Returned length: %d", len(retTrs))
 	}
 
-	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
 		t.Errorf("the returned creation time is invalid")
 	}
 }
 
 func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
+
+	//factories:
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -110,10 +120,10 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 		concrete_signed.CreateTransactionForTests(t),
 	}
 
-	build := createTransactionsBuilder()
-	aggTrs, aggTrsErr := build.Create().WithTransactions(trs).Now()
+	build := createTransactionsBuilder(htBuilderFactory)
+	aggTrs, aggTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()
 	if aggTrsErr != nil {
-		t.Errorf("the returned error was expected to be nil, error returned")
+		t.Errorf("the returned error was expected to be nil, error returned: %s", aggTrsErr.Error())
 	}
 
 	retID := aggTrs.GetID()
@@ -135,7 +145,7 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 		t.Errorf("the returned AtomicTransactions was expected to be empty.  Returned length: %d", len(retAtomicTrs))
 	}
 
-	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
 		t.Errorf("the returned creation time is invalid")
 	}
 

@@ -9,4 +9,6 @@ type Tree interface {
 	GetSubObject() Object
 	HasSubObjects() bool
 	GetSubObjects() Objects
+	HasSubTrees() bool
+	GetSubTrees() Trees
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
 	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
@@ -26,8 +27,10 @@ func TestCreateTransactions_Success(t *testing.T) {
 		concrete_signed.CreateAtomicTransactionForTests(t),
 	}
 
+	ht := concrete_hashtrees.CreateHashTreeForTests(t)
+
 	//execute:
-	aggTrs := createTransactions(&id, trs, atomicTrs, createdOn)
+	aggTrs := createTransactions(&id, ht, trs, atomicTrs, createdOn)
 
 	retID := aggTrs.GetID()
 	retTrs := aggTrs.GetTrs()
@@ -50,7 +53,7 @@ func TestCreateTransactions_Success(t *testing.T) {
 		}
 	}
 
-	if !reflect.DeepEqual(&createdOn, retCreatedOn) {
+	if !reflect.DeepEqual(createdOn, retCreatedOn) {
 		t.Errorf("the returned creation time is invalid")
 	}
 

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	concrete_signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
@@ -11,18 +13,20 @@ import (
 )
 
 type aggregatedTransactionsBuilder struct {
-	id        *uuid.UUID
-	trs       []signed.Transaction
-	atomicTrs []signed.AtomicTransaction
-	createdOn *time.Time
+	htBuilderFactory hashtrees.HashTreeBuilderFactory
+	id               *uuid.UUID
+	trs              []signed.Transaction
+	atomicTrs        []signed.AtomicTransaction
+	createdOn        *time.Time
 }
 
-func createTransactionsBuilder() aggregated.TransactionsBuilder {
+func createTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) aggregated.TransactionsBuilder {
 	out := aggregatedTransactionsBuilder{
-		id:        nil,
-		trs:       []signed.Transaction{},
-		atomicTrs: []signed.AtomicTransaction{},
-		createdOn: nil,
+		htBuilderFactory: htBuilderFactory,
+		id:               nil,
+		trs:              nil,
+		atomicTrs:        nil,
+		createdOn:        nil,
 	}
 
 	return &out
@@ -72,20 +76,53 @@ func (build *aggregatedTransactionsBuilder) Now() (aggregated.Transactions, erro
 		return nil, errors.New("the creation time is mandatory in order to build a transactions instance")
 	}
 
-	if len(build.atomicTrs) <= 0 && len(build.trs) <= 0 {
+	if build.atomicTrs == nil && build.trs == nil {
 		return nil, errors.New("there is no transactions or atomic transactions, therefore the aggregated transactions cannot be built")
 	}
 
+	//declare the hashtree block:
+	htBlocks := [][]byte{}
+
+	//transactions:
 	trs := []*concrete_signed.Transaction{}
-	for _, oneTrs := range build.trs {
-		trs = append(trs, oneTrs.(*concrete_signed.Transaction))
+	if build.trs != nil {
+		for _, oneTrs := range build.trs {
+			//add the ID in the block:
+			htBlocks = append(htBlocks, oneTrs.GetID().Bytes())
+
+			//append the atomic trs:
+			trs = append(trs, oneTrs.(*concrete_signed.Transaction))
+		}
 	}
 
+	//atomic transactions:
 	atomicTrs := []*concrete_signed.AtomicTransaction{}
-	for _, oneAtomicTrs := range build.atomicTrs {
-		atomicTrs = append(atomicTrs, oneAtomicTrs.(*concrete_signed.AtomicTransaction))
+	if build.atomicTrs != nil {
+		for _, oneAtomicTrs := range build.atomicTrs {
+			//add the ID in the block:
+			htBlocks = append(htBlocks, oneAtomicTrs.GetID().Bytes())
+
+			//append the atomic trs:
+			atomicTrs = append(atomicTrs, oneAtomicTrs.(*concrete_signed.AtomicTransaction))
+		}
 	}
 
-	out := createTransactions(build.id, trs, atomicTrs, *build.createdOn)
+	//build the hashtree:
+	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htBlocks).Now()
+	if htErr != nil {
+		return nil, htErr
+	}
+
+	if len(trs) > 0 && len(atomicTrs) > 0 {
+		out := createTransactions(build.id, ht.(*concrete_hashtrees.HashTree), trs, atomicTrs, *build.createdOn)
+		return out, nil
+	}
+
+	if len(atomicTrs) > 0 {
+		out := createTransactionsWithAtomicTrs(build.id, ht.(*concrete_hashtrees.HashTree), atomicTrs, *build.createdOn)
+		return out, nil
+	}
+
+	out := createTransactionsWithTrs(build.id, ht.(*concrete_hashtrees.HashTree), trs, *build.createdOn)
 	return out, nil
 }

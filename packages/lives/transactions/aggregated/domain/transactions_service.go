@@ -7,5 +7,4 @@ import (
 // TransactionsService represents a transactions service
 type TransactionsService interface {
 	Save(dirPath string, trs Transactions) (stored_objects.Tree, error)
-	SaveAll(dirPath string, trs []Transactions) ([]stored_objects.Tree, error)
 }
