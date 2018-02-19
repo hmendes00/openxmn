@@ -19,10 +19,10 @@ import (
 	conncrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 )
 
-func TestSaveBlock_thenRetrieve_Success(t *testing.T) {
+func TestSaveSignedBlock_thenRetrieve_Success(t *testing.T) {
 
 	//create the block:
-	blk := CreateBlockForTests(t)
+	signedBlk := CreateSignedBlockForTests(t)
 
 	//variables:
 	basePath := filepath.Join("test_files", "files")
@@ -71,6 +71,9 @@ func TestSaveBlock_thenRetrieve_Success(t *testing.T) {
 	aggTrsRepository := conncrete_aggregated_transactions.CreateSignedTransactionsRepository(objectRepository, aggregatedTrsRepository, aggregatedSignedTrsBuilderFactory)
 	aggTrsService := conncrete_aggregated_transactions.CreateSignedTransactionsService(metaDataBuilderFactory, objBuilderFactory, objectService, aggregatedTrsService, storedTreeBuilderFactory)
 	blkBuilderFactory := CreateBlockBuilderFactory(htBuilderFactory)
+	blkRepository := CreateBlockRepository(blkBuilderFactory, htRepository, aggTrsRepository, objectRepository)
+	blkService := CreateBlockService(storedTreesBuilderFactory, storedTreeBuilderFactory, metaDataBuilderFactory, objBuilderFactory, objectService, htService, aggTrsService)
+	signedBlkBuilderFactory := CreateSignedBlockBuilderFactory()
 
 	//delete the files folder at the end:
 	defer func() {
@@ -78,17 +81,17 @@ func TestSaveBlock_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateBlockRepository(blkBuilderFactory, htRepository, aggTrsRepository, objectRepository)
-	service := CreateBlockService(storedTreesBuilderFactory, storedTreeBuilderFactory, metaDataBuilderFactory, objBuilderFactory, objectService, htService, aggTrsService)
+	repository := CreateSignedBlockRepository(objectRepository, blkRepository, signedBlkBuilderFactory)
+	service := CreateSignedBlockService(storedTreeBuilderFactory, metaDataBuilderFactory, objBuilderFactory, objectService, blkService)
 
-	//make sure there is no block:
+	//make sure there is no blocks:
 	_, noTrsErr := repository.Retrieve(basePath)
 	if noTrsErr == nil {
-		t.Errorf("there was supposed to be no block.")
+		t.Errorf("there was supposed to be no signed block.")
 	}
 
 	//save the block:
-	_, storedTrsErr := service.Save(basePath, blk)
+	_, storedTrsErr := service.Save(basePath, signedBlk)
 	if storedTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", storedTrsErr.Error())
 	}
@@ -99,7 +102,7 @@ func TestSaveBlock_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retBlkErr.Error())
 	}
 
-	if !reflect.DeepEqual(blk, retBlk) {
+	if !reflect.DeepEqual(signedBlk, retBlk) {
 		t.Errorf("the retrieved block is invalid")
 	}
 

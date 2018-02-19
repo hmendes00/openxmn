@@ -6,6 +6,7 @@ import (
 
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -29,4 +30,16 @@ func CreateBlockForTests(t *testing.T) *Block {
 
 	blk := createBlock(&id, ht.(*concrete_hashtrees.HashTree), trs, crOn)
 	return blk.(*Block)
+}
+
+// CreateSignedBlockForTests creates a SignedBlock for tests
+func CreateSignedBlockForTests(t *testing.T) *SignedBlock {
+	//variables:
+	id := uuid.NewV4()
+	blk := CreateBlockForTests(t)
+	sig := concrete_users.CreateSignatureForTests(t)
+	crOn := time.Now().UTC()
+
+	signedBlk := createSignedBlock(&id, blk, sig, crOn)
+	return signedBlk.(*SignedBlock)
 }
