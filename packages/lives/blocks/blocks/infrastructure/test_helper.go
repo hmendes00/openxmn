@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"math/rand"
 	"testing"
 	"time"
 
@@ -21,10 +20,13 @@ func CreateBlockForTests(t *testing.T) *Block {
 		concrete_aggregated.CreateSignedTransactionsForTests(t),
 	}
 
-	ht := concrete_hashtrees.CreateHashTreeForTests(t)
+	htBlocks := [][]byte{}
+	for _, oneTrs := range trs {
+		htBlocks = append(htBlocks, oneTrs.GetID().Bytes())
+	}
 
-	neededKarma := rand.Int()%500 + 100
+	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
 
-	blk := createBlock(&id, ht, trs, neededKarma, crOn)
+	blk := createBlock(&id, ht.(*concrete_hashtrees.HashTree), trs, crOn)
 	return blk.(*Block)
 }

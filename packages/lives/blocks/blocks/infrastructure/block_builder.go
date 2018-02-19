@@ -4,12 +4,11 @@ import (
 	"errors"
 	"time"
 
+	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
-	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
-	"github.com/montanaflynn/stats"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -76,37 +75,6 @@ func (build *blockBuilder) Now() (blocks.Block, error) {
 		return nil, errors.New("there must be at least 1 aggregate signed transaction instance, none given")
 	}
 
-	//fetch all the needed karma:
-	karmaData := []float64{}
-	for _, oneSignedTrs := range build.trs {
-		//atomic trs:
-		atomicTrs := oneSignedTrs.GetTrs().GetAtomicTrs()
-		for _, oneAtomicTrs := range atomicTrs {
-			trsList := oneAtomicTrs.GetTrs()
-			for _, oneTrs := range trsList {
-				karmaData = append(karmaData, float64(oneTrs.GetKarma()))
-			}
-		}
-
-		//trs:
-		trs := oneSignedTrs.GetTrs().GetTrs()
-		for _, oneTrs := range trs {
-			karmaData = append(karmaData, float64(oneTrs.GetTrs().GetKarma()))
-		}
-	}
-
-	//make a median with the karma:
-	med, medErr := stats.Median(karmaData)
-	if medErr != nil {
-		return nil, medErr
-	}
-
-	//round the median to get the needed karma:
-	neededKarma, neededKarmaErr := stats.Round(med, 0)
-	if neededKarmaErr != nil {
-		return nil, neededKarmaErr
-	}
-
 	htBlocks := [][]byte{}
 	agregatedSignedTrs := []*concrete_aggregated.SignedTransactions{}
 	for _, oneAggSignedTrs := range build.trs {
@@ -120,6 +88,6 @@ func (build *blockBuilder) Now() (blocks.Block, error) {
 		return nil, htErr
 	}
 
-	out := createBlock(build.id, ht.(*concrete_hashtrees.HashTree), agregatedSignedTrs, int(neededKarma), *build.createdOn)
+	out := createBlock(build.id, ht.(*concrete_hashtrees.HashTree), agregatedSignedTrs, *build.createdOn)
 	return out, nil
 }

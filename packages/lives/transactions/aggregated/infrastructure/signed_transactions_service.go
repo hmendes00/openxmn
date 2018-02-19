@@ -77,5 +77,16 @@ func (serv *SignedTransactionsService) Save(dirPath string, signedTrs aggregated
 
 // SaveAll saves []SignedTransactions instances
 func (serv *SignedTransactionsService) SaveAll(dirPath string, trs []aggregated.SignedTransactions) ([]stored_objects.Tree, error) {
-	return nil, nil
+	out := []stored_objects.Tree{}
+	for _, oneTrs := range trs {
+		trsDirPath := filepath.Join(dirPath, oneTrs.GetID().String())
+		oneStoredTrs, oneStoredTrsErr := serv.Save(trsDirPath, oneTrs)
+		if oneStoredTrsErr != nil {
+			return nil, oneStoredTrsErr
+		}
+
+		out = append(out, oneStoredTrs)
+	}
+
+	return out, nil
 }

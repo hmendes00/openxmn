@@ -13,6 +13,5 @@ type Block interface {
 	GetID() *uuid.UUID
 	GetHashTree() hashtrees.HashTree
 	GetTransactions() []aggregated.SignedTransactions
-	GetNeededKarma() int
 	CreatedOn() time.Time
 }
