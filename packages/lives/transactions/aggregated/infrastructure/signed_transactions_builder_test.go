@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

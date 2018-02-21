@@ -4,58 +4,59 @@ import (
 	"path/filepath"
 
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
+	stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
 )
 
 // SignedBlockService represents a concrete SignedBlockService implementation
 type SignedBlockService struct {
-	storedTreeBuilderFactory stored_objects.TreeBuilderFactory
-	metaDataBuilderFactory   objects.MetaDataBuilderFactory
-	objBuilderFactory        objects.ObjectBuilderFactory
-	objService               objects.ObjectService
-	blkService               blocks.BlockService
+	metaDataBuilderFactory  metadata.MetaDataBuilderFactory
+	metaDataService         metadata.MetaDataService
+	userSigService          users.SignatureService
+	blkService              blocks.BlockService
+	storedBlkBuilderFactory stored_blocks.SignedBlockBuilderFactory
 }
 
 // CreateSignedBlockService creates a new SignedBlockService instance
 func CreateSignedBlockService(
-	storedTreeBuilderFactory stored_objects.TreeBuilderFactory,
-	metaDataBuilderFactory objects.MetaDataBuilderFactory,
-	objBuilderFactory objects.ObjectBuilderFactory,
-	objService objects.ObjectService,
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
+	metaDataService metadata.MetaDataService,
+	userSigService users.SignatureService,
 	blkService blocks.BlockService,
+	storedBlkBuilderFactory stored_blocks.SignedBlockBuilderFactory,
 ) blocks.SignedBlockService {
 	out := SignedBlockService{
-		storedTreeBuilderFactory: storedTreeBuilderFactory,
-		metaDataBuilderFactory:   metaDataBuilderFactory,
-		objBuilderFactory:        objBuilderFactory,
-		objService:               objService,
-		blkService:               blkService,
+		metaDataBuilderFactory:  metaDataBuilderFactory,
+		metaDataService:         metaDataService,
+		userSigService:          userSigService,
+		blkService:              blkService,
+		storedBlkBuilderFactory: storedBlkBuilderFactory,
 	}
 	return &out
 }
 
 // Save saves a block instance
-func (serv *SignedBlockService) Save(dirPath string, signedBlk blocks.SignedBlock) (stored_objects.Tree, error) {
+func (serv *SignedBlockService) Save(dirPath string, signedBlk blocks.SignedBlock) (stored_blocks.SignedBlock, error) {
 	//build the metadata:
 	id := signedBlk.GetID()
-	sig := signedBlk.GetSignature()
 	ts := signedBlk.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).WithSignature(sig).CreatedOn(ts).Now()
+	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
 	if metErr != nil {
 		return nil, metErr
 	}
 
-	//build the object:
-	obj, objErr := serv.objBuilderFactory.Create().Create().WithMetaData(met).Now()
-	if objErr != nil {
-		return nil, objErr
+	//save the metadata:
+	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
+	if storedMetErr != nil {
+		return nil, storedMetErr
 	}
 
-	//save the object:
-	storedObj, storedObjErr := serv.objService.Save(dirPath, obj)
-	if storedObjErr != nil {
-		return nil, storedObjErr
+	//save the signature:
+	sig := signedBlk.GetSignature()
+	storedSig, storedSigErr := serv.userSigService.Save(dirPath, sig)
+	if storedSigErr != nil {
+		return nil, storedSigErr
 	}
 
 	//save the block:
@@ -66,11 +67,11 @@ func (serv *SignedBlockService) Save(dirPath string, signedBlk blocks.SignedBloc
 		return nil, storedBlkErr
 	}
 
-	//build the stored tree:
-	storedTree, storedTreeErr := serv.storedTreeBuilderFactory.Create().Create().WithName("signed_block").WithObject(storedObj).WithSubTree(storedBlk).Now()
-	if storedTreeErr != nil {
-		return nil, storedTreeErr
+	//build the stored block:
+	storedSignedBlk, storedSignedBlkErr := serv.storedBlkBuilderFactory.Create().Create().WithBlock(storedBlk).WithMetaData(storedMet).WithSignature(storedSig).Now()
+	if storedSignedBlkErr != nil {
+		return nil, storedSignedBlkErr
 	}
 
-	return storedTree, nil
+	return storedSignedBlk, nil
 }

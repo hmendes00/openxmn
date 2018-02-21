@@ -4,58 +4,45 @@ import (
 	"path/filepath"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	stored_aggregated_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/aggregated/domain"
 )
 
 // TransactionsService represents a concrete TransactionsService implementation
 type TransactionsService struct {
-	signedTrsService       signed.TransactionService
-	atomicSignedTrsService signed.AtomicTransactionService
-	htService              hashtrees.HashTreeService
-	metaDataBuilderFactory objects.MetaDataBuilderFactory
-	objService             objects.ObjectService
-	objBuilderFactory      objects.ObjectBuilderFactory
-	treeBuilderFactory     stored_objects.TreeBuilderFactory
-	treesBuilderFactory    stored_objects.TreesBuilderFactory
+	metaDataBuilderFactory  metadata.MetaDataBuilderFactory
+	metaDataService         metadata.MetaDataService
+	htService               hashtrees.HashTreeService
+	signedTrsService        signed.TransactionService
+	atomicSignedTrsService  signed.AtomicTransactionService
+	storedTrsBuilderFactory stored_aggregated_transactions.TransactionsBuilderFactory
 }
 
 // CreateTransactionsService creates a new TransactionsService instance
 func CreateTransactionsService(
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
+	metaDataService metadata.MetaDataService,
+	htService hashtrees.HashTreeService,
 	signedTrsService signed.TransactionService,
 	atomicSignedTrsService signed.AtomicTransactionService,
-	htService hashtrees.HashTreeService,
-	metaDataBuilderFactory objects.MetaDataBuilderFactory,
-	objService objects.ObjectService,
-	objBuilderFactory objects.ObjectBuilderFactory,
-	treeBuilderFactory stored_objects.TreeBuilderFactory,
-	treesBuilderFactory stored_objects.TreesBuilderFactory,
+	storedTrsBuilderFactory stored_aggregated_transactions.TransactionsBuilderFactory,
 ) aggregated.TransactionsService {
 	out := TransactionsService{
-		signedTrsService:       signedTrsService,
-		atomicSignedTrsService: atomicSignedTrsService,
-		htService:              htService,
-		metaDataBuilderFactory: metaDataBuilderFactory,
-		objService:             objService,
-		objBuilderFactory:      objBuilderFactory,
-		treeBuilderFactory:     treeBuilderFactory,
-		treesBuilderFactory:    treesBuilderFactory,
+		metaDataBuilderFactory:  metaDataBuilderFactory,
+		metaDataService:         metaDataService,
+		htService:               htService,
+		signedTrsService:        signedTrsService,
+		atomicSignedTrsService:  atomicSignedTrsService,
+		storedTrsBuilderFactory: storedTrsBuilderFactory,
 	}
 
 	return &out
 }
 
 // Save saves an aggregated Transactions instance
-func (serv *TransactionsService) Save(dirPath string, trs aggregated.Transactions) (stored_objects.Tree, error) {
-	//save the hashtree:
-	ht := trs.GetHashTree()
-	storedHt, storedHtErr := serv.htService.Save(dirPath, ht)
-	if storedHtErr != nil {
-		return nil, storedHtErr
-	}
-
+func (serv *TransactionsService) Save(dirPath string, trs aggregated.Transactions) (stored_aggregated_transactions.Transactions, error) {
 	//build the metadata:
 	id := trs.GetID()
 	createdOn := trs.CreatedOn()
@@ -64,20 +51,21 @@ func (serv *TransactionsService) Save(dirPath string, trs aggregated.Transaction
 		return nil, metaDataErr
 	}
 
-	//build the object:
-	obj, objErr := serv.objBuilderFactory.Create().Create().WithMetaData(metaData).Now()
-	if objErr != nil {
-		return nil, objErr
+	//save the metadata:
+	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, metaData)
+	if storedMetErr != nil {
+		return nil, storedMetErr
 	}
 
-	//save the object:
-	storedObj, storedObjErr := serv.objService.Save(dirPath, obj)
-	if storedObjErr != nil {
-		return nil, storedObjErr
+	//save the hashtree:
+	ht := trs.GetHashTree()
+	storedHt, storedHtErr := serv.htService.Save(dirPath, ht)
+	if storedHtErr != nil {
+		return nil, storedHtErr
 	}
 
-	//create the sub trees:
-	storedSubTrees := []stored_objects.Tree{}
+	//create the stored aggregated transactions builder:
+	aggregatedTrsBuilder := serv.storedTrsBuilderFactory.Create().Create().WithMetaData(storedMet).WithHashTree(storedHt)
 
 	//save the transactions, if any:
 	if trs.HasTrs() {
@@ -88,10 +76,8 @@ func (serv *TransactionsService) Save(dirPath string, trs aggregated.Transaction
 			return nil, storedTrsErr
 		}
 
-		//add the stored trs:
-		for _, oneStoredTree := range storedTrs {
-			storedSubTrees = append(storedSubTrees, oneStoredTree)
-		}
+		//add the stored transaction to the builder:
+		aggregatedTrsBuilder.WithTrs(storedTrs)
 	}
 
 	//save the atomic transactions, if any:
@@ -103,23 +89,15 @@ func (serv *TransactionsService) Save(dirPath string, trs aggregated.Transaction
 			return nil, storedAtomicTrsErr
 		}
 
-		//add the stored atomic trs:
-		for _, oneStoredTree := range storedAtomicTrs {
-			storedSubTrees = append(storedSubTrees, oneStoredTree)
-		}
+		//add the stored atomic transaction to the builder:
+		aggregatedTrsBuilder.WithAtomicTrs(storedAtomicTrs)
 	}
 
-	//build the trees:
-	tres, tresErr := serv.treesBuilderFactory.Create().Create().WithTrees(storedSubTrees).WithHastTree(storedHt).Now()
-	if tresErr != nil {
-		return nil, tresErr
+	//build the stored aggregated transactions:
+	aggregatedTrs, aggregatedTrsErr := aggregatedTrsBuilder.Now()
+	if aggregatedTrsErr != nil {
+		return nil, aggregatedTrsErr
 	}
 
-	//build the tree:
-	tree, treeErr := serv.treeBuilderFactory.Create().Create().WithName("aggregated_transactions").WithObject(storedObj).WithSubTrees(tres).Now()
-	if treeErr != nil {
-		return nil, treeErr
-	}
-
-	return tree, nil
+	return aggregatedTrs, nil
 }

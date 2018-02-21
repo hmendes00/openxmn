@@ -10,7 +10,7 @@ import (
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 	concrete_signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 	sdk "github.com/XMNBlockchain/core/sdks/domain"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"

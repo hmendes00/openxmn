@@ -1,11 +1,11 @@
 package domain
 
 import (
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	stored_aggregated_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/aggregated/domain"
 )
 
 // SignedTransactionsService represents a signed transactions service
 type SignedTransactionsService interface {
-	Save(dirPath string, trs SignedTransactions) (stored_objects.Tree, error)
-	SaveAll(dirPath string, trs []SignedTransactions) ([]stored_objects.Tree, error)
+	Save(dirPath string, trs SignedTransactions) (stored_aggregated_transactions.SignedTransactions, error)
+	SaveAll(dirPath string, trs []SignedTransactions) ([]stored_aggregated_transactions.SignedTransactions, error)
 }

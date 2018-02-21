@@ -6,7 +6,7 @@ import (
 
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 )
 
 // ValidateBlock represents an application that received SignedBlocks and created validated Blocks

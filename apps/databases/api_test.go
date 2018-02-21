@@ -14,7 +14,7 @@ import (
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	concrete_block "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	concrete_server "github.com/XMNBlockchain/core/packages/servers/infrastructure"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	concrete_sdk "github.com/XMNBlockchain/core/sdks/infrastructure"
 	uuid "github.com/satori/go.uuid"
 

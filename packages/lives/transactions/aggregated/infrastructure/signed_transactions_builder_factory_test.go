@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 )
 
 func TestCreateSignedTransactionsBuilderFactory_Success(t *testing.T) {

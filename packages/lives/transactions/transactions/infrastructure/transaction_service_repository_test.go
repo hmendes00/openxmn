@@ -5,14 +5,14 @@ import (
 	"reflect"
 	"testing"
 
-	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
 	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
-	conncrete_objects "github.com/XMNBlockchain/core/packages/lives/objects/infrastructure"
+	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
+	conncrete_metadata "github.com/XMNBlockchain/core/packages/lives/metadata/infrastructure"
 	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 	conncrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
 	conncrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
-	conncrete_stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/infrastructure"
+	conncrete_stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/infrastructure"
 )
 
 func TestSave_thenRetrieve_Success(t *testing.T) {
@@ -36,7 +36,6 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	extension := "chk"
 
 	//factories:
-	objBuilderFactory := conncrete_objects.CreateObjectBuilderFactory()
 	fileBuilderFactory := conncrete_files.CreateFileBuilderFactory()
 	storedFileBuilderFactory := conncrete_stored_files.CreateFileBuilderFactory()
 	storedChkBuilderFactory := conncrete_stored_chunks.CreateChunksBuilderFactory()
@@ -48,12 +47,9 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	chksBuilderFactory := conncrete_chunks.CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	chkRepository := conncrete_chunks.CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
 	chkService := conncrete_chunks.CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
-	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
-	metaDataBuilderFactory := conncrete_objects.CreateMetaDataBuilderFactory()
-	metaDataRepository := conncrete_objects.CreateMetaDataRepository(fileRepository)
-	metaDataService := conncrete_objects.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
-	objectRepository := conncrete_objects.CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
-	objectService := conncrete_objects.CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
+	metaDataBuilderFactory := conncrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataService := conncrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	storedTrsBuilderFactory := conncrete_stored_transactions.CreateTransactionBuilderFactory()
 
 	//delete the files folder at the end:
 	defer func() {
@@ -61,8 +57,8 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	trsRepository := CreateTransactionRepository(objectRepository)
-	trsService := CreateTransactionService(objectService, metaDataBuilderFactory, chksBuilderFactory, objBuilderFactory, storedObjBuilderFactory)
+	trsRepository := CreateTransactionRepository(chkRepository)
+	trsService := CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
 
 	//make sure there is no transactions:
 	_, noTrsErr := trsRepository.RetrieveAll(basePath)

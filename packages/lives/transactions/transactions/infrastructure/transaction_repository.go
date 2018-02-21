@@ -1,50 +1,58 @@
 package infrastructure
 
 import (
-	"errors"
-	"fmt"
+	"io/ioutil"
+	"path/filepath"
 
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
 )
 
 // TransactionRepository represents a concrete TransactionRepository implementation
 type TransactionRepository struct {
-	objRepository objects.ObjectRepository
+	chksRepository chunks.ChunksRepository
 }
 
 // CreateTransactionRepository creates a new TransactionRepository instance
-func CreateTransactionRepository(objRepository objects.ObjectRepository) trs.TransactionRepository {
+func CreateTransactionRepository(chksRepository chunks.ChunksRepository) trs.TransactionRepository {
 	out := TransactionRepository{
-		objRepository: objRepository,
+		chksRepository: chksRepository,
 	}
 	return &out
 }
 
 // Retrieve retrieves a Transaction instance
 func (rep *TransactionRepository) Retrieve(dirPath string) (trs.Transaction, error) {
-	obj, objErr := rep.objRepository.Retrieve(dirPath)
-	if objErr != nil {
-		return nil, objErr
+	//retrieve the chunks:
+	chks, chksErr := rep.chksRepository.Retrieve(dirPath)
+	if chksErr != nil {
+		return nil, chksErr
 	}
 
-	return rep.fromObjectToTransaction(obj)
+	newTrs := new(Transaction)
+	marErr := chks.Marshal(newTrs)
+	if marErr != nil {
+		return nil, marErr
+	}
+
+	return newTrs, nil
 }
 
 // RetrieveAll retrieves a []Transaction instances
 func (rep *TransactionRepository) RetrieveAll(dirPath string) ([]trs.Transaction, error) {
-	objs, objsErr := rep.objRepository.RetrieveAll(dirPath)
-	if objsErr != nil {
-		return nil, objsErr
+	files, filesErr := ioutil.ReadDir(dirPath)
+	if filesErr != nil {
+		return nil, filesErr
 	}
 
-	return rep.fromObjectsToTransactions(objs)
-}
-
-func (rep *TransactionRepository) fromObjectsToTransactions(objs []objects.Object) ([]trs.Transaction, error) {
 	out := []trs.Transaction{}
-	for _, oneObj := range objs {
-		oneTrs, oneTrsErr := rep.fromObjectToTransaction(oneObj)
+	for _, oneFile := range files {
+		if !oneFile.IsDir() {
+			continue
+		}
+
+		oneDirPath := filepath.Join(dirPath, oneFile.Name())
+		oneTrs, oneTrsErr := rep.Retrieve(oneDirPath)
 		if oneTrsErr != nil {
 			return nil, oneTrsErr
 		}
@@ -53,21 +61,4 @@ func (rep *TransactionRepository) fromObjectsToTransactions(objs []objects.Objec
 	}
 
 	return out, nil
-}
-
-func (rep *TransactionRepository) fromObjectToTransaction(obj objects.Object) (trs.Transaction, error) {
-
-	if !obj.HasChunks() {
-		str := fmt.Sprintf("the transaction (id: %s) must contain chunks", obj.GetMetaData().GetID().String())
-		return nil, errors.New(str)
-	}
-
-	chks := obj.GetChunks()
-	newTrs := new(Transaction)
-	marErr := chks.Marshal(newTrs)
-	if marErr != nil {
-		return nil, marErr
-	}
-
-	return newTrs, nil
 }

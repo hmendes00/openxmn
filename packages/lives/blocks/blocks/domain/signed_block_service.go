@@ -1,10 +1,10 @@
 package domain
 
 import (
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
 )
 
 // SignedBlockService represents a signed block service
 type SignedBlockService interface {
-	Save(dirPath string, blk SignedBlock) (stored_objects.Tree, error)
+	Save(dirPath string, blk SignedBlock) (stored_blocks.SignedBlock, error)
 }

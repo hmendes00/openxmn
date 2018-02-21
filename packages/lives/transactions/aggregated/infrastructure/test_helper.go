@@ -6,7 +6,7 @@ import (
 
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
 	concrete_signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/infrastructure"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

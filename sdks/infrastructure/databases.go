@@ -9,7 +9,7 @@ import (
 	concrete_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 	sdk "github.com/XMNBlockchain/core/sdks/domain"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"

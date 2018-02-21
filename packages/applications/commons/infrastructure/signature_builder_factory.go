@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	commons "github.com/XMNBlockchain/core/packages/applications/commons/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 )
 
 // SignatureBuilderFactory represents a concrete SignatureBuilder factory

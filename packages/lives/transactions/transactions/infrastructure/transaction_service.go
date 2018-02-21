@@ -4,44 +4,50 @@ import (
 	"path/filepath"
 
 	chunks "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
 	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/domain"
 )
 
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
-	objService              objects.ObjectService
-	metaDataBuilderFactory  objects.MetaDataBuilderFactory
+	metaDataBuilderFactory  metadata.MetaDataBuilderFactory
+	metaDataService         metadata.MetaDataService
 	chkBuilderFactory       chunks.ChunksBuilderFactory
-	objBuilderFactory       objects.ObjectBuilderFactory
-	storedObjBuilderFactory stored_objects.ObjectBuilderFactory
+	chkService              chunks.ChunksService
+	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory
 }
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
-	objService objects.ObjectService,
-	metaDataBuilderFactory objects.MetaDataBuilderFactory,
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
+	metaDataService metadata.MetaDataService,
 	chkBuilderFactory chunks.ChunksBuilderFactory,
-	objBuilderFactory objects.ObjectBuilderFactory,
-	storedObjBuilderFactory stored_objects.ObjectBuilderFactory,
+	chkService chunks.ChunksService,
+	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory,
 ) trs.TransactionService {
 	out := TransactionService{
-		objService:              objService,
 		metaDataBuilderFactory:  metaDataBuilderFactory,
+		metaDataService:         metaDataService,
 		chkBuilderFactory:       chkBuilderFactory,
-		objBuilderFactory:       objBuilderFactory,
-		storedObjBuilderFactory: storedObjBuilderFactory,
+		chkService:              chkService,
+		storedTrsBuilderFactory: storedTrsBuilderFactory,
 	}
 	return &out
 }
 
 // Save save a Transaction on disk
-func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (stored_objects.Object, error) {
+func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (stored_transactions.Transaction, error) {
 	//build the chunks:
 	chks, chksErr := serv.chkBuilderFactory.Create().Create().WithInstance(trs).Now()
 	if chksErr != nil {
 		return nil, chksErr
+	}
+
+	//save the chunks:
+	storedChks, storedChksErr := serv.chkService.Save(dirPath, chks)
+	if storedChksErr != nil {
+		return nil, storedChksErr
 	}
 
 	//build the metaData:
@@ -52,24 +58,24 @@ func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (store
 		return nil, metErr
 	}
 
-	//build the object:
-	obj, objErr := serv.objBuilderFactory.Create().Create().WithMetaData(met).WithChunks(chks).Now()
-	if objErr != nil {
-		return nil, objErr
+	//save the metadata:
+	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
+	if storedMetErr != nil {
+		return nil, storedMetErr
 	}
 
-	//save the object:
-	storedObj, storedObjErr := serv.objService.Save(dirPath, obj)
-	if storedObjErr != nil {
-		return nil, storedObjErr
+	//build the stored transaction:
+	storedTrs, storedTrsErr := serv.storedTrsBuilderFactory.Create().Create().WithMetaData(storedMet).WithChunks(storedChks).Now()
+	if storedTrsErr != nil {
+		return nil, storedTrsErr
 	}
 
-	return storedObj, nil
+	return storedTrs, nil
 }
 
 // SaveAll saves []Transaction on disk
-func (serv *TransactionService) SaveAll(dirPath string, trs []trs.Transaction) ([]stored_objects.Object, error) {
-	out := []stored_objects.Object{}
+func (serv *TransactionService) SaveAll(dirPath string, trs []trs.Transaction) ([]stored_transactions.Transaction, error) {
+	out := []stored_transactions.Transaction{}
 	for _, oneTrs := range trs {
 		oneObjDirPath := filepath.Join(dirPath, oneTrs.GetID().String())
 		oneObj, oneObjErr := serv.Save(oneObjDirPath, oneTrs)

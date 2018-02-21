@@ -4,7 +4,7 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 	uuid "github.com/satori/go.uuid"
 )
 

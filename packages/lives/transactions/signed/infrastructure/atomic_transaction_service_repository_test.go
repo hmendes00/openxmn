@@ -5,15 +5,17 @@ import (
 	"reflect"
 	"testing"
 
-	conncrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
-	conncrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
-	conncrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
-	conncrete_objects "github.com/XMNBlockchain/core/packages/lives/objects/infrastructure"
+	concrete_chunks "github.com/XMNBlockchain/core/packages/lives/chunks/infrastructure"
+	concrete_files "github.com/XMNBlockchain/core/packages/lives/files/infrastructure"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/lives/metadata/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
-	conncrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
-	conncrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
-	conncrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
-	conncrete_stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/infrastructure"
+	concrete_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
+	concrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
+	concrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
+	concrete_stored_signed_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/signed/infrastructure"
+	concrete_stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/infrastructure"
 )
 
 func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
@@ -37,31 +39,27 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	extension := "chk"
 
 	//factories:
-	objBuilderFactory := conncrete_objects.CreateObjectBuilderFactory()
-	fileBuilderFactory := conncrete_files.CreateFileBuilderFactory()
-	storedFileBuilderFactory := conncrete_stored_files.CreateFileBuilderFactory()
-	storedChkBuilderFactory := conncrete_stored_chunks.CreateChunksBuilderFactory()
-	fileRepository := conncrete_files.CreateFileRepository(fileBuilderFactory)
-	fileService := conncrete_files.CreateFileService(storedFileBuilderFactory)
-	htBuilderFactory := conncrete_hashtrees.CreateHashTreeBuilderFactory()
-	htService := conncrete_hashtrees.CreateHashTreeService(fileService, fileBuilderFactory)
-	htRepository := conncrete_hashtrees.CreateHashTreeRepository(fileRepository)
-	objsBuilderFactory := conncrete_objects.CreateObjectsBuilderFactory(htBuilderFactory)
-	chksBuilderFactory := conncrete_chunks.CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
-	chkRepository := conncrete_chunks.CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
-	chkService := conncrete_chunks.CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
-	storedObjBuilderFactory := conncrete_stored_objects.CreateObjectBuilderFactory()
-	metaDataBuilderFactory := conncrete_objects.CreateMetaDataBuilderFactory()
-	metaDataRepository := conncrete_objects.CreateMetaDataRepository(fileRepository)
-	metaDataService := conncrete_objects.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
-	objectRepository := conncrete_objects.CreateObjectRepository(metaDataRepository, objBuilderFactory, chkRepository)
-	objectService := conncrete_objects.CreateObjectService(metaDataService, storedObjBuilderFactory, chkService)
-	trsRepository := conncrete_transactions.CreateTransactionRepository(objectRepository)
-	trsService := conncrete_transactions.CreateTransactionService(objectService, metaDataBuilderFactory, chksBuilderFactory, objBuilderFactory, storedObjBuilderFactory)
-	signedTrsBuilderFactory := CreateTransactionBuilderFactory()
-	storedTreeBuilderFactory := conncrete_stored_objects.CreateTreeBuilderFactory()
+	fileBuilderFactory := concrete_files.CreateFileBuilderFactory()
+	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
+	storedChkBuilderFactory := concrete_stored_chunks.CreateChunksBuilderFactory()
+	fileRepository := concrete_files.CreateFileRepository(fileBuilderFactory)
+	fileService := concrete_files.CreateFileService(storedFileBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	htService := concrete_hashtrees.CreateHashTreeService(fileService, fileBuilderFactory)
+	htRepository := concrete_hashtrees.CreateHashTreeRepository(fileRepository)
+	chksBuilderFactory := concrete_chunks.CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	chkRepository := concrete_chunks.CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
+	chkService := concrete_chunks.CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataRepository := concrete_metadata.CreateMetaDataRepository(fileRepository)
+	metaDataService := concrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository)
+	storedTrsBuilderFactory := concrete_stored_transactions.CreateTransactionBuilderFactory()
+	trsService := concrete_transactions.CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
 	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactory(htBuilderFactory)
-	storedObjsBuilderFactory := conncrete_stored_objects.CreateObjectsBuilderFactory()
+	userSigRepository := concrete_users.CreateSignatureRepository(fileRepository)
+	userSigService := concrete_users.CreateSignatureService(fileService, fileBuilderFactory)
+	storedAtomicTrsBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionBuilderFactory()
 
 	//delete the files folder at the end:
 	defer func() {
@@ -69,8 +67,8 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateAtomicTransactionRepository(objectRepository, fileRepository, trsRepository, signedTrsBuilderFactory, atomicTrsBuilderFactory)
-	service := CreateAtomicTransactionService(metaDataBuilderFactory, fileBuilderFactory, fileService, storedTreeBuilderFactory, trsService, objectService, objBuilderFactory, objsBuilderFactory, storedObjsBuilderFactory)
+	repository := CreateAtomicTransactionRepository(metaDataRepository, userSigRepository, htRepository, trsRepository, atomicTrsBuilderFactory)
+	service := CreateAtomicTransactionService(metaDataBuilderFactory, metaDataService, htService, userSigService, trsService, storedAtomicTrsBuilderFactory)
 
 	//make sure there is no transactions:
 	_, noTrsErr := repository.RetrieveAll(basePath)

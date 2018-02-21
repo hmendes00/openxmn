@@ -4,8 +4,8 @@ import (
 	"time"
 
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

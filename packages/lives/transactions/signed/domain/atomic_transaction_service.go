@@ -1,11 +1,11 @@
 package domain
 
 import (
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	stored_signed_transaction "github.com/XMNBlockchain/core/packages/storages/transactions/signed/domain"
 )
 
 // AtomicTransactionService represents a transaction service
 type AtomicTransactionService interface {
-	Save(dirPath string, trs AtomicTransaction) (stored_objects.Tree, error)
-	SaveAll(dirPath string, trs []AtomicTransaction) ([]stored_objects.Tree, error)
+	Save(dirPath string, trs AtomicTransaction) (stored_signed_transaction.AtomicTransaction, error)
+	SaveAll(dirPath string, trs []AtomicTransaction) ([]stored_signed_transaction.AtomicTransaction, error)
 }

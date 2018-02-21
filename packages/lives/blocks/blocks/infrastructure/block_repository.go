@@ -8,40 +8,41 @@ import (
 
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
+	aggregated_transactions "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 )
 
 // BlockRepository represents a concrete Block repository
 type BlockRepository struct {
-	blkBuilderFactory blocks.BlockBuilderFactory
-	htRepository      hashtrees.HashTreeRepository
-	aggTrsRepository  transactions.SignedTransactionsRepository
-	objRepository     objects.ObjectRepository
+	metaDataRepository      metadata.MetaDataRepository
+	htRepository            hashtrees.HashTreeRepository
+	aggregatedTrsRepository aggregated_transactions.SignedTransactionsRepository
+	blkBuilderFactory       blocks.BlockBuilderFactory
 }
 
 // CreateBlockRepository creates a BlockRepository instance
 func CreateBlockRepository(
-	blkBuilderFactory blocks.BlockBuilderFactory,
+	metaDataRepository metadata.MetaDataRepository,
 	htRepository hashtrees.HashTreeRepository,
-	aggTrsRepository transactions.SignedTransactionsRepository,
-	objRepository objects.ObjectRepository,
+	aggregatedTrsRepository aggregated_transactions.SignedTransactionsRepository,
+	blkBuilderFactory blocks.BlockBuilderFactory,
 ) blocks.BlockRepository {
 	out := BlockRepository{
-		blkBuilderFactory: blkBuilderFactory,
-		htRepository:      htRepository,
-		aggTrsRepository:  aggTrsRepository,
-		objRepository:     objRepository,
+		metaDataRepository:      metaDataRepository,
+		htRepository:            htRepository,
+		aggregatedTrsRepository: aggregatedTrsRepository,
+		blkBuilderFactory:       blkBuilderFactory,
 	}
 	return &out
 }
 
 // Retrieve retrieves a Block
 func (rep *BlockRepository) Retrieve(dirPath string) (blocks.Block, error) {
-	//retrieve the object:
-	obj, objErr := rep.objRepository.Retrieve(dirPath)
-	if objErr != nil {
-		return nil, objErr
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
 	}
 
 	//retrieve the hashtree:
@@ -52,7 +53,7 @@ func (rep *BlockRepository) Retrieve(dirPath string) (blocks.Block, error) {
 
 	//retrieve the transactions:
 	trsDirPath := filepath.Join(dirPath, "aggregated_transactions")
-	trs, trsErr := rep.aggTrsRepository.RetrieveAll(trsDirPath)
+	trs, trsErr := rep.aggregatedTrsRepository.RetrieveAll(trsDirPath)
 	if trsErr != nil {
 		return nil, trsErr
 	}
@@ -90,7 +91,6 @@ func (rep *BlockRepository) Retrieve(dirPath string) (blocks.Block, error) {
 	}
 
 	//build the block:
-	met := obj.GetMetaData()
 	id := met.GetID()
 	ts := met.CreatedOn()
 	blk, blkErr := rep.blkBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).WithTransactions(reorderedTrs).Now()

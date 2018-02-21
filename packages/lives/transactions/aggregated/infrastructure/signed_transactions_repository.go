@@ -1,30 +1,33 @@
 package infrastructure
 
 import (
-	"errors"
 	"io/ioutil"
 	"path/filepath"
 
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 )
 
 // SignedTransactionsRepository represents a concrete SignedTransactions repository
 type SignedTransactionsRepository struct {
-	objRepository           objects.ObjectRepository
-	trsRepository           aggregated.TransactionsRepository
+	metaDataRepository      metadata.MetaDataRepository
+	userSigRepository       users.SignatureRepository
+	aggregatedTrsRepository aggregated.TransactionsRepository
 	signedTrsBuilderFactory aggregated.SignedTransactionsBuilderFactory
 }
 
 // CreateSignedTransactionsRepository creates a new SignedTransactionsRepository instance
 func CreateSignedTransactionsRepository(
-	objRepository objects.ObjectRepository,
-	trsRepository aggregated.TransactionsRepository,
+	metaDataRepository metadata.MetaDataRepository,
+	userSigRepository users.SignatureRepository,
+	aggregatedTrsRepository aggregated.TransactionsRepository,
 	signedTrsBuilderFactory aggregated.SignedTransactionsBuilderFactory,
 ) aggregated.SignedTransactionsRepository {
 	out := SignedTransactionsRepository{
-		objRepository:           objRepository,
-		trsRepository:           trsRepository,
+		metaDataRepository:      metaDataRepository,
+		userSigRepository:       userSigRepository,
+		aggregatedTrsRepository: aggregatedTrsRepository,
 		signedTrsBuilderFactory: signedTrsBuilderFactory,
 	}
 	return &out
@@ -32,28 +35,28 @@ func CreateSignedTransactionsRepository(
 
 // Retrieve retrieves a SignedTransactions instance
 func (rep *SignedTransactionsRepository) Retrieve(dirPath string) (aggregated.SignedTransactions, error) {
-	//retrieve the object:
-	obj, objErr := rep.objRepository.Retrieve(dirPath)
-	if objErr != nil {
-		return nil, objErr
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
+	}
+
+	//retrieve the signature:
+	sig, sigErr := rep.userSigRepository.Retrieve(dirPath)
+	if sigErr != nil {
+		return nil, sigErr
 	}
 
 	//retrieve the transactions:
 	trsPath := filepath.Join(dirPath, "transactions")
-	trs, trsErr := rep.trsRepository.Retrieve(trsPath)
+	trs, trsErr := rep.aggregatedTrsRepository.Retrieve(trsPath)
 	if trsErr != nil {
 		return nil, trsErr
-	}
-
-	met := obj.GetMetaData()
-	if !met.HasSignature() {
-		return nil, errors.New("the signature, inside the metadata is mandatory")
 	}
 
 	//build the signed transactions:
 	id := met.GetID()
 	ts := met.CreatedOn()
-	sig := met.GetSignature()
 	signedTrs, signedTrsErr := rep.signedTrsBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).WithSignature(sig).WithTransactions(trs).Now()
 	if signedTrsErr != nil {
 		return nil, signedTrsErr

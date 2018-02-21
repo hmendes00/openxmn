@@ -5,8 +5,8 @@ import (
 	"time"
 
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	users "github.com/XMNBlockchain/core/packages/users/domain"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

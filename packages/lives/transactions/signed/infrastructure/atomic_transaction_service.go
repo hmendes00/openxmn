@@ -1,130 +1,104 @@
 package infrastructure
 
 import (
-	"encoding/json"
 	"path/filepath"
 
-	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
 	signed_trs "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
-	trs "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
-	stored_objects "github.com/XMNBlockchain/core/packages/storages/objects/domain"
+	transactions "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
+	stored_signed_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/signed/domain"
 )
 
 // AtomicTransactionService represents a concrete AtomicTransactionService implementation
 type AtomicTransactionService struct {
-	metaDataBuilderFactory   objects.MetaDataBuilderFactory
-	fileBuilderFactory       files.FileBuilderFactory
-	fileService              files.FileService
-	treeBuilderFactory       stored_objects.TreeBuilderFactory
-	trsService               trs.TransactionService
-	objService               objects.ObjectService
-	objBuilderFactory        objects.ObjectBuilderFactory
-	storedObjsBuilderFactory stored_objects.ObjectsBuilderFactory
+	metaDataBuilderFactory        metadata.MetaDataBuilderFactory
+	metaDataService               metadata.MetaDataService
+	hashTreeService               hashtrees.HashTreeService
+	userSigService                users.SignatureService
+	trsService                    transactions.TransactionService
+	storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionBuilderFactory
 }
 
 // CreateAtomicTransactionService creates a new AtomicTransactionService instance
 func CreateAtomicTransactionService(
-	metaDataBuilderFactory objects.MetaDataBuilderFactory,
-	fileBuilderFactory files.FileBuilderFactory,
-	fileService files.FileService,
-	treeBuilderFactory stored_objects.TreeBuilderFactory,
-	trsService trs.TransactionService,
-	objService objects.ObjectService,
-	objBuilderFactory objects.ObjectBuilderFactory,
-	objsBuilderFactory objects.ObjectsBuilderFactory,
-	storedObjsBuilderFactory stored_objects.ObjectsBuilderFactory,
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
+	metaDataService metadata.MetaDataService,
+	hashTreeService hashtrees.HashTreeService,
+	userSigService users.SignatureService,
+	trsService transactions.TransactionService,
+	storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionBuilderFactory,
 ) signed_trs.AtomicTransactionService {
 	out := AtomicTransactionService{
-		metaDataBuilderFactory:   metaDataBuilderFactory,
-		fileBuilderFactory:       fileBuilderFactory,
-		fileService:              fileService,
-		treeBuilderFactory:       treeBuilderFactory,
-		trsService:               trsService,
-		objService:               objService,
-		objBuilderFactory:        objBuilderFactory,
-		storedObjsBuilderFactory: storedObjsBuilderFactory,
+		metaDataBuilderFactory:        metaDataBuilderFactory,
+		metaDataService:               metaDataService,
+		hashTreeService:               hashTreeService,
+		userSigService:                userSigService,
+		trsService:                    trsService,
+		storedAtomicTrsBuilderFactory: storedAtomicTrsBuilderFactory,
 	}
 	return &out
 }
 
 // Save save a signed AtomicTransaction on disk
-func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.AtomicTransaction) (stored_objects.Tree, error) {
-
-	//save the transactions:
-	trs := atomicTrs.GetTrs()
-	trsDirPath := filepath.Join(dirPath, "transactions")
-	storedAtomicTrsObjs, storedAtomicTrsObjsErr := serv.trsService.SaveAll(trsDirPath, trs)
-	if storedAtomicTrsObjsErr != nil {
-		return nil, storedAtomicTrsObjsErr
-	}
-
-	//convert the hashtree to json:
-	ht := atomicTrs.GetHashTree()
-	js, jsErr := json.Marshal(ht)
-	if jsErr != nil {
-		return nil, jsErr
-	}
-
-	//build the hashtree file:
-	htFile, htFileErr := serv.fileBuilderFactory.Create().Create().WithData(js).WithFileName("hashtree").WithExtension("json").Now()
-	if htFileErr != nil {
-		return nil, htFileErr
-	}
-
-	//save the hashtree:
-	storedHt, storedHtErr := serv.fileService.Save(dirPath, htFile)
-	if storedHtErr != nil {
-		return nil, storedHtErr
-	}
-
-	//build the stored objects:
-	storedObjects, storedObjectsErr := serv.storedObjsBuilderFactory.Create().Create().WithObjects(storedAtomicTrsObjs).WithHashTree(storedHt).Now()
-	if storedObjectsErr != nil {
-		return nil, storedObjectsErr
-	}
-
+func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.AtomicTransaction) (stored_signed_transactions.AtomicTransaction, error) {
 	//build the metadata:
 	id := atomicTrs.GetID()
-	sig := atomicTrs.GetSignature()
-	createdOn := atomicTrs.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).WithSignature(sig).CreatedOn(createdOn).Now()
+	ts := atomicTrs.CreatedOn()
+	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
 	if metErr != nil {
 		return nil, metErr
 	}
 
-	//build the object:
-	obj, objErr := serv.objBuilderFactory.Create().Create().WithMetaData(met).Now()
-	if objErr != nil {
-		return nil, objErr
+	//save the metadata:
+	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
+	if storedMetErr != nil {
+		return nil, storedMetErr
 	}
 
-	//store the object:
-	storedObj, storedObjErr := serv.objService.Save(dirPath, obj)
-	if storedObjErr != nil {
-		return nil, storedObjErr
+	//save the hashtree:
+	ht := atomicTrs.GetHashTree()
+	storedHt, storedHtErr := serv.hashTreeService.Save(dirPath, ht)
+	if storedHtErr != nil {
+		return nil, storedHtErr
 	}
 
-	//create the tree:
-	tr, trErr := serv.treeBuilderFactory.Create().Create().WithName("atomic_transaction").WithObject(storedObj).WithSubObjects(storedObjects).Now()
-	if trErr != nil {
-		return nil, trErr
+	//save the signature:
+	sig := atomicTrs.GetSignature()
+	storedSig, storedSigErr := serv.userSigService.Save(dirPath, sig)
+	if storedSigErr != nil {
+		return nil, storedSigErr
 	}
 
-	return tr, nil
+	//save the transactions:
+	trs := atomicTrs.GetTrs()
+	trsDirPath := filepath.Join(dirPath, "transactions")
+	storedTrs, storedTrsErr := serv.trsService.SaveAll(trsDirPath, trs)
+	if storedTrsErr != nil {
+		return nil, storedTrsErr
+	}
+
+	//build the stored atomic transaction:
+	storedAtomicTrs, storedAtomicTrsErr := serv.storedAtomicTrsBuilderFactory.Create().Create().WithHashTree(storedHt).WithMetaData(storedMet).WithSignature(storedSig).WithTransactions(storedTrs).Now()
+	if storedAtomicTrsErr != nil {
+		return nil, storedAtomicTrsErr
+	}
+
+	return storedAtomicTrs, nil
 }
 
 // SaveAll saves []AtomicTransaction on disk
-func (serv *AtomicTransactionService) SaveAll(dirPath string, atomicTrs []signed_trs.AtomicTransaction) ([]stored_objects.Tree, error) {
-	out := []stored_objects.Tree{}
+func (serv *AtomicTransactionService) SaveAll(dirPath string, atomicTrs []signed_trs.AtomicTransaction) ([]stored_signed_transactions.AtomicTransaction, error) {
+	out := []stored_signed_transactions.AtomicTransaction{}
 	for _, oneAtomicTrs := range atomicTrs {
 		oneAtomicTrsDirPath := filepath.Join(dirPath, oneAtomicTrs.GetID().String())
-		oneTree, oneTreeErr := serv.Save(oneAtomicTrsDirPath, oneAtomicTrs)
-		if oneTreeErr != nil {
-			return nil, oneTreeErr
+		oneAtomicTrs, oneAtomicTrsErr := serv.Save(oneAtomicTrsDirPath, oneAtomicTrs)
+		if oneAtomicTrsErr != nil {
+			return nil, oneAtomicTrsErr
 		}
 
-		out = append(out, oneTree)
+		out = append(out, oneAtomicTrs)
 	}
 
 	return out, nil

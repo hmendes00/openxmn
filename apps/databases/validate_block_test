@@ -13,7 +13,7 @@ import (
 	validated_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/validated/domain"
 	concrete_validated_block "github.com/XMNBlockchain/core/packages/lives/blocks/validated/infrastructure"
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/infrastructure"
-	concrete_users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	concrete_users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

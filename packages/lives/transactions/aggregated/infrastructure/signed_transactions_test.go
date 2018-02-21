@@ -6,7 +6,7 @@ import (
 	"time"
 
 	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
-	users "github.com/XMNBlockchain/core/packages/users/infrastructure"
+	users "github.com/XMNBlockchain/core/packages/lives/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 

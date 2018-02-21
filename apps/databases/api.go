@@ -11,6 +11,7 @@ import (
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
 	concrete_blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/infrastructure"
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 )
 
 // API represents the concrete database API Handlers
@@ -106,8 +107,10 @@ func (db *API) postBlock(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//sign the block:
+	signedBlkID := uuid.NewV4()
+	ts := time.Now().UTC()
 	userSig := sig.GetSignature()
-	signedBlk, signedBlKErr := db.signedBlockBuilderFactory.Create().Create().WithBlock(newBlk).WithSignature(userSig).Now()
+	signedBlk, signedBlKErr := db.signedBlockBuilderFactory.Create().Create().WithID(&signedBlkID).CreatedOn(ts).WithBlock(newBlk).WithSignature(userSig).Now()
 	if signedBlKErr != nil {
 		str := fmt.Sprintf("there was a problem while building a signed block: %s", signedBlKErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)

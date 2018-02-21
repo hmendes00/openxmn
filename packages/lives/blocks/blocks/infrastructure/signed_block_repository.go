@@ -1,28 +1,31 @@
 package infrastructure
 
 import (
-	"errors"
 	"path/filepath"
 
 	blocks "github.com/XMNBlockchain/core/packages/lives/blocks/blocks/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
+	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
 )
 
 // SignedBlockRepository represents a concrete SignedBlockRepository implementation
 type SignedBlockRepository struct {
-	objRepository           objects.ObjectRepository
+	metaDataRepository      metadata.MetaDataRepository
+	userSigRepository       users.SignatureRepository
 	blkRepository           blocks.BlockRepository
 	signedBlkBuilderFactory blocks.SignedBlockBuilderFactory
 }
 
 // CreateSignedBlockRepository creates a new SignedBlockRepository instance
 func CreateSignedBlockRepository(
-	objRepository objects.ObjectRepository,
+	metaDataRepository metadata.MetaDataRepository,
+	userSigRepository users.SignatureRepository,
 	blkRepository blocks.BlockRepository,
 	signedBlkBuilderFactory blocks.SignedBlockBuilderFactory,
 ) blocks.SignedBlockRepository {
 	out := SignedBlockRepository{
-		objRepository:           objRepository,
+		metaDataRepository:      metaDataRepository,
+		userSigRepository:       userSigRepository,
 		blkRepository:           blkRepository,
 		signedBlkBuilderFactory: signedBlkBuilderFactory,
 	}
@@ -31,10 +34,16 @@ func CreateSignedBlockRepository(
 
 // Retrieve retrieves a SignedBlock instance
 func (rep *SignedBlockRepository) Retrieve(dirPath string) (blocks.SignedBlock, error) {
-	//retrieve the object:
-	obj, objErr := rep.objRepository.Retrieve(dirPath)
-	if objErr != nil {
-		return nil, objErr
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
+	}
+
+	//retrieve the signature:
+	sig, sigErr := rep.userSigRepository.Retrieve(dirPath)
+	if sigErr != nil {
+		return nil, sigErr
 	}
 
 	//retrieve the block:
@@ -44,15 +53,8 @@ func (rep *SignedBlockRepository) Retrieve(dirPath string) (blocks.SignedBlock, 
 		return nil, blkErr
 	}
 
-	//there must be a signature inside the metadata:
-	met := obj.GetMetaData()
-	if !met.HasSignature() {
-		return nil, errors.New("the signature is mandatory, inside the metadata of the object, in order to retrieve a SignedBlock instance")
-	}
-
 	//build the signed block:
 	id := met.GetID()
-	sig := met.GetSignature()
 	ts := met.CreatedOn()
 	signedBlk, signedBlkErr := rep.signedBlkBuilderFactory.Create().Create().WithID(id).WithSignature(sig).WithBlock(blk).CreatedOn(ts).Now()
 	if signedBlkErr != nil {

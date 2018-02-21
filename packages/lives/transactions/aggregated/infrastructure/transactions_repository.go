@@ -7,33 +7,33 @@ import (
 	"path/filepath"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
-	objects "github.com/XMNBlockchain/core/packages/lives/objects/domain"
+	metadata "github.com/XMNBlockchain/core/packages/lives/metadata/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 	signed "github.com/XMNBlockchain/core/packages/lives/transactions/signed/domain"
 )
 
 // TransactionsRepository represents a concrete TransactionsRepository implementation
 type TransactionsRepository struct {
+	metaDataRepository          metadata.MetaDataRepository
+	hashTreeRepository          hashtrees.HashTreeRepository
 	signedTrsRepository         signed.TransactionRepository
-	atomicSignedTrsRepository   signed.AtomicTransactionRepository
-	htRepository                hashtrees.HashTreeRepository
-	objectRepository            objects.ObjectRepository
+	signedAtomicTrsRepository   signed.AtomicTransactionRepository
 	aggregatedTrsBuilderFactory aggregated.TransactionsBuilderFactory
 }
 
 // CreateTransactionsRepository creates a new TransactionsRepository instance
 func CreateTransactionsRepository(
+	metaDataRepository metadata.MetaDataRepository,
+	hashTreeRepository hashtrees.HashTreeRepository,
 	signedTrsRepository signed.TransactionRepository,
-	atomicSignedTrsRepository signed.AtomicTransactionRepository,
-	htRepository hashtrees.HashTreeRepository,
-	objectRepository objects.ObjectRepository,
+	signedAtomicTrsRepository signed.AtomicTransactionRepository,
 	aggregatedTrsBuilderFactory aggregated.TransactionsBuilderFactory,
 ) aggregated.TransactionsRepository {
 	out := TransactionsRepository{
+		metaDataRepository:          metaDataRepository,
+		hashTreeRepository:          hashTreeRepository,
 		signedTrsRepository:         signedTrsRepository,
-		atomicSignedTrsRepository:   atomicSignedTrsRepository,
-		htRepository:                htRepository,
-		objectRepository:            objectRepository,
+		signedAtomicTrsRepository:   signedAtomicTrsRepository,
 		aggregatedTrsBuilderFactory: aggregatedTrsBuilderFactory,
 	}
 	return &out
@@ -41,21 +41,16 @@ func CreateTransactionsRepository(
 
 // Retrieve retrieves an aggregated Transactions instance
 func (rep *TransactionsRepository) Retrieve(dirPath string) (aggregated.Transactions, error) {
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
+	}
 
 	//retrieve the hashtree:
-	ht, htErr := rep.htRepository.Retrieve(dirPath)
+	ht, htErr := rep.hashTreeRepository.Retrieve(dirPath)
 	if htErr != nil {
 		return nil, htErr
-	}
-
-	//retrieve the obj:
-	obj, objErr := rep.objectRepository.Retrieve(dirPath)
-	if objErr != nil {
-		return nil, objErr
-	}
-
-	if obj.HasChunks() {
-		return nil, errors.New("there should be no chunks inside the Transactions instance")
 	}
 
 	//declare the ht blocks:
@@ -77,7 +72,7 @@ func (rep *TransactionsRepository) Retrieve(dirPath string) (aggregated.Transact
 	//retrieve the atomic transaction, if any - and build the hashtree blocks:
 	atomicTrsMap := map[string]signed.AtomicTransaction{}
 	atomicTrsPath := filepath.Join(dirPath, "signed_atomic_transactions")
-	atomicTrs, atomicTrsErr := rep.atomicSignedTrsRepository.RetrieveAll(atomicTrsPath)
+	atomicTrs, atomicTrsErr := rep.signedAtomicTrsRepository.RetrieveAll(atomicTrsPath)
 	if atomicTrsErr == nil {
 		for _, oneAtomicTrs := range atomicTrs {
 			idAsBytes := oneAtomicTrs.GetID().Bytes()
@@ -100,7 +95,6 @@ func (rep *TransactionsRepository) Retrieve(dirPath string) (aggregated.Transact
 
 	//build the transactions instance:
 	amountTrs := 0
-	met := obj.GetMetaData()
 	id := met.GetID()
 	createdOn := met.CreatedOn()
 	trsBuilder := rep.aggregatedTrsBuilderFactory.Create().Create().WithID(id).CreatedOn(createdOn)
