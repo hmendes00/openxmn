@@ -7,16 +7,14 @@ import (
 )
 
 type userBuilder struct {
-	cr  users.Create
+	cr  users.Save
 	del users.Delete
-	up  users.Update
 }
 
 func createUserBuilder() users.Builder {
 	out := userBuilder{
 		cr:  nil,
 		del: nil,
-		up:  nil,
 	}
 
 	return &out
@@ -26,12 +24,11 @@ func createUserBuilder() users.Builder {
 func (build *userBuilder) Create() users.Builder {
 	build.cr = nil
 	build.del = nil
-	build.up = nil
 	return build
 }
 
-// WithCreate adds a Create instance to the user builder
-func (build *userBuilder) WithCreate(cr users.Create) users.Builder {
+// WithSave adds a Save instance to the user builder
+func (build *userBuilder) WithSave(cr users.Save) users.Builder {
 	build.cr = cr
 	return build
 }
@@ -42,27 +39,16 @@ func (build *userBuilder) WithDelete(del users.Delete) users.Builder {
 	return build
 }
 
-// WithUpdate adds an Update instance to the user builder
-func (build *userBuilder) WithUpdate(up users.Update) users.Builder {
-	build.up = up
-	return build
-}
-
 // Now builds a new User instance
 func (build *userBuilder) Now() (users.User, error) {
 
 	if build.cr != nil {
-		out := createUserWithCreate(build.cr.(*Create))
+		out := createUserWithSave(build.cr.(*Save))
 		return out, nil
 	}
 
 	if build.del != nil {
 		out := createUserWithDelete(build.del.(*Delete))
-		return out, nil
-	}
-
-	if build.up != nil {
-		out := createUserWithUpdate(build.up.(*Update))
 		return out, nil
 	}
 

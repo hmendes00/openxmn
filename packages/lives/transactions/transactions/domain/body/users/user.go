@@ -2,10 +2,8 @@ package users
 
 // User represents a user transaction
 type User interface {
-	HasCreate() bool
-	GetCreate() Create
+	HasSave() bool
+	GetSave() Save
 	HasDelete() bool
 	GetDelete() Delete
-	HasUpdate() bool
-	GetUpdate() Update
 }

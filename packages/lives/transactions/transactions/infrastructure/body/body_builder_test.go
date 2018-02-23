@@ -88,7 +88,7 @@ func TestBuildBody_withServer_Success(t *testing.T) {
 func TestBuildBody_withUser_Success(t *testing.T) {
 
 	//variables:
-	usr := concrete_users.CreateUserWithCreateForTests(t)
+	usr := concrete_users.CreateUserWithSaveForTests(t)
 
 	//execute:
 	bod, bodErr := createBodyBuilder().Create().WithUser(usr).Now()

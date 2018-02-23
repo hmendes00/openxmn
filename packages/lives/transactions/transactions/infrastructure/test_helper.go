@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"math/rand"
 	"testing"
 	"time"
 
@@ -14,9 +13,8 @@ func CreateTransactionForTests(t *testing.T) *Transaction {
 	//variables:
 	id := uuid.NewV4()
 	createdOn := time.Now().UTC()
-	karma := rand.Int() % 20
 	bod := concrete_body.CreateBodyWithUserForTests(t)
 
-	trs := createTransaction(&id, karma, bod, createdOn)
+	trs := createTransaction(&id, bod, createdOn)
 	return trs.(*Transaction)
 }

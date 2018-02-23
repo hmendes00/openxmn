@@ -12,7 +12,6 @@ type TransactionBuilder interface {
 	Create() TransactionBuilder
 	WithID(id *uuid.UUID) TransactionBuilder
 	WithBody(bod body.Body) TransactionBuilder
-	WithKarma(karma int) TransactionBuilder
 	CreatedOn(time time.Time) TransactionBuilder
 	Now() (Transaction, error)
 }

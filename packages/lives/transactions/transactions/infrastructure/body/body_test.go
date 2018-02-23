@@ -4,10 +4,10 @@ import (
 	"reflect"
 	"testing"
 
-	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_custom "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure/body/custom"
 	concrete_servers "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure/body/servers"
 	concrete_users "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure/body/users"
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 )
 
 func TestCreateBody_withCustom_Success(t *testing.T) {
@@ -73,7 +73,7 @@ func TestCreateBody_withServer_Success(t *testing.T) {
 func TestCreateBody_withUser_Success(t *testing.T) {
 
 	//variables:
-	usr := concrete_users.CreateUserWithCreateForTests(t)
+	usr := concrete_users.CreateUserWithSaveForTests(t)
 
 	//execute:
 	bod := createBodyWithUser(usr)

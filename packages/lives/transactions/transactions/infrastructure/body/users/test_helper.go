@@ -7,14 +7,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// CreateCreateForTests creates a Create for tests
-func CreateCreateForTests(t *testing.T) *Create {
+// CreateSaveForTests creates a Save for tests
+func CreateSaveForTests(t *testing.T) *Save {
 	//variables:
 	id := uuid.NewV4()
 	pk := concrete_cryptography.CreatePublicKeyForTests(t)
 
-	cr := createCreate(&id, pk)
-	return cr.(*Create)
+	cr := createSave(&id, pk)
+	return cr.(*Save)
 }
 
 // CreateDeleteForTests creates a Delete for tests
@@ -26,25 +26,6 @@ func CreateDeleteForTests(t *testing.T) *Delete {
 	return del.(*Delete)
 }
 
-// CreateUpdateForTests creates an Update for tests
-func CreateUpdateForTests(t *testing.T) *Update {
-	//variables:
-	id := uuid.NewV4()
-	pk := concrete_cryptography.CreatePublicKeyForTests(t)
-
-	up := createUpdate(&id, pk)
-	return up.(*Update)
-}
-
-// CreateUserWithCreateForTests creates a User with Create for tests
-func CreateUserWithCreateForTests(t *testing.T) *User {
-	//variables:
-	cr := CreateCreateForTests(t)
-
-	usr := createUserWithCreate(cr)
-	return usr.(*User)
-}
-
 // CreateUserWithDeleteForTests creates a User with Delete for tests
 func CreateUserWithDeleteForTests(t *testing.T) *User {
 	//variables:
@@ -54,11 +35,11 @@ func CreateUserWithDeleteForTests(t *testing.T) *User {
 	return usr.(*User)
 }
 
-// CreateUserWithUpdateForTests creates a User with Update for tests
-func CreateUserWithUpdateForTests(t *testing.T) *User {
+// CreateUserWithSaveForTests creates a User with Save for tests
+func CreateUserWithSaveForTests(t *testing.T) *User {
 	//variables:
-	up := CreateUpdateForTests(t)
+	cr := CreateSaveForTests(t)
 
-	usr := createUserWithUpdate(up)
+	usr := createUserWithSave(cr)
 	return usr.(*User)
 }

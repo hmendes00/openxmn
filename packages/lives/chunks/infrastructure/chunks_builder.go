@@ -6,9 +6,9 @@ import (
 	"errors"
 	"math"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/lives/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/lives/files/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/lives/hashtrees/domain"
 )
 
 type chunksBuilder struct {

@@ -8,10 +8,10 @@ import (
 func TestBuildUser_withCreate_Success(t *testing.T) {
 
 	//variables:
-	cr := CreateCreateForTests(t)
+	cr := CreateSaveForTests(t)
 
 	//execute:
-	usr, usrErr := createUserBuilder().Create().WithCreate(cr).Now()
+	usr, usrErr := createUserBuilder().Create().WithSave(cr).Now()
 	if usrErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", usrErr.Error())
 	}
@@ -20,12 +20,12 @@ func TestBuildUser_withCreate_Success(t *testing.T) {
 		t.Errorf("the returned instance was expected to be valid, nil returned")
 	}
 
-	retHasCreate := usr.HasCreate()
-	retCreate := usr.GetCreate()
+	retHasSave := usr.HasSave()
+	retCreate := usr.GetSave()
 	retHasDelete := usr.HasDelete()
 
-	if !retHasCreate {
-		t.Errorf("the returned HasCreate has expected to be true, false returned")
+	if !retHasSave {
+		t.Errorf("the returned HasSave has expected to be true, false returned")
 	}
 
 	if !reflect.DeepEqual(cr, retCreate) {
@@ -53,12 +53,12 @@ func TestBuildUser_withDelete_Success(t *testing.T) {
 		t.Errorf("the returned instance was expected to be valid, nil returned")
 	}
 
-	retHasCreate := usr.HasCreate()
+	retHasSave := usr.HasSave()
 	retHasDelete := usr.HasDelete()
 	retDelete := usr.GetDelete()
 
-	if retHasCreate {
-		t.Errorf("the returned HasCreate has expected to be false, true returned")
+	if retHasSave {
+		t.Errorf("the returned HasSave has expected to be false, true returned")
 	}
 
 	if !retHasDelete {
@@ -67,44 +67,6 @@ func TestBuildUser_withDelete_Success(t *testing.T) {
 
 	if !reflect.DeepEqual(del, retDelete) {
 		t.Errorf("the returned delete is invalid.")
-	}
-
-}
-
-func TestBuildUser_withUpdate_Success(t *testing.T) {
-
-	//variables:
-	up := CreateUpdateForTests(t)
-
-	//execute:
-	usr, usrErr := createUserBuilder().Create().WithUpdate(up).Now()
-	if usrErr != nil {
-		t.Errorf("the returned error was expected to be nil, error returned: %s", usrErr.Error())
-	}
-
-	if usr == nil {
-		t.Errorf("the returned instance was expected to be valid, nil returned")
-	}
-
-	retHasCreate := usr.HasCreate()
-	retHasDelete := usr.HasDelete()
-	retHasUpdate := usr.HasUpdate()
-	retUpdate := usr.GetUpdate()
-
-	if retHasCreate {
-		t.Errorf("the returned HasCreate has expected to be false, true returned")
-	}
-
-	if retHasDelete {
-		t.Errorf("the returned HasDelete has expected to be false, true returned")
-	}
-
-	if !retHasUpdate {
-		t.Errorf("the returned HasUpdate has expected to be true, false returned")
-	}
-
-	if !reflect.DeepEqual(up, retUpdate) {
-		t.Errorf("the returned update is invalid.")
 	}
 
 }

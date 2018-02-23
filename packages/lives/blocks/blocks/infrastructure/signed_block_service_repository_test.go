@@ -29,7 +29,7 @@ func TestSaveSignedBlock_thenRetrieve_Success(t *testing.T) {
 
 	//variables:
 	basePath := filepath.Join("test_files", "files")
-	chkSizeInBytes := 8
+	chkSizeInBytes := 16
 	extension := "chk"
 
 	//factories:

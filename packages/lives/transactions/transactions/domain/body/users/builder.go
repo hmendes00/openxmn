@@ -3,8 +3,7 @@ package users
 // Builder represents a User builder instance
 type Builder interface {
 	Create() Builder
-	WithCreate(cr Create) Builder
+	WithSave(cr Save) Builder
 	WithDelete(del Delete) Builder
-	WithUpdate(up Update) Builder
 	Now() (User, error)
 }

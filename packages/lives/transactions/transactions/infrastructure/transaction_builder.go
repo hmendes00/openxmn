@@ -13,7 +13,6 @@ import (
 type transactionBuilder struct {
 	id        *uuid.UUID
 	bod       body.Body
-	karma     int
 	createdOn *time.Time
 }
 
@@ -26,7 +25,6 @@ func createTransactionBuilder() trs.TransactionBuilder {
 func (build *transactionBuilder) Create() trs.TransactionBuilder {
 	build.id = nil
 	build.bod = nil
-	build.karma = -1
 	build.createdOn = nil
 	return build
 }
@@ -40,12 +38,6 @@ func (build *transactionBuilder) WithID(id *uuid.UUID) trs.TransactionBuilder {
 // WithBody adds a Body to the transactionBuilder
 func (build *transactionBuilder) WithBody(bod body.Body) trs.TransactionBuilder {
 	build.bod = bod
-	return build
-}
-
-// WithKarma adds karma to the transactionBuilder
-func (build *transactionBuilder) WithKarma(karma int) trs.TransactionBuilder {
-	build.karma = karma
 	return build
 }
 
@@ -66,14 +58,10 @@ func (build *transactionBuilder) Now() (trs.Transaction, error) {
 		return nil, errors.New("the body is mandatory in order to build a transaction instance")
 	}
 
-	if build.karma <= 0 {
-		return nil, errors.New("the karma must be a positive value (greater than 0)")
-	}
-
 	if build.createdOn == nil {
 		return nil, errors.New("the createdOn is mandatory in order to build a transaction instance")
 	}
 
-	out := createTransaction(build.id, build.karma, build.bod.(*concrete_body.Body), *build.createdOn)
+	out := createTransaction(build.id, build.bod.(*concrete_body.Body), *build.createdOn)
 	return out, nil
 }

@@ -1,13 +1,12 @@
 package infrastructure
 
 import (
-	"math/rand"
 	"reflect"
 	"testing"
 	"time"
 
-	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_body "github.com/XMNBlockchain/core/packages/lives/transactions/transactions/infrastructure/body"
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -16,11 +15,10 @@ func TestCreate_Success(t *testing.T) {
 	//variables:
 	id := uuid.NewV4()
 	createdOn := time.Now()
-	karma := rand.Int() % 20
 	bod := concrete_body.CreateBodyWithCustomForTests(t)
 
 	//execute:
-	trs := createTransaction(&id, karma, bod, createdOn)
+	trs := createTransaction(&id, bod, createdOn)
 	retID := trs.GetID()
 	retBody := trs.GetBody()
 	retCreatedOn := trs.CreatedOn()
