@@ -7,13 +7,13 @@ import (
 
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	users "github.com/XMNBlockchain/core/packages/lives/users/domain"
+	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	sdk "github.com/XMNBlockchain/core/sdks/domain"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 
-	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
-	concrete_aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/infrastructure"
+	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
+	concrete_aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/infrastructure"
 )
 
 type leaders struct {

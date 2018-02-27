@@ -1,8 +1,8 @@
 package domain
 
 import (
+	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	aggregated "github.com/XMNBlockchain/core/packages/lives/transactions/aggregated/domain"
 )
 
 // Leaders represents the leaders SDK

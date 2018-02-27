@@ -9,7 +9,6 @@ import (
 type BlockBuilder interface {
 	Create() BlockBuilder
 	WithMetaData(met stored_files.File) BlockBuilder
-	WithHashTree(ht stored_files.File) BlockBuilder
 	WithBlock(blk stored_block.SignedBlock) BlockBuilder
 	WithSignatures(sigs []stored_files.File) BlockBuilder
 	Now() (Block, error)

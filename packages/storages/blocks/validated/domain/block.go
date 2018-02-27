@@ -8,7 +8,6 @@ import (
 // Block represents a stored validated block
 type Block interface {
 	GetMetaData() stored_files.File
-	GetHashTree() stored_files.File
 	GetBlock() stored_block.SignedBlock
 	GetSignatures() []stored_files.File
 }

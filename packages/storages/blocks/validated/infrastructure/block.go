@@ -8,15 +8,13 @@ import (
 
 type block struct {
 	metaData stored_files.File
-	ht       stored_files.File
 	blk      stored_block.SignedBlock
 	sigs     []stored_files.File
 }
 
-func createBlock(metaData stored_files.File, ht stored_files.File, blk stored_block.SignedBlock, sigs []stored_files.File) stored_validated_block.Block {
+func createBlock(metaData stored_files.File, blk stored_block.SignedBlock, sigs []stored_files.File) stored_validated_block.Block {
 	out := block{
 		metaData: metaData,
-		ht:       ht,
 		blk:      blk,
 		sigs:     sigs,
 	}
@@ -27,11 +25,6 @@ func createBlock(metaData stored_files.File, ht stored_files.File, blk stored_bl
 // GetMetaData returns the metadata file
 func (blk *block) GetMetaData() stored_files.File {
 	return blk.metaData
-}
-
-// GetHashTree returns the hashtree file
-func (blk *block) GetHashTree() stored_files.File {
-	return blk.ht
 }
 
 // GetBlock returns the stored block

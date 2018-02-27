@@ -10,7 +10,6 @@ import (
 
 type blockBuilder struct {
 	metaData stored_files.File
-	ht       stored_files.File
 	blk      stored_block.SignedBlock
 	sigs     []stored_files.File
 }
@@ -18,7 +17,6 @@ type blockBuilder struct {
 func createBlockBuilder() stored_validated_block.BlockBuilder {
 	out := blockBuilder{
 		metaData: nil,
-		ht:       nil,
 		blk:      nil,
 		sigs:     nil,
 	}
@@ -29,7 +27,6 @@ func createBlockBuilder() stored_validated_block.BlockBuilder {
 // Create initializes the BlockBuilder instance
 func (build *blockBuilder) Create() stored_validated_block.BlockBuilder {
 	build.metaData = nil
-	build.ht = nil
 	build.blk = nil
 	build.sigs = nil
 	return build
@@ -38,12 +35,6 @@ func (build *blockBuilder) Create() stored_validated_block.BlockBuilder {
 // WithMetaData adds the metadata to the BlockBuilder instance
 func (build *blockBuilder) WithMetaData(met stored_files.File) stored_validated_block.BlockBuilder {
 	build.metaData = met
-	return build
-}
-
-// WithHashTree adds the hashtree to the BlockBuilder instance
-func (build *blockBuilder) WithHashTree(ht stored_files.File) stored_validated_block.BlockBuilder {
-	build.ht = ht
 	return build
 }
 
@@ -65,10 +56,6 @@ func (build *blockBuilder) Now() (stored_validated_block.Block, error) {
 		return nil, errors.New("the metadata is mandatory in order to build a Block instance")
 	}
 
-	if build.ht == nil {
-		return nil, errors.New("the hashtree is mandatory in order to build a Block instance")
-	}
-
 	if build.blk == nil {
 		return nil, errors.New("the block is mandatory in order to build a Block instance")
 	}
@@ -77,6 +64,6 @@ func (build *blockBuilder) Now() (stored_validated_block.Block, error) {
 		return nil, errors.New("the signatures is mandatory in order to build a Block instance")
 	}
 
-	out := createBlock(build.metaData, build.ht, build.blk, build.sigs)
+	out := createBlock(build.metaData, build.blk, build.sigs)
 	return out, nil
 }
