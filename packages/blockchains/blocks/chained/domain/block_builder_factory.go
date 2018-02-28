@@ -1,6 +1,6 @@
 package domain
 
-// BlockBuilderFactory represents a chained BlockBuilderFactory
+// BlockBuilderFactory represents a chained block builder factory
 type BlockBuilderFactory interface {
 	Create() BlockBuilder
 }
