@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	commons "github.com/XMNBlockchain/core/packages/controllers/signatures/domain"
 	signed_trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
 	concrete_trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
+	commons "github.com/XMNBlockchain/core/packages/controllers/signatures/domain"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

@@ -12,6 +12,6 @@ type MetaDataBuilder interface {
 	WithID(id *uuid.UUID) MetaDataBuilder
 	WithIndex(index int) MetaDataBuilder
 	WithPreviousIndex(prevIndex int) MetaDataBuilder
-	CreatedOn() time.Time
+	CreatedOn(crOn time.Time) MetaDataBuilder
 	Now() (MetaData, error)
 }
