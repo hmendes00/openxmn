@@ -1,17 +1,14 @@
 package domain
 
 import (
-	"time"
-
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Transaction represents a signed transaction
 type Transaction interface {
-	GetID() *uuid.UUID
-	GetTrs() transactions.Transaction
+	GetMetaData() met.MetaData
+	GetTransaction() transactions.Transaction
 	GetSignature() users.Signature
-	CreatedOn() time.Time
 }

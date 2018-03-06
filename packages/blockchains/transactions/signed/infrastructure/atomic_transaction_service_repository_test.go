@@ -29,8 +29,8 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	}
 
 	multipleTrsMap := map[string]signed_transactions.AtomicTransaction{
-		trs.GetID().String():       trs,
-		secondTrs.GetID().String(): secondTrs,
+		trs.GetMetaData().GetID().String():       trs,
+		secondTrs.GetMetaData().GetID().String(): secondTrs,
 	}
 
 	//variables:
@@ -53,12 +53,17 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 	metaDataRepository := concrete_metadata.CreateMetaDataRepository(fileRepository)
 	metaDataService := concrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
-	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository)
+	trsBuilderFactory := concrete_transactions.CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	transBuilderFactory := concrete_transactions.CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository, metaDataRepository, trsBuilderFactory)
 	storedTrsBuilderFactory := concrete_stored_transactions.CreateTransactionBuilderFactory()
-	trsService := concrete_transactions.CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
-	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactory(htBuilderFactory)
+	storedTrsansBuilderFactory := concrete_stored_transactions.CreateTransactionsBuilderFactory()
+	trsService := concrete_transactions.CreateTransactionService(metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
 	userSigRepository := concrete_users.CreateSignatureRepository(fileRepository)
 	userSigService := concrete_users.CreateSignatureService(fileService, fileBuilderFactory)
+	transRepository := concrete_transactions.CreateTransactionsRepository(metaDataRepository, trsRepository, transBuilderFactory)
+	transService := concrete_transactions.CreateTransactionsService(metaDataService, trsService, storedTrsansBuilderFactory)
+	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	storedAtomicTrsBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionBuilderFactory()
 
 	//delete the files folder at the end:
@@ -67,8 +72,8 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateAtomicTransactionRepository(metaDataRepository, userSigRepository, htRepository, trsRepository, atomicTrsBuilderFactory)
-	service := CreateAtomicTransactionService(metaDataBuilderFactory, metaDataService, htService, userSigService, trsService, storedAtomicTrsBuilderFactory)
+	repository := CreateAtomicTransactionRepository(metaDataRepository, userSigRepository, transRepository, atomicTrsBuilderFactory)
+	service := CreateAtomicTransactionService(metaDataService, userSigService, transService, storedAtomicTrsBuilderFactory)
 
 	//make sure there is no transactions:
 	_, noTrsErr := repository.RetrieveAll(basePath)
@@ -115,7 +120,7 @@ func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {
 	}
 
 	for index, oneRetTrs := range retMultipleTrs {
-		retIDAsString := oneRetTrs.GetID().String()
+		retIDAsString := oneRetTrs.GetMetaData().GetID().String()
 		if oneTrs, ok := multipleTrsMap[retIDAsString]; ok {
 			if !reflect.DeepEqual(oneTrs, oneRetTrs) {
 				t.Errorf("the retrieved atomic transaction at index: %d (ID: %s) is invalid", index, retIDAsString)

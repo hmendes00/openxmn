@@ -1,14 +1,11 @@
 package domain
 
 import (
-	"time"
-
-	uuid "github.com/satori/go.uuid"
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 )
 
 // Transaction represents a Transaction
 type Transaction interface {
-	GetID() *uuid.UUID
+	GetMetaData() met.MetaData
 	GetJSON() []byte
-	CreatedOn() time.Time
 }

@@ -18,7 +18,7 @@ import (
 	concrete_stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/infrastructure"
 )
 
-func TestSaveTrs_thenRetrieve_Success(t *testing.T) {
+func TestSaveTransaction_thenRetrieve_Success(t *testing.T) {
 
 	//create the transaction:
 	trs := CreateTransactionForTests(t)
@@ -29,8 +29,8 @@ func TestSaveTrs_thenRetrieve_Success(t *testing.T) {
 	}
 
 	multipleTrsMap := map[string]signed_transactions.Transaction{
-		trs.GetID().String():       trs,
-		secondTrs.GetID().String(): secondTrs,
+		trs.GetMetaData().GetID().String():       trs,
+		secondTrs.GetMetaData().GetID().String(): secondTrs,
 	}
 
 	//variables:
@@ -53,10 +53,11 @@ func TestSaveTrs_thenRetrieve_Success(t *testing.T) {
 	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 	metaDataRepository := concrete_metadata.CreateMetaDataRepository(fileRepository)
 	metaDataService := concrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
-	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository)
+	trsBuilderFactory := concrete_transactions.CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository, metaDataRepository, trsBuilderFactory)
 	storedTrsBuilderFactory := concrete_stored_transactions.CreateTransactionBuilderFactory()
-	trsService := concrete_transactions.CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
-	signedTrsBuilderFactory := CreateTransactionBuilderFactory()
+	trsService := concrete_transactions.CreateTransactionService(metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
+	signedTrsBuilderFactory := CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	userSigRepository := concrete_users.CreateSignatureRepository(fileRepository)
 	storedSignedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionBuilderFactory()
 	userSigService := concrete_users.CreateSignatureService(fileService, fileBuilderFactory)
@@ -68,7 +69,7 @@ func TestSaveTrs_thenRetrieve_Success(t *testing.T) {
 
 	//execute:
 	repository := CreateTransactionRepository(metaDataRepository, userSigRepository, trsRepository, signedTrsBuilderFactory)
-	service := CreateTransactionService(metaDataBuilderFactory, metaDataService, trsService, storedSignedTrsBuilderFactory, userSigService)
+	service := CreateTransactionService(metaDataService, trsService, storedSignedTrsBuilderFactory, userSigService)
 
 	//make sure there is no transactions:
 	_, noTrsErr := repository.RetrieveAll(basePath)
@@ -115,7 +116,7 @@ func TestSaveTrs_thenRetrieve_Success(t *testing.T) {
 	}
 
 	for index, oneRetTrs := range retMultipleTrs {
-		retIDAsString := oneRetTrs.GetID().String()
+		retIDAsString := oneRetTrs.GetMetaData().GetID().String()
 		if oneTrs, ok := multipleTrsMap[retIDAsString]; ok {
 			if !reflect.DeepEqual(oneTrs, oneRetTrs) {
 				t.Errorf("the retrieved signed transaction at index: %d (ID: %s) is invalid", index, retIDAsString)

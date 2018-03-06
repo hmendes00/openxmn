@@ -26,13 +26,13 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}
 
 	multipleTrsMap := map[string]transactions.Transaction{
-		trs.GetID().String():       trs,
-		secondTrs.GetID().String(): secondTrs,
+		trs.GetMetaData().GetID().String():       trs,
+		secondTrs.GetMetaData().GetID().String(): secondTrs,
 	}
 
 	//variables:
 	basePath := filepath.Join("test_files", "transactions")
-	chkSizeInBytes := 16
+	chkSizeInBytes := 8
 	extension := "chk"
 
 	//factories:
@@ -47,9 +47,11 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	chksBuilderFactory := conncrete_chunks.CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	chkRepository := conncrete_chunks.CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
 	chkService := conncrete_chunks.CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
-	metaDataBuilderFactory := conncrete_metadata.CreateMetaDataBuilderFactory()
 	metaDataService := conncrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	metaDataRepository := conncrete_metadata.CreateMetaDataRepository(fileRepository)
+	metBuilderFactory := conncrete_metadata.CreateMetaDataBuilderFactory()
 	storedTrsBuilderFactory := conncrete_stored_transactions.CreateTransactionBuilderFactory()
+	trsBuilderFactory := CreateTransactionBuilderFactory(htBuilderFactory, metBuilderFactory)
 
 	//delete the files folder at the end:
 	defer func() {
@@ -57,8 +59,8 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	trsRepository := CreateTransactionRepository(chkRepository)
-	trsService := CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
+	trsRepository := CreateTransactionRepository(chkRepository, metaDataRepository, trsBuilderFactory)
+	trsService := CreateTransactionService(metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
 
 	//make sure there is no transactions:
 	_, noTrsErr := trsRepository.RetrieveAll(basePath)
@@ -79,7 +81,7 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(trs, retTrs) {
-		t.Errorf("the retrieved transaction is invalid")
+		t.Errorf("the retrieved transaction JSON is invalid.")
 	}
 
 	//delete the transaction:
@@ -105,7 +107,7 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	}
 
 	for index, oneRetTrs := range retMultipleTrs {
-		retIDAsString := oneRetTrs.GetID().String()
+		retIDAsString := oneRetTrs.GetMetaData().GetID().String()
 		if oneTrs, ok := multipleTrsMap[retIDAsString]; ok {
 			if !reflect.DeepEqual(oneTrs, oneRetTrs) {
 				t.Errorf("the retrieved transaction at index: %d (ID: %s) is invalid", index, retIDAsString)

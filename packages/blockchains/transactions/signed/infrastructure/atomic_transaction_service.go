@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"path/filepath"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	signed_trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
@@ -13,27 +12,21 @@ import (
 
 // AtomicTransactionService represents a concrete AtomicTransactionService implementation
 type AtomicTransactionService struct {
-	metaDataBuilderFactory        metadata.MetaDataBuilderFactory
 	metaDataService               metadata.MetaDataService
-	hashTreeService               hashtrees.HashTreeService
 	userSigService                users.SignatureService
-	trsService                    transactions.TransactionService
+	trsService                    transactions.TransactionsService
 	storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionBuilderFactory
 }
 
 // CreateAtomicTransactionService creates a new AtomicTransactionService instance
 func CreateAtomicTransactionService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
 	metaDataService metadata.MetaDataService,
-	hashTreeService hashtrees.HashTreeService,
 	userSigService users.SignatureService,
-	trsService transactions.TransactionService,
+	trsService transactions.TransactionsService,
 	storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionBuilderFactory,
 ) signed_trs.AtomicTransactionService {
 	out := AtomicTransactionService{
-		metaDataBuilderFactory:        metaDataBuilderFactory,
 		metaDataService:               metaDataService,
-		hashTreeService:               hashTreeService,
 		userSigService:                userSigService,
 		trsService:                    trsService,
 		storedAtomicTrsBuilderFactory: storedAtomicTrsBuilderFactory,
@@ -43,25 +36,11 @@ func CreateAtomicTransactionService(
 
 // Save save a signed AtomicTransaction on disk
 func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.AtomicTransaction) (stored_signed_transactions.AtomicTransaction, error) {
-	//build the metadata:
-	id := atomicTrs.GetID()
-	ts := atomicTrs.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
 	//save the metadata:
+	met := atomicTrs.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr
-	}
-
-	//save the hashtree:
-	ht := atomicTrs.GetHashTree()
-	storedHt, storedHtErr := serv.hashTreeService.Save(dirPath, ht)
-	if storedHtErr != nil {
-		return nil, storedHtErr
 	}
 
 	//save the signature:
@@ -72,15 +51,15 @@ func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.
 	}
 
 	//save the transactions:
-	trs := atomicTrs.GetTrs()
+	trs := atomicTrs.GetTransactions()
 	trsDirPath := filepath.Join(dirPath, "transactions")
-	storedTrs, storedTrsErr := serv.trsService.SaveAll(trsDirPath, trs)
+	storedTrs, storedTrsErr := serv.trsService.Save(trsDirPath, trs)
 	if storedTrsErr != nil {
 		return nil, storedTrsErr
 	}
 
 	//build the stored atomic transaction:
-	storedAtomicTrs, storedAtomicTrsErr := serv.storedAtomicTrsBuilderFactory.Create().Create().WithHashTree(storedHt).WithMetaData(storedMet).WithSignature(storedSig).WithTransactions(storedTrs).Now()
+	storedAtomicTrs, storedAtomicTrsErr := serv.storedAtomicTrsBuilderFactory.Create().Create().WithMetaData(storedMet).WithSignature(storedSig).WithTransactions(storedTrs).Now()
 	if storedAtomicTrsErr != nil {
 		return nil, storedAtomicTrsErr
 	}
@@ -92,7 +71,7 @@ func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.
 func (serv *AtomicTransactionService) SaveAll(dirPath string, atomicTrs []signed_trs.AtomicTransaction) ([]stored_signed_transactions.AtomicTransaction, error) {
 	out := []stored_signed_transactions.AtomicTransaction{}
 	for _, oneAtomicTrs := range atomicTrs {
-		oneAtomicTrsDirPath := filepath.Join(dirPath, oneAtomicTrs.GetID().String())
+		oneAtomicTrsDirPath := filepath.Join(dirPath, oneAtomicTrs.GetMetaData().GetID().String())
 		oneAtomicTrs, oneAtomicTrsErr := serv.Save(oneAtomicTrsDirPath, oneAtomicTrs)
 		if oneAtomicTrsErr != nil {
 			return nil, oneAtomicTrsErr

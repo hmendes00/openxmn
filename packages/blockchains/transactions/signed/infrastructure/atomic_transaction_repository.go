@@ -1,13 +1,9 @@
 package infrastructure
 
 import (
-	"encoding/hex"
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	signed_trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
@@ -18,8 +14,7 @@ import (
 type AtomicTransactionRepository struct {
 	metaDataRepository      metadata.MetaDataRepository
 	userSigRepository       users.SignatureRepository
-	htRepository            hashtrees.HashTreeRepository
-	trsRepository           transactions.TransactionRepository
+	trsRepository           transactions.TransactionsRepository
 	atomicTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory
 }
 
@@ -27,14 +22,12 @@ type AtomicTransactionRepository struct {
 func CreateAtomicTransactionRepository(
 	metaDataRepository metadata.MetaDataRepository,
 	userSigRepository users.SignatureRepository,
-	htRepository hashtrees.HashTreeRepository,
-	trsRepository transactions.TransactionRepository,
+	trsRepository transactions.TransactionsRepository,
 	atomicTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory,
 ) signed_trs.AtomicTransactionRepository {
 	out := AtomicTransactionRepository{
 		metaDataRepository:      metaDataRepository,
 		userSigRepository:       userSigRepository,
-		htRepository:            htRepository,
 		trsRepository:           trsRepository,
 		atomicTrsBuilderFactory: atomicTrsBuilderFactory,
 	}
@@ -55,53 +48,15 @@ func (rep *AtomicTransactionRepository) Retrieve(dirPath string) (signed_trs.Ato
 		return nil, sigErr
 	}
 
-	//retrieve the hashtree:
-	ht, htErr := rep.htRepository.Retrieve(dirPath)
-	if htErr != nil {
-		return nil, htErr
-	}
-
 	//retrieve the transactions:
 	trsDirPath := filepath.Join(dirPath, "transactions")
-	trs, trsErr := rep.trsRepository.RetrieveAll(trsDirPath)
+	trs, trsErr := rep.trsRepository.Retrieve(trsDirPath)
 	if trsErr != nil {
 		return nil, trsErr
 	}
 
-	trsMap := map[string]transactions.Transaction{}
-	for _, oneTrs := range trs {
-		trsIDAsString := hex.EncodeToString(oneTrs.GetID().Bytes())
-		trsMap[trsIDAsString] = oneTrs
-	}
-
-	//re-order the transactions:
-	trsIDs := [][]byte{}
-	for _, oneTrs := range trs {
-		trsIDs = append(trsIDs, oneTrs.GetID().Bytes())
-	}
-
-	orderedData, orderedErr := ht.Order(trsIDs)
-	if orderedErr != nil {
-		return nil, orderedErr
-	}
-
-	//create the new trs list based on the ordered data:
-	orderedTrs := []transactions.Transaction{}
-	for _, oneOrderedData := range orderedData {
-		trsIDAsString := hex.EncodeToString(oneOrderedData)
-		if oneTrs, ok := trsMap[trsIDAsString]; ok {
-			orderedTrs = append(orderedTrs, oneTrs)
-			continue
-		}
-
-		str := fmt.Sprintf("the ordered transaction ID (%s), in the HashTree, cannot be found.  Path: %s. \n\n%v", trsIDAsString, dirPath, trsMap)
-		return nil, errors.New(str)
-	}
-
 	//build the atomic transaction:
-	id := met.GetID()
-	createdOn := met.CreatedOn()
-	atomicTrs, atomicTrsErr := rep.atomicTrsBuilderFactory.Create().Create().WithID(id).CreatedOn(createdOn).WithSignature(sig).WithTransactions(orderedTrs).Now()
+	atomicTrs, atomicTrsErr := rep.atomicTrsBuilderFactory.Create().Create().WithMetaData(met).WithSignature(sig).WithTransactions(trs).Now()
 	if atomicTrsErr != nil {
 		return nil, atomicTrsErr
 	}

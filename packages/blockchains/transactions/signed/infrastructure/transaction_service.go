@@ -12,7 +12,6 @@ import (
 
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
-	metaDataBuilderFactory        metadata.MetaDataBuilderFactory
 	metaDataService               metadata.MetaDataService
 	trsService                    trs.TransactionService
 	storedSignedTrsBuilderFactory stored_signed_transaction.TransactionBuilderFactory
@@ -21,14 +20,12 @@ type TransactionService struct {
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
 	metaDataService metadata.MetaDataService,
 	trsService trs.TransactionService,
 	storedSignedTrsBuilderFactory stored_signed_transaction.TransactionBuilderFactory,
 	sigService users.SignatureService,
 ) signed_trs.TransactionService {
 	out := TransactionService{
-		metaDataBuilderFactory:        metaDataBuilderFactory,
 		metaDataService:               metaDataService,
 		trsService:                    trsService,
 		storedSignedTrsBuilderFactory: storedSignedTrsBuilderFactory,
@@ -39,15 +36,8 @@ func CreateTransactionService(
 
 // Save save a signed Transaction on disk
 func (serv *TransactionService) Save(dirPath string, signedTrs signed_trs.Transaction) (stored_signed_transaction.Transaction, error) {
-	//build the metadata:
-	id := signedTrs.GetID()
-	createdOn := signedTrs.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(createdOn).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
 	//save the metadata:
+	met := signedTrs.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr
@@ -61,7 +51,7 @@ func (serv *TransactionService) Save(dirPath string, signedTrs signed_trs.Transa
 	}
 
 	//save the transaction:
-	trs := signedTrs.GetTrs()
+	trs := signedTrs.GetTransaction()
 	trsPath := filepath.Join(dirPath, "transaction")
 	storedTrsObj, storedTrsObjErr := serv.trsService.Save(trsPath, trs)
 	if storedTrsObjErr != nil {
@@ -81,7 +71,7 @@ func (serv *TransactionService) Save(dirPath string, signedTrs signed_trs.Transa
 func (serv *TransactionService) SaveAll(dirPath string, signedTrs []signed_trs.Transaction) ([]stored_signed_transaction.Transaction, error) {
 	out := []stored_signed_transaction.Transaction{}
 	for _, oneSignedTrs := range signedTrs {
-		signedTrsPath := filepath.Join(dirPath, oneSignedTrs.GetID().String())
+		signedTrsPath := filepath.Join(dirPath, oneSignedTrs.GetMetaData().GetID().String())
 		oneTrs, oneTrsErr := serv.Save(signedTrsPath, oneSignedTrs)
 		if oneTrsErr != nil {
 			return nil, oneTrsErr

@@ -9,15 +9,13 @@ import (
 type atomicTransaction struct {
 	metaData stored_files.File
 	sig      stored_files.File
-	ht       stored_files.File
-	trs      []stored_transactions.Transaction
+	trs      stored_transactions.Transactions
 }
 
-func createAtomicTransaction(metaData stored_files.File, sig stored_files.File, ht stored_files.File, trs []stored_transactions.Transaction) stored_signed_transactions.AtomicTransaction {
+func createAtomicTransaction(metaData stored_files.File, sig stored_files.File, trs stored_transactions.Transactions) stored_signed_transactions.AtomicTransaction {
 	out := atomicTransaction{
 		metaData: metaData,
 		sig:      sig,
-		ht:       ht,
 		trs:      trs,
 	}
 
@@ -34,12 +32,7 @@ func (trs *atomicTransaction) GetSignature() stored_files.File {
 	return trs.sig
 }
 
-// GetHashTree returns the hashtree file
-func (trs *atomicTransaction) GetHashTree() stored_files.File {
-	return trs.ht
-}
-
 // GetTransactions returns the stored transactions
-func (trs *atomicTransaction) GetTransactions() []stored_transactions.Transaction {
+func (trs *atomicTransaction) GetTransactions() stored_transactions.Transactions {
 	return trs.trs
 }

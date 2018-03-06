@@ -1,20 +1,15 @@
 package domain
 
 import (
-	"time"
-
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	signed_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Transactions represents aggregated signed transactions
 type Transactions interface {
-	GetID() *uuid.UUID
-	GetHashTree() hashtrees.HashTree
-	HasTrs() bool
-	GetTrs() []signed_transactions.Transaction
-	HasAtomicTrs() bool
-	GetAtomicTrs() []signed_transactions.AtomicTransaction
-	CreatedOn() time.Time
+	GetMetaData() metadata.MetaData
+	HasTransactions() bool
+	GetTransactions() signed_transactions.Transactions
+	HasAtomicTransactions() bool
+	GetAtomicTransactions() signed_transactions.AtomicTransactions
 }

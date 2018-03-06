@@ -1,102 +1,71 @@
 package infrastructure
 
 import (
-	"time"
-
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	signed "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	concrete_signed "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/infrastructure"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Transactions represents the concrete aggregated transactions
 type Transactions struct {
-	ID        *uuid.UUID                           `json:"id"`
-	HT        *concrete_hashtrees.HashTree         `json:"hashtree"`
-	Trs       []*concrete_signed.Transaction       `json:"transactions"`
-	AtomicTrs []*concrete_signed.AtomicTransaction `json:"atomic_transactions"`
-	CrOn      time.Time                            `json:"created_on"`
+	Met       *concrete_metadata.MetaData         `json:"metadata"`
+	Trs       *concrete_signed.Transactions       `json:"transactions"`
+	AtomicTrs *concrete_signed.AtomicTransactions `json:"atomic_transactions"`
 }
 
-func createTransactions(id *uuid.UUID, ht *concrete_hashtrees.HashTree, trs []*concrete_signed.Transaction, atomicTrs []*concrete_signed.AtomicTransaction, createdOn time.Time) aggregated.Transactions {
+func createTransactions(met *concrete_metadata.MetaData, trs *concrete_signed.Transactions, atomicTrs *concrete_signed.AtomicTransactions) aggregated.Transactions {
 	out := Transactions{
-		ID:        id,
-		HT:        ht,
+		Met:       met,
 		Trs:       trs,
 		AtomicTrs: atomicTrs,
-		CrOn:      createdOn,
 	}
 
 	return &out
 }
 
-func createTransactionsWithTrs(id *uuid.UUID, ht *concrete_hashtrees.HashTree, trs []*concrete_signed.Transaction, createdOn time.Time) aggregated.Transactions {
+func createTransactionsWithTrs(met *concrete_metadata.MetaData, trs *concrete_signed.Transactions) aggregated.Transactions {
 	out := Transactions{
-		ID:        id,
-		HT:        ht,
+		Met:       met,
 		Trs:       trs,
 		AtomicTrs: nil,
-		CrOn:      createdOn,
 	}
 
 	return &out
 }
 
-func createTransactionsWithAtomicTrs(id *uuid.UUID, ht *concrete_hashtrees.HashTree, atomicTrs []*concrete_signed.AtomicTransaction, createdOn time.Time) aggregated.Transactions {
+func createTransactionsWithAtomicTrs(met *concrete_metadata.MetaData, atomicTrs *concrete_signed.AtomicTransactions) aggregated.Transactions {
 	out := Transactions{
-		ID:        id,
-		HT:        ht,
+		Met:       met,
 		Trs:       nil,
 		AtomicTrs: atomicTrs,
-		CrOn:      createdOn,
 	}
 
 	return &out
 }
 
-// GetID returns the ID
-func (trs *Transactions) GetID() *uuid.UUID {
-	return trs.ID
+// GetMetaData returns the MetaData
+func (trs *Transactions) GetMetaData() metadata.MetaData {
+	return trs.Met
 }
 
-// GetHashTree returns the HashTree
-func (trs *Transactions) GetHashTree() hashtrees.HashTree {
-	return trs.HT
-}
-
-// HasTrs returns true if there is transaction, false otherwise
-func (trs *Transactions) HasTrs() bool {
+// HasTransactions returns true if there is transaction, false otherwise
+func (trs *Transactions) HasTransactions() bool {
 	return trs.Trs != nil
 }
 
-// GetTrs returns the signed transactions
-func (trs *Transactions) GetTrs() []signed.Transaction {
-	out := []signed.Transaction{}
-	for _, oneTrs := range trs.Trs {
-		out = append(out, oneTrs)
-	}
-
-	return out
+// GetTransactions returns the signed transactions
+func (trs *Transactions) GetTransactions() signed.Transactions {
+	return trs.Trs
 }
 
-// HasAtomicTrs returns true if there is an atomic transaction, false otherwise
-func (trs *Transactions) HasAtomicTrs() bool {
+// HasAtomicTransactions returns true if there is an atomic transaction, false otherwise
+func (trs *Transactions) HasAtomicTransactions() bool {
 	return trs.AtomicTrs != nil
 }
 
-// GetAtomicTrs returns the signed atomic transactions
-func (trs *Transactions) GetAtomicTrs() []signed.AtomicTransaction {
-	out := []signed.AtomicTransaction{}
-	for _, oneTrs := range trs.AtomicTrs {
-		out = append(out, oneTrs)
-	}
-
-	return out
-}
-
-// CreatedOn returns the creation time
-func (trs *Transactions) CreatedOn() time.Time {
-	return trs.CrOn
+// GetAtomicTransactions returns the signed atomic transactions
+func (trs *Transactions) GetAtomicTransactions() signed.AtomicTransactions {
+	return trs.AtomicTrs
 }

@@ -8,9 +8,8 @@ import (
 // Transactions represents aggregated transactions
 type Transactions interface {
 	GetMetaData() stored_files.File
-	GetHashTree() stored_files.File
-	HasTrs() bool
-	GetTrs() []stored_signed_transactions.Transaction
-	HasAtomicTrs() bool
-	GetAtomicTrs() []stored_signed_transactions.AtomicTransaction
+	HasTransactions() bool
+	GetTransactions() stored_signed_transactions.Transactions
+	HasAtomicTransactions() bool
+	GetAtomicTransactions() stored_signed_transactions.AtomicTransactions
 }

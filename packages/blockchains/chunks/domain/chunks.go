@@ -9,5 +9,6 @@ import (
 type Chunks interface {
 	GetHashTree() hashtrees.HashTree
 	GetChunks() []files.File
+	GetData() ([]byte, error)
 	Marshal(v interface{}) error
 }

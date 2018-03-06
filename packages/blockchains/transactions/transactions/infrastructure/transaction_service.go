@@ -11,7 +11,6 @@ import (
 
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
-	metaDataBuilderFactory  metadata.MetaDataBuilderFactory
 	metaDataService         metadata.MetaDataService
 	chkBuilderFactory       chunks.ChunksBuilderFactory
 	chkService              chunks.ChunksService
@@ -20,14 +19,12 @@ type TransactionService struct {
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
 	metaDataService metadata.MetaDataService,
 	chkBuilderFactory chunks.ChunksBuilderFactory,
 	chkService chunks.ChunksService,
 	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory,
 ) trs.TransactionService {
 	out := TransactionService{
-		metaDataBuilderFactory:  metaDataBuilderFactory,
 		metaDataService:         metaDataService,
 		chkBuilderFactory:       chkBuilderFactory,
 		chkService:              chkService,
@@ -39,26 +36,21 @@ func CreateTransactionService(
 // Save save a Transaction on disk
 func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (stored_transactions.Transaction, error) {
 	//build the chunks:
-	chks, chksErr := serv.chkBuilderFactory.Create().Create().WithInstance(trs).Now()
+	jsData := trs.GetJSON()
+	chks, chksErr := serv.chkBuilderFactory.Create().Create().WithData(jsData).Now()
 	if chksErr != nil {
 		return nil, chksErr
 	}
 
 	//save the chunks:
-	storedChks, storedChksErr := serv.chkService.Save(dirPath, chks)
+	chkDirPath := filepath.Join(dirPath, "json")
+	storedChks, storedChksErr := serv.chkService.Save(chkDirPath, chks)
 	if storedChksErr != nil {
 		return nil, storedChksErr
 	}
 
-	//build the metaData:
-	id := trs.GetID()
-	createdOn := trs.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(createdOn).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
 	//save the metadata:
+	met := trs.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr
@@ -77,7 +69,7 @@ func (serv *TransactionService) Save(dirPath string, trs trs.Transaction) (store
 func (serv *TransactionService) SaveAll(dirPath string, trs []trs.Transaction) ([]stored_transactions.Transaction, error) {
 	out := []stored_transactions.Transaction{}
 	for _, oneTrs := range trs {
-		oneObjDirPath := filepath.Join(dirPath, oneTrs.GetID().String())
+		oneObjDirPath := filepath.Join(dirPath, oneTrs.GetMetaData().GetID().String())
 		oneObj, oneObjErr := serv.Save(oneObjDirPath, oneTrs)
 		if oneObjErr != nil {
 			return nil, oneObjErr

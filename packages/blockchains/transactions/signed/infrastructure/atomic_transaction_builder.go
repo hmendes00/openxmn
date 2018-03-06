@@ -2,10 +2,12 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
@@ -15,20 +17,24 @@ import (
 )
 
 type atomicTransactionBuilder struct {
-	htBuilderFactory hashtrees.HashTreeBuilderFactory
-	id               *uuid.UUID
-	trs              []trs.Transaction
-	sig              users.Signature
-	createdOn        *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory met.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	met                    met.MetaData
+	trs                    trs.Transactions
+	sig                    users.Signature
+	createdOn              *time.Time
 }
 
-func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) signed_transactions.AtomicTransactionBuilder {
+func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) signed_transactions.AtomicTransactionBuilder {
 	out := atomicTransactionBuilder{
-		htBuilderFactory: htBuilderFactory,
-		id:               nil,
-		trs:              nil,
-		sig:              nil,
-		createdOn:        nil,
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
+		id:        nil,
+		met:       nil,
+		trs:       nil,
+		sig:       nil,
+		createdOn: nil,
 	}
 
 	return &out
@@ -37,6 +43,7 @@ func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFa
 // Create initializes the AtomicTransactionBuilder instance
 func (build *atomicTransactionBuilder) Create() signed_transactions.AtomicTransactionBuilder {
 	build.id = nil
+	build.met = nil
 	build.trs = nil
 	build.sig = nil
 	return build
@@ -48,8 +55,14 @@ func (build *atomicTransactionBuilder) WithID(id *uuid.UUID) signed_transactions
 	return build
 }
 
+// WithMetaData adds a MetaData to the AtomicTransactionBuilder
+func (build *atomicTransactionBuilder) WithMetaData(meta met.MetaData) signed_transactions.AtomicTransactionBuilder {
+	build.met = meta
+	return build
+}
+
 // WithTransactions adds transactions to the AtomicTransactionBuilder
-func (build *atomicTransactionBuilder) WithTransactions(trs []trs.Transaction) signed_transactions.AtomicTransactionBuilder {
+func (build *atomicTransactionBuilder) WithTransactions(trs trs.Transactions) signed_transactions.AtomicTransactionBuilder {
 	build.trs = trs
 	return build
 }
@@ -69,10 +82,6 @@ func (build *atomicTransactionBuilder) CreatedOn(ts time.Time) signed_transactio
 // Now builds a new AtomicTransaction instance
 func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransaction, error) {
 
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build an AtomicTransaction instance")
-	}
-
 	if build.trs == nil {
 		return nil, errors.New("the []transaction are mandatory in order to build an AtomicTransaction instance")
 	}
@@ -81,30 +90,35 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 		return nil, errors.New("the user signature is mandatory in order to build an AtomicTransaction instance")
 	}
 
-	if len(build.trs) <= 0 {
-		return nil, errors.New("the []transaction cannot be empty")
+	if build.met == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build an AtomicTransaction instance")
+		}
+
+		if build.createdOn == nil {
+			return nil, errors.New("the creation time is mandatory in order to build an AtomicTransaction instance")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
+			[]byte(build.sig.GetSig().String()),
+			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.createdOn).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
 	}
 
-	if build.createdOn == nil {
-		return nil, errors.New("the creation time is mandatory in order to build an AtomicTransaction instance")
-	}
-
-	htBlocks := [][]byte{}
-	trs := []*concrete_transactions.Transaction{}
-	for _, oneTrs := range build.trs {
-		//add the ID in the block:
-		htBlocks = append(htBlocks, oneTrs.GetID().Bytes())
-
-		//add the trs in the list:
-		trs = append(trs, oneTrs.(*concrete_transactions.Transaction))
-	}
-
-	//build the hashtree:
-	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htBlocks).Now()
-	if htErr != nil {
-		return nil, htErr
-	}
-
-	out := createAtomicTransaction(build.id, ht.(*concrete_hashtrees.HashTree), trs, build.sig.(*concrete_users.Signature), *build.createdOn)
+	out := createAtomicTransaction(build.met.(*concrete_metadata.MetaData), build.trs.(*concrete_transactions.Transactions), build.sig.(*concrete_users.Signature))
 	return out, nil
 }

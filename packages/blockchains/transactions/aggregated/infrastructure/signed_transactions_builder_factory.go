@@ -1,25 +1,28 @@
 package infrastructure
 
 import (
-	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 )
 
 // SignedTransactionsBuilderFactory represents the concrete SignedTransactionsBuilder factory
 type SignedTransactionsBuilderFactory struct {
-	sigBuilderFactory users.SignatureBuilderFactory
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory
 }
 
 // CreateSignedTransactionsBuilderFactory creates a new SignedTransactionsBuilderFactory instance
-func CreateSignedTransactionsBuilderFactory(sigBuilderFactory users.SignatureBuilderFactory) aggregated.SignedTransactionsBuilderFactory {
+func CreateSignedTransactionsBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) aggregated.SignedTransactionsBuilderFactory {
 	out := SignedTransactionsBuilderFactory{
-		sigBuilderFactory: sigBuilderFactory,
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
 	}
 	return &out
 }
 
 // Create creates a new SignedTransactionsBuilder instance
 func (fac *SignedTransactionsBuilderFactory) Create() aggregated.SignedTransactionsBuilder {
-	out := createSignedTransactionsBuilder(fac.sigBuilderFactory)
+	out := createSignedTransactionsBuilder(fac.htBuilderFactory, fac.metaDataBuilderFactory)
 	return out
 }

@@ -4,5 +4,5 @@ These are the core packages/applications that a decentralized application should
 ## Run tests
 Type this command to execute the tests:
 ```
-go test -v -parallel 10  ./...
+go test -timeout 99999999s -v -parallel 10  ./...
 ```

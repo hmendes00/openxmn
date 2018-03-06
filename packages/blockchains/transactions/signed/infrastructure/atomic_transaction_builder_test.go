@@ -2,11 +2,12 @@ package infrastructure
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
-	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
@@ -16,45 +17,52 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 
 	//execute:
 	id := uuid.NewV4()
-	trs := []transactions.Transaction{
-		concrete_transactions.CreateTransactionForTests(t),
-		concrete_transactions.CreateTransactionForTests(t),
-	}
-
+	trs := concrete_transactions.CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 
-	build := createAtomicTransactionBuilder(htBuilderFactory)
+	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", atomicTrsErr.Error())
 	}
 
-	retID := atomicTrs.GetID()
-	retTrs := atomicTrs.GetTrs()
-	retSig := atomicTrs.GetSignature()
-	retCreatedOn := atomicTrs.CreatedOn()
-
-	if !reflect.DeepEqual(&id, retID) {
-		t.Errorf("the returned ID was invalid")
+	blocks := [][]byte{
+		id.Bytes(),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		[]byte(sig.GetSig().String()),
+		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 	}
 
-	for index, oneTrs := range trs {
-		if !reflect.DeepEqual(retTrs[index], oneTrs) {
-			t.Errorf("the returned []transaction was invalid at index: %d", index)
-		}
+	ht, htErr := htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+	if htErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", htErr.Error())
+	}
+
+	met, metErr := metaDataBuilderFactory.Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	if metErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", metErr.Error())
+	}
+
+	retMetaData := atomicTrs.GetMetaData()
+	retTrs := atomicTrs.GetTransactions()
+	retSig := atomicTrs.GetSignature()
+
+	if !reflect.DeepEqual(met, retMetaData) {
+		t.Errorf("the returned metadata was invalid")
+	}
+
+	if !reflect.DeepEqual(retTrs, trs) {
+		t.Errorf("the returned Transactions was invalid")
 	}
 
 	if !reflect.DeepEqual(sig, retSig) {
 		t.Errorf("the returned user signature was invalid")
-	}
-
-	if !reflect.DeepEqual(createdOn, retCreatedOn) {
-		t.Errorf("the returned createdOn time was invalid")
 	}
 
 }
@@ -62,18 +70,15 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 func TestBuildAtomicTransaction_withoutID_returnsError(t *testing.T) {
 
 	//execute:
-	trs := []transactions.Transaction{
-		concrete_transactions.CreateTransactionForTests(t),
-		concrete_transactions.CreateTransactionForTests(t),
-	}
-
+	trs := concrete_transactions.CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 
-	build := createAtomicTransactionBuilder(htBuilderFactory)
+	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -95,8 +100,9 @@ func TestBuildAtomicTransaction_withoutTransactions_returnsError(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 
-	build := createAtomicTransactionBuilder(htBuilderFactory)
+	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -113,17 +119,14 @@ func TestBuildAtomicTransaction_withoutSignature_returnsError(t *testing.T) {
 
 	//execute:
 	id := uuid.NewV4()
-	trs := []transactions.Transaction{
-		concrete_transactions.CreateTransactionForTests(t),
-		concrete_transactions.CreateTransactionForTests(t),
-	}
-
+	trs := concrete_transactions.CreateTransactionsForTests(t)
 	createdOn := time.Now().UTC()
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 
-	build := createAtomicTransactionBuilder(htBuilderFactory)
+	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()
 
 	if atomicTrsErr == nil {
@@ -140,17 +143,14 @@ func TestBuildAtomicTransaction_withoutCreatedOn_returnsError(t *testing.T) {
 
 	//execute:
 	id := uuid.NewV4()
-	trs := []transactions.Transaction{
-		concrete_transactions.CreateTransactionForTests(t),
-		concrete_transactions.CreateTransactionForTests(t),
-	}
-
+	trs := concrete_transactions.CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 
-	build := createAtomicTransactionBuilder(htBuilderFactory)
+	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).Now()
 
 	if atomicTrsErr == nil {

@@ -9,6 +9,5 @@ import (
 type AtomicTransaction interface {
 	GetMetaData() stored_files.File
 	GetSignature() stored_files.File
-	GetHashTree() stored_files.File
-	GetTransactions() []stored_transactions.Transaction
+	GetTransactions() stored_transactions.Transactions
 }

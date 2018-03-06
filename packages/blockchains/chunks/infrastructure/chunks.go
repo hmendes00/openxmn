@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	chunk "github.com/XMNBlockchain/core/packages/blockchains/chunks/domain"
 	files "github.com/XMNBlockchain/core/packages/blockchains/files/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 )
 
 type chunks struct {
@@ -33,8 +33,8 @@ func (chks *chunks) GetChunks() []files.File {
 	return chks.chks
 }
 
-// Marshal re-create the object bashed on the chunks and the hashtree
-func (chks *chunks) Marshal(v interface{}) error {
+// GetData returns the combined re-ordered data
+func (chks *chunks) GetData() ([]byte, error) {
 	//combine the chunks data:
 	trsData := [][]byte{}
 	for _, oneFileChk := range chks.chks {
@@ -44,11 +44,22 @@ func (chks *chunks) Marshal(v interface{}) error {
 	//re-order the data:
 	reOrderedData, reOrderedDataErr := chks.GetHashTree().Order(trsData)
 	if reOrderedDataErr != nil {
-		return reOrderedDataErr
+		return nil, reOrderedDataErr
 	}
 
-	//re-create the object:
+	//combine the data:
 	matrixData := bytes.Join(reOrderedData, []byte(""))
+	return matrixData, nil
+}
+
+// Marshal re-create the object bashed on the chunks and the hashtree
+func (chks *chunks) Marshal(v interface{}) error {
+	//re-create the object:
+	matrixData, matrixDataErr := chks.GetData()
+	if matrixDataErr != nil {
+		return matrixDataErr
+	}
+
 	rdBuf := bytes.NewReader(matrixData)
 	dec := gob.NewDecoder(rdBuf)
 	decErr := dec.Decode(v)

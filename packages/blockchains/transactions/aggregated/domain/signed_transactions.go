@@ -1,16 +1,13 @@
 package domain
 
 import (
-	"time"
-
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // SignedTransactions represents the aggregated signed transactions, then signed by a pointer
 type SignedTransactions interface {
-	GetID() *uuid.UUID
-	GetTrs() Transactions
+	GetMetaData() metadata.MetaData
+	GetTransactions() Transactions
 	GetSignature() users.Signature
-	CreatedOn() time.Time
 }

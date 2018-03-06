@@ -2,9 +2,12 @@ package infrastructure
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
@@ -12,27 +15,37 @@ import (
 func TestBuildSignedTransactions_withID_withSignature_withTransactions_createdOn_Success(t *testing.T) {
 
 	//variables:
-	usrSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
 	id := uuid.NewV4()
 	trs := CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
-	cr := time.Now()
+	cr := time.Now().UTC()
 
 	//execute:
-	build := createSignedTransactionsBuilder(usrSigBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithSignature(sig).WithTransactions(trs).CreatedOn(cr).Now()
 
 	if sigTrsErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", sigTrsErr.Error())
 	}
 
-	retID := sigTrs.GetID()
-	retTrs := sigTrs.GetTrs()
-	retSig := sigTrs.GetSignature()
-	retCr := sigTrs.CreatedOn()
+	blocks := [][]byte{
+		id.Bytes(),
+		[]byte(strconv.Itoa(int(cr.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		[]byte(sig.GetSig().String()),
+	}
 
-	if !reflect.DeepEqual(&id, retID) {
-		t.Errorf("the returned ID is invalid")
+	ht, _ := htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+	met, _ := metaDataBuilderFactory.Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
+
+	retMetaData := sigTrs.GetMetaData()
+	retTrs := sigTrs.GetTransactions()
+	retSig := sigTrs.GetSignature()
+
+	if !reflect.DeepEqual(met, retMetaData) {
+		t.Errorf("the returned MetaData is invalid")
 	}
 
 	if !reflect.DeepEqual(trs, retTrs) {
@@ -43,22 +56,19 @@ func TestBuildSignedTransactions_withID_withSignature_withTransactions_createdOn
 		t.Errorf("the returned user Signature is invalid")
 	}
 
-	if !reflect.DeepEqual(cr, retCr) {
-		t.Errorf("the returned createdOn time is invalid")
-	}
-
 }
 
 func TestBuildSignedTransactions_withoutCreatedOn_returnsError(t *testing.T) {
 
 	//variables:
-	usrSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
 	id := uuid.NewV4()
 	trs := CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
 
 	//execute:
-	build := createSignedTransactionsBuilder(usrSigBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithSignature(sig).WithTransactions(trs).Now()
 
 	if sigTrsErr == nil {
@@ -74,13 +84,14 @@ func TestBuildSignedTransactions_withoutCreatedOn_returnsError(t *testing.T) {
 func TestBuildSignedTransactions_withoutID_returnsError(t *testing.T) {
 
 	//variables:
-	usrSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
 	trs := CreateTransactionsForTests(t)
 	sig := concrete_users.CreateSignatureForTests(t)
 	cr := time.Now()
 
 	//execute:
-	build := createSignedTransactionsBuilder(usrSigBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithSignature(sig).WithTransactions(trs).CreatedOn(cr).Now()
 
 	if sigTrsErr == nil {
@@ -96,13 +107,14 @@ func TestBuildSignedTransactions_withoutID_returnsError(t *testing.T) {
 func TestBuildSignedTransactions_withoutSignature_returnsError(t *testing.T) {
 
 	//variables:
-	usrSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
 	id := uuid.NewV4()
 	trs := CreateTransactionsForTests(t)
 	cr := time.Now()
 
 	//execute:
-	build := createSignedTransactionsBuilder(usrSigBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(cr).Now()
 
 	if sigTrsErr == nil {
@@ -117,13 +129,14 @@ func TestBuildSignedTransactions_withoutSignature_returnsError(t *testing.T) {
 func TestBuildSignedTransactions_withoutTransactions_returnsError(t *testing.T) {
 
 	//variables:
-	usrSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
 	id := uuid.NewV4()
 	sig := concrete_users.CreateSignatureForTests(t)
 	cr := time.Now()
 
 	//execute:
-	build := createSignedTransactionsBuilder(usrSigBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(cr).Now()
 
 	if sigTrsErr == nil {

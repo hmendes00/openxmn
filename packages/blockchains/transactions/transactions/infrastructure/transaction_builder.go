@@ -2,28 +2,50 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_met "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
 	uuid "github.com/satori/go.uuid"
 )
 
 type transactionBuilder struct {
-	id        *uuid.UUID
-	js        []byte
-	createdOn *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory met.MetaDataBuilderFactory
+	meta                   met.MetaData
+	id                     *uuid.UUID
+	js                     []byte
+	createdOn              *time.Time
 }
 
-func createTransactionBuilder() trs.TransactionBuilder {
-	out := transactionBuilder{}
+func createTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) trs.TransactionBuilder {
+	out := transactionBuilder{
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
+		meta:      nil,
+		id:        nil,
+		js:        nil,
+		createdOn: nil,
+	}
+
 	return &out
 }
 
 // Create initializes the transactionBuilder
 func (build *transactionBuilder) Create() trs.TransactionBuilder {
 	build.id = nil
+	build.meta = nil
 	build.js = nil
 	build.createdOn = nil
+	return build
+}
+
+// WithMetaData adds a metadata instance to the transactionBuilder
+func (build *transactionBuilder) WithMetaData(meta met.MetaData) trs.TransactionBuilder {
+	build.meta = meta
 	return build
 }
 
@@ -48,18 +70,43 @@ func (build *transactionBuilder) CreatedOn(time time.Time) trs.TransactionBuilde
 // Now build a new transaction instance
 func (build *transactionBuilder) Now() (trs.Transaction, error) {
 
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build a transaction instance")
-	}
-
 	if build.js == nil {
 		return nil, errors.New("the json data is mandatory in order to build a transaction instance")
 	}
 
-	if build.createdOn == nil {
-		return nil, errors.New("the createdOn is mandatory in order to build a transaction instance")
+	if build.meta == nil {
+
+		if build.id == nil {
+			return nil, errors.New("since there is no metadata, the ID is mandatory in order to build a transaction instance")
+		}
+
+		if build.createdOn == nil {
+			return nil, errors.New("since there is no metadata, the createdOn is mandatory in order to build a transaction instance")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			build.js,
+			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		meta, metaErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.createdOn).Now()
+		if metaErr != nil {
+			return nil, metaErr
+		}
+
+		build.meta = meta
 	}
 
-	out := createTransaction(build.id, build.js, *build.createdOn)
+	if build.meta == nil {
+		return nil, errors.New("the metadata is mandatory in order to build a transaction instance")
+	}
+
+	out := createTransaction(build.meta.(*concrete_met.MetaData), build.js)
 	return out, nil
 }

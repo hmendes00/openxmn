@@ -10,7 +10,6 @@ type AtomicTransactionBuilder interface {
 	Create() AtomicTransactionBuilder
 	WithMetaData(met stored_files.File) AtomicTransactionBuilder
 	WithSignature(sig stored_files.File) AtomicTransactionBuilder
-	WithHashTree(ht stored_files.File) AtomicTransactionBuilder
-	WithTransactions(trs []stored_transactions.Transaction) AtomicTransactionBuilder
+	WithTransactions(trs stored_transactions.Transactions) AtomicTransactionBuilder
 	Now() (AtomicTransaction, error)
 }

@@ -28,7 +28,7 @@ func CreateMetaDataService(fileBuilderFactory files.FileBuilderFactory, fileServ
 
 // Save saves a MetaData instance
 func (serv *MetaDataService) Save(dirPath string, met met.MetaData) (stored_files.File, error) {
-	//copnvert to json:
+	//convert to json:
 	js, jsErr := json.Marshal(met)
 	if jsErr != nil {
 		return nil, jsErr

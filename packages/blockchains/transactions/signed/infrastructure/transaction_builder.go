@@ -2,8 +2,12 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	signed_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
@@ -13,15 +17,21 @@ import (
 )
 
 type transactionBuilder struct {
-	id   *uuid.UUID
-	trs  trs.Transaction
-	sig  users.Signature
-	crOn *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory met.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	meta                   met.MetaData
+	trs                    trs.Transaction
+	sig                    users.Signature
+	crOn                   *time.Time
 }
 
-func createTransactionBuilder() signed_transactions.TransactionBuilder {
+func createTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) signed_transactions.TransactionBuilder {
 	out := transactionBuilder{
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
 		id:   nil,
+		meta: nil,
 		trs:  nil,
 		sig:  nil,
 		crOn: nil,
@@ -33,14 +43,22 @@ func createTransactionBuilder() signed_transactions.TransactionBuilder {
 // Create initializes the TransactionBuilder instance
 func (build *transactionBuilder) Create() signed_transactions.TransactionBuilder {
 	build.id = nil
+	build.meta = nil
 	build.trs = nil
 	build.sig = nil
 	build.crOn = nil
 	return build
 }
 
+// WithID adds an ID to the TransactionBuilder instance
 func (build *transactionBuilder) WithID(id *uuid.UUID) signed_transactions.TransactionBuilder {
 	build.id = id
+	return build
+}
+
+// WithMetaData adds a MetaData to the TransactionBuilder instance
+func (build *transactionBuilder) WithMetaData(meta met.MetaData) signed_transactions.TransactionBuilder {
+	build.meta = meta
 	return build
 }
 
@@ -65,10 +83,6 @@ func (build *transactionBuilder) CreatedOn(ts time.Time) signed_transactions.Tra
 // Now builds a signed Transaction instance
 func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) {
 
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build a signed Transaction instance")
-	}
-
 	if build.trs == nil {
 		return nil, errors.New("the transaction is mandatory in order to build a signed Transaction instance")
 	}
@@ -77,10 +91,34 @@ func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) 
 		return nil, errors.New("the user signature is mandatory in order to build a signed Transaction instance")
 	}
 
-	if build.crOn == nil {
-		return nil, errors.New("the creation time is mandatory in order to build a signed Transaction instance")
+	if build.meta == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build a signed Transaction instance")
+		}
+
+		if build.crOn == nil {
+			return nil, errors.New("the creation time is mandatory in order to build a signed Transaction instance")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
+			[]byte(build.sig.GetSig().String()),
+			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
+		}
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.crOn).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.meta = met
 	}
 
-	out := createTransaction(build.id, build.trs.(*concrete_transactions.Transaction), build.sig.(*concrete_users.Signature), *build.crOn)
+	out := createTransaction(build.meta.(*concrete_metadata.MetaData), build.trs.(*concrete_transactions.Transaction), build.sig.(*concrete_users.Signature))
 	return out, nil
 }

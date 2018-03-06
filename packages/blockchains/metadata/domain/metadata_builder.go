@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -10,6 +11,7 @@ import (
 type MetaDataBuilder interface {
 	Create() MetaDataBuilder
 	WithID(id *uuid.UUID) MetaDataBuilder
+	WithHashTree(ht hashtrees.HashTree) MetaDataBuilder
 	CreatedOn(ts time.Time) MetaDataBuilder
 	Now() (MetaData, error)
 }

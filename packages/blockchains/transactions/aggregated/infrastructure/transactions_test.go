@@ -2,10 +2,12 @@ package infrastructure
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	concrete_signed "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/infrastructure"
 	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
@@ -15,46 +17,37 @@ func TestCreateTransactions_Success(t *testing.T) {
 
 	//variables:
 	id := uuid.NewV4()
+	trs := concrete_signed.CreateTransactionsForTests(t)
+	atomicTrs := concrete_signed.CreateAtomicTransactionsForTests(t)
 	createdOn := time.Now().UTC()
-	trs := []*concrete_signed.Transaction{
-		concrete_signed.CreateTransactionForTests(t),
-		concrete_signed.CreateTransactionForTests(t),
+
+	htBlocks := [][]byte{
+		id.Bytes(),
+		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		atomicTrs.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
-	atomicTrs := []*concrete_signed.AtomicTransaction{
-		concrete_signed.CreateAtomicTransactionForTests(t),
-		concrete_signed.CreateAtomicTransactionForTests(t),
-		concrete_signed.CreateAtomicTransactionForTests(t),
-	}
-
-	ht := concrete_hashtrees.CreateHashTreeForTests(t)
+	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
+	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	//execute:
-	aggTrs := createTransactions(&id, ht, trs, atomicTrs, createdOn)
+	aggTrs := createTransactions(met.(*concrete_metadata.MetaData), trs, atomicTrs)
 
-	retID := aggTrs.GetID()
-	retTrs := aggTrs.GetTrs()
-	retAtomicTrs := aggTrs.GetAtomicTrs()
-	retCreatedOn := aggTrs.CreatedOn()
+	retMetaData := aggTrs.GetMetaData()
+	retTrs := aggTrs.GetTransactions()
+	retAtomicTrs := aggTrs.GetAtomicTransactions()
 
-	if !reflect.DeepEqual(&id, retID) {
-		t.Errorf("the returned ID is invalid.  Expected: %s, Returned: %s", id.String(), retID.String())
+	if !reflect.DeepEqual(met, retMetaData) {
+		t.Errorf("the returned ID is invalid")
 	}
 
-	for index, oneTrs := range trs {
-		if !reflect.DeepEqual(retTrs[index], oneTrs) {
-			t.Errorf("the returned []Transaction was invalid at index: %d", index)
-		}
+	if !reflect.DeepEqual(trs, retTrs) {
+		t.Errorf("the returned signed transactions is invalid")
 	}
 
-	for index, oneAtomicTrs := range atomicTrs {
-		if !reflect.DeepEqual(retAtomicTrs[index], oneAtomicTrs) {
-			t.Errorf("the returned []AtomicTransaction was invalid at index: %d", index)
-		}
-	}
-
-	if !reflect.DeepEqual(createdOn, retCreatedOn) {
-		t.Errorf("the returned creation time is invalid")
+	if !reflect.DeepEqual(atomicTrs, retAtomicTrs) {
+		t.Errorf("the returned signed atomic transactions is invalid")
 	}
 
 }

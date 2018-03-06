@@ -2,9 +2,12 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
-	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
@@ -12,24 +15,24 @@ import (
 )
 
 type signedTransactionsBuilder struct {
-	sigBuilderFactory users.SignatureBuilderFactory
-	id                *uuid.UUID
-	usrID             *uuid.UUID
-	pk                cryptography.PrivateKey
-	trs               aggregated.Transactions
-	sig               users.Signature
-	createdOn         *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	met                    metadata.MetaData
+	trs                    aggregated.Transactions
+	sig                    users.Signature
+	createdOn              *time.Time
 }
 
-func createSignedTransactionsBuilder(sigBuilderFactory users.SignatureBuilderFactory) aggregated.SignedTransactionsBuilder {
+func createSignedTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) aggregated.SignedTransactionsBuilder {
 	out := signedTransactionsBuilder{
-		sigBuilderFactory: sigBuilderFactory,
-		id:                nil,
-		usrID:             nil,
-		pk:                nil,
-		trs:               nil,
-		sig:               nil,
-		createdOn:         nil,
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
+		id:        nil,
+		met:       nil,
+		trs:       nil,
+		sig:       nil,
+		createdOn: nil,
 	}
 
 	return &out
@@ -38,8 +41,7 @@ func createSignedTransactionsBuilder(sigBuilderFactory users.SignatureBuilderFac
 // Create initializes the builder
 func (build *signedTransactionsBuilder) Create() aggregated.SignedTransactionsBuilder {
 	build.id = nil
-	build.usrID = nil
-	build.pk = nil
+	build.met = nil
 	build.trs = nil
 	build.sig = nil
 	build.createdOn = nil
@@ -52,15 +54,9 @@ func (build *signedTransactionsBuilder) WithID(id *uuid.UUID) aggregated.SignedT
 	return build
 }
 
-// WithUserID adds a userID to the builder
-func (build *signedTransactionsBuilder) WithUserID(usrID *uuid.UUID) aggregated.SignedTransactionsBuilder {
-	build.usrID = usrID
-	return build
-}
-
-// WithPrivateKey adds a PrivateKey instance to the builder
-func (build *signedTransactionsBuilder) WithPrivateKey(pk cryptography.PrivateKey) aggregated.SignedTransactionsBuilder {
-	build.pk = pk
+// WithMetaData adds the MetaData to the builder
+func (build *signedTransactionsBuilder) WithMetaData(met metadata.MetaData) aggregated.SignedTransactionsBuilder {
+	build.met = met
 	return build
 }
 
@@ -85,32 +81,48 @@ func (build *signedTransactionsBuilder) CreatedOn(ts time.Time) aggregated.Signe
 // Now builds a new SignedTransactions instance
 func (build *signedTransactionsBuilder) Now() (aggregated.SignedTransactions, error) {
 
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build a SignedTransactions")
-	}
-
-	if build.createdOn == nil {
-		return nil, errors.New("the createdOn time is mandatory in order to build a SignedTransactions")
-	}
-
 	if build.trs == nil {
 		return nil, errors.New("the Transactions is mandatory in order to build a SignedTransactions")
 	}
 
-	if build.sig == nil && build.usrID == nil {
-		return nil, errors.New("the user Signature or the userID is mandatory in order to build a SignedTransactions")
+	if build.sig == nil {
+		return nil, errors.New("the user Signature is mandatory in order to build a SignedTransactions")
 	}
 
-	if build.sig == nil && build.usrID != nil && build.pk != nil {
-		sig, sigErr := build.sigBuilderFactory.Create().Create().WithUserID(build.usrID).WithInterface(build.trs).WithPrivateKey(build.pk).Now()
-		if sigErr != nil {
-			return nil, sigErr
+	if build.met == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build a SignedTransactions")
 		}
 
-		build.sig = sig
+		if build.createdOn == nil {
+			return nil, errors.New("the createdOn time is mandatory in order to build a SignedTransactions")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
+			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
+			[]byte(build.sig.GetSig().String()),
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.createdOn).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
 	}
 
-	out := createSignedTransactions(build.id, build.trs.(*Transactions), build.sig.(*concrete_users.Signature), *build.createdOn)
+	if build.met == nil {
+		return nil, errors.New("the MetaData is mandatory in order to build a SignedTransactions instance")
+	}
+
+	out := createSignedTransactions(build.met.(*concrete_metadata.MetaData), build.trs.(*Transactions), build.sig.(*concrete_users.Signature))
 	return out, nil
 
 }

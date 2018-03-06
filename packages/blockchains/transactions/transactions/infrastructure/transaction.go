@@ -1,40 +1,32 @@
 package infrastructure
 
 import (
-	"time"
-
+	met "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_met "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Transaction represents the concrete transaction
 type Transaction struct {
-	ID   *uuid.UUID `json:"id"`
-	JS   []byte     `json:"json"`
-	CrOn time.Time  `json:"created_on"`
+	Met *concrete_met.MetaData `json:"metadata"`
+	JS  []byte                 `json:"json"`
 }
 
-func createTransaction(id *uuid.UUID, js []byte, createdOn time.Time) trs.Transaction {
+func createTransaction(met *concrete_met.MetaData, js []byte) trs.Transaction {
 	out := Transaction{
-		ID:   id,
-		JS:   js,
-		CrOn: createdOn,
+		Met: met,
+		JS:  js,
 	}
 
 	return &out
 }
 
-// GetID returns the ID of the transaction
-func (trs *Transaction) GetID() *uuid.UUID {
-	return trs.ID
+// GetMetaData returns the MetaData of the transaction
+func (trs *Transaction) GetMetaData() met.MetaData {
+	return trs.Met
 }
 
 // GetJSON returns the json data of the transaction
 func (trs *Transaction) GetJSON() []byte {
 	return trs.JS
-}
-
-// CreatedOn returns the cresation time of the transaction
-func (trs *Transaction) CreatedOn() time.Time {
-	return trs.CrOn
 }

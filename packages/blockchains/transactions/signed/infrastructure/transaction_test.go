@@ -2,12 +2,15 @@ package infrastructure
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
-	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
+	convert "github.com/XMNBlockchain/core/packages/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -18,15 +21,31 @@ func TestCreateTransactionWithWalletSignature_Success(t *testing.T) {
 	trs := concrete_transactions.CreateTransactionForTests(t)
 	usrSig := concrete_users.CreateSignatureForTests(t)
 	createdOn := time.Now().UTC()
-	signedTrs := createTransaction(&id, trs, usrSig, createdOn)
 
-	retID := signedTrs.GetID()
-	retTrs := signedTrs.GetTrs()
+	blocks := [][]byte{
+		id.Bytes(),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		[]byte(usrSig.GetSig().String()),
+		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+	}
+	ht, htErr := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
+	if htErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", htErr.Error())
+	}
+
+	met, metErr := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	if metErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", metErr.Error())
+	}
+
+	signedTrs := createTransaction(met.(*concrete_metadata.MetaData), trs, usrSig)
+
+	retMetaData := signedTrs.GetMetaData()
+	retTrs := signedTrs.GetTransaction()
 	retSig := signedTrs.GetSignature()
-	retCreatedOn := signedTrs.CreatedOn()
 
-	if !reflect.DeepEqual(&id, retID) {
-		t.Errorf("the returned id was invalid")
+	if !reflect.DeepEqual(met, retMetaData) {
+		t.Errorf("the returned metadata was invalid")
 	}
 
 	if !reflect.DeepEqual(trs, retTrs) {
@@ -35,10 +54,6 @@ func TestCreateTransactionWithWalletSignature_Success(t *testing.T) {
 
 	if !reflect.DeepEqual(usrSig, retSig) {
 		t.Errorf("the returned wallet signature was invalid")
-	}
-
-	if !reflect.DeepEqual(createdOn, retCreatedOn) {
-		t.Errorf("the returned createdOn time was invalid")
 	}
 
 }
