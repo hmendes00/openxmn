@@ -9,42 +9,33 @@ import (
 )
 
 type blockBuilder struct {
-	metadata stored_files.File
-	ht       stored_files.File
-	trs      []stored_aggregated_transactions.SignedTransactions
+	met stored_files.File
+	trs []stored_aggregated_transactions.SignedTransactions
 }
 
 func createBlockBuilder() stored_blocks.BlockBuilder {
 	out := blockBuilder{
-		metadata: nil,
-		ht:       nil,
-		trs:      nil,
+		met: nil,
+		trs: nil,
 	}
 
 	return &out
 }
 
-// Create initializes the BlockBuilder instance
+// Create initializes the BlockBuilder
 func (build *blockBuilder) Create() stored_blocks.BlockBuilder {
-	build.metadata = nil
-	build.ht = nil
+	build.met = nil
 	build.trs = nil
 	return build
 }
 
-// WithMetaData adds metadata to the BlockBuilder instance
+// WithMetaData adds MetaData to the BlockBuilder instance
 func (build *blockBuilder) WithMetaData(met stored_files.File) stored_blocks.BlockBuilder {
-	build.metadata = met
+	build.met = met
 	return build
 }
 
-// WithHashTree adds an hashtree to the BlockBuilder instance
-func (build *blockBuilder) WithHashTree(ht stored_files.File) stored_blocks.BlockBuilder {
-	build.ht = ht
-	return build
-}
-
-// WithTransactions adds stored transactions to the BlockBuilder instance
+// WithTransactions adds SignedTransactions to the BlockBuilder instance
 func (build *blockBuilder) WithTransactions(trs []stored_aggregated_transactions.SignedTransactions) stored_blocks.BlockBuilder {
 	build.trs = trs
 	return build
@@ -52,18 +43,14 @@ func (build *blockBuilder) WithTransactions(trs []stored_aggregated_transactions
 
 // Now builds a new Block instance
 func (build *blockBuilder) Now() (stored_blocks.Block, error) {
-	if build.metadata == nil {
-		return nil, errors.New("the metadata is mandatory in order to build a Block instance")
-	}
-
-	if build.ht == nil {
-		return nil, errors.New("the hashtree is mandatory in order to build a Block instance")
+	if build.met == nil {
+		return nil, errors.New("the MetaData is mandatory in order to build a Block instance")
 	}
 
 	if build.trs == nil {
-		return nil, errors.New("the transactions is mandatory in order to build a Block instance")
+		return nil, errors.New("the SignedTransactions are mandatory in order to build a Block instance")
 	}
 
-	out := createBlock(build.metadata, build.ht, build.trs)
+	out := createBlock(build.met, build.trs)
 	return out, nil
 }

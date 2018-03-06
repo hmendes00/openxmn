@@ -5,39 +5,32 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strconv"
 
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
-	aggregated_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
-	transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
+	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 )
 
-// BlockRepository represents a concrete Block repository
+// BlockRepository represents a concrete BlockRepository implementation
 type BlockRepository struct {
-	metaDataRepository      metadata.MetaDataRepository
-	htRepository            hashtrees.HashTreeRepository
-	aggregatedTrsRepository aggregated_transactions.SignedTransactionsRepository
-	blkBuilderFactory       blocks.BlockBuilderFactory
+	metaDataRepository  metadata.MetaDataRepository
+	signedTrsRepository aggregated.SignedTransactionsRepository
+	blkBuilderFactory   blocks.BlockBuilderFactory
 }
 
-// CreateBlockRepository creates a BlockRepository instance
-func CreateBlockRepository(
-	metaDataRepository metadata.MetaDataRepository,
-	htRepository hashtrees.HashTreeRepository,
-	aggregatedTrsRepository aggregated_transactions.SignedTransactionsRepository,
-	blkBuilderFactory blocks.BlockBuilderFactory,
-) blocks.BlockRepository {
+// CreateBlockRepository creates a new BlockRepository instance
+func CreateBlockRepository(metaDataRepository metadata.MetaDataRepository, signedTrsRepository aggregated.SignedTransactionsRepository, blkBuilderFactory blocks.BlockBuilderFactory) blocks.BlockRepository {
 	out := BlockRepository{
-		metaDataRepository:      metaDataRepository,
-		htRepository:            htRepository,
-		aggregatedTrsRepository: aggregatedTrsRepository,
-		blkBuilderFactory:       blkBuilderFactory,
+		metaDataRepository:  metaDataRepository,
+		signedTrsRepository: signedTrsRepository,
+		blkBuilderFactory:   blkBuilderFactory,
 	}
+
 	return &out
 }
 
-// Retrieve retrieves a Block
+// Retrieve retrieves an Block instance
 func (rep *BlockRepository) Retrieve(dirPath string) (blocks.Block, error) {
 	//retrieve the metadata:
 	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
@@ -45,58 +38,50 @@ func (rep *BlockRepository) Retrieve(dirPath string) (blocks.Block, error) {
 		return nil, metErr
 	}
 
-	//retrieve the hashtree:
-	ht, htErr := rep.htRepository.Retrieve(dirPath)
-	if htErr != nil {
-		return nil, htErr
-	}
-
 	//retrieve the transactions:
-	trsDirPath := filepath.Join(dirPath, "aggregated_transactions")
-	trs, trsErr := rep.aggregatedTrsRepository.RetrieveAll(trsDirPath)
-	if trsErr != nil {
-		return nil, trsErr
+	trsPath := filepath.Join(dirPath, "signed_transactions")
+	signedTrs, signedTrsErr := rep.signedTrsRepository.RetrieveAll(trsPath)
+	if signedTrsErr != nil {
+		return nil, signedTrsErr
 	}
 
-	//create the trs map:
-	trsMap := map[string]transactions.SignedTransactions{}
-	for _, oneTrs := range trs {
-		IDAsString := hex.EncodeToString(oneTrs.GetID().Bytes())
-		trsMap[IDAsString] = oneTrs
+	//retrieve the blocks:
+	blocks := [][]byte{
+		met.GetID().Bytes(),
+		[]byte(strconv.Itoa(int(met.CreatedOn().UnixNano()))),
 	}
 
-	//create the blocks:
-	htBlocks := [][]byte{}
-	for _, oneTrs := range trs {
-		htBlocks = append(htBlocks, oneTrs.GetID().Bytes())
+	trsMap := map[string]aggregated.SignedTransactions{}
+	for _, oneTrs := range signedTrs {
+		hash := oneTrs.GetMetaData().GetHashTree().GetHash()
+		trsMap[hash.String()] = oneTrs
+		blocks = append(blocks, hash.Get())
 	}
 
 	//re-order the blocks:
-	reOrderedBlks, reOrderedBlksErr := ht.Order(htBlocks)
+	reOrderedBlks, reOrderedBlksErr := met.GetHashTree().Order(blocks)
 	if reOrderedBlksErr != nil {
 		return nil, reOrderedBlksErr
 	}
 
 	//re-order the transactions:
-	reorderedTrs := []transactions.SignedTransactions{}
-	for _, oneBlk := range reOrderedBlks {
-		IDAsString := hex.EncodeToString(oneBlk)
-		if foundTrs, ok := trsMap[IDAsString]; ok {
-			reorderedTrs = append(reorderedTrs, foundTrs)
+	reOrderedTrs := []aggregated.SignedTransactions{}
+	for _, oneBlk := range reOrderedBlks[2:] {
+		blkAsString := hex.EncodeToString(oneBlk)
+		if oneTrs, ok := trsMap[blkAsString]; ok {
+			reOrderedTrs = append(reOrderedTrs, oneTrs)
 			continue
 		}
 
-		str := fmt.Sprintf("there is 1 aggregated transaction (ID: %s) that was not in the HashTree", IDAsString)
+		str := fmt.Sprintf("the signed transactions with the hash: %s could not be found", blkAsString)
 		return nil, errors.New(str)
 	}
 
-	//build the block:
-	id := met.GetID()
-	ts := met.CreatedOn()
-	blk, blkErr := rep.blkBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).WithTransactions(reorderedTrs).Now()
-	if blkErr != nil {
-		return nil, blkErr
+	//build the aggregated signed transactions:
+	out, outErr := rep.blkBuilderFactory.Create().Create().WithMetaData(met).WithTransactions(reOrderedTrs).Now()
+	if outErr != nil {
+		return nil, outErr
 	}
 
-	return blk, nil
+	return out, nil
 }

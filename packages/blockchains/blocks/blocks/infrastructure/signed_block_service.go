@@ -11,7 +11,6 @@ import (
 
 // SignedBlockService represents a concrete SignedBlockService implementation
 type SignedBlockService struct {
-	metaDataBuilderFactory  metadata.MetaDataBuilderFactory
 	metaDataService         metadata.MetaDataService
 	userSigService          users.SignatureService
 	blkService              blocks.BlockService
@@ -20,14 +19,12 @@ type SignedBlockService struct {
 
 // CreateSignedBlockService creates a new SignedBlockService instance
 func CreateSignedBlockService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
 	metaDataService metadata.MetaDataService,
 	userSigService users.SignatureService,
 	blkService blocks.BlockService,
 	storedBlkBuilderFactory stored_blocks.SignedBlockBuilderFactory,
 ) blocks.SignedBlockService {
 	out := SignedBlockService{
-		metaDataBuilderFactory:  metaDataBuilderFactory,
 		metaDataService:         metaDataService,
 		userSigService:          userSigService,
 		blkService:              blkService,
@@ -38,15 +35,8 @@ func CreateSignedBlockService(
 
 // Save saves a block instance
 func (serv *SignedBlockService) Save(dirPath string, signedBlk blocks.SignedBlock) (stored_blocks.SignedBlock, error) {
-	//build the metadata:
-	id := signedBlk.GetID()
-	ts := signedBlk.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
 	//save the metadata:
+	met := signedBlk.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr

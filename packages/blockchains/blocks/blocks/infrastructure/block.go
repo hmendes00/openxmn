@@ -1,56 +1,39 @@
 package infrastructure
 
 import (
-	"time"
-
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/infrastructure"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Block represents a concrete Block implementation
 type Block struct {
-	ID   *uuid.UUID                                `json:"id"`
-	HT   *concrete_hashtrees.HashTree              `json:"hashtree"`
-	Trs  []*concrete_aggregated.SignedTransactions `json:"transactions"`
-	CrOn time.Time                                 `json:"created_on"`
+	Met *concrete_metadata.MetaData               `json:"metadata"`
+	Trs []*concrete_aggregated.SignedTransactions `json:"signed_transactions"`
 }
 
-func createBlock(id *uuid.UUID, ht *concrete_hashtrees.HashTree, trs []*concrete_aggregated.SignedTransactions, crOn time.Time) blocks.Block {
+func createBlock(met *concrete_metadata.MetaData, trs []*concrete_aggregated.SignedTransactions) blocks.Block {
 	out := Block{
-		ID:   id,
-		HT:   ht,
-		Trs:  trs,
-		CrOn: crOn,
+		Met: met,
+		Trs: trs,
 	}
 
 	return &out
 }
 
-// GetID returns the ID of the block
-func (blk *Block) GetID() *uuid.UUID {
-	return blk.ID
+// GetMetaData returns the MetaData
+func (trs *Block) GetMetaData() metadata.MetaData {
+	return trs.Met
 }
 
-// GetHashTree returns the HashTree
-func (blk *Block) GetHashTree() hashtrees.HashTree {
-	return blk.HT
-}
-
-// GetTransactions returns the Signed Transactions
-func (blk *Block) GetTransactions() []aggregated.SignedTransactions {
+// GetTransactions returns the []SignedTransactions
+func (trs *Block) GetTransactions() []aggregated.SignedTransactions {
 	out := []aggregated.SignedTransactions{}
-	for _, oneSignedTrs := range blk.Trs {
-		out = append(out, oneSignedTrs)
+	for _, oneTrs := range trs.Trs {
+		out = append(out, oneTrs)
 	}
 
 	return out
-}
-
-// CreatedOn returns the creation time of the block
-func (blk *Block) CreatedOn() time.Time {
-	return blk.CrOn
 }

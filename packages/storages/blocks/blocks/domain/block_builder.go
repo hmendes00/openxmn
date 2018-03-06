@@ -9,7 +9,6 @@ import (
 type BlockBuilder interface {
 	Create() BlockBuilder
 	WithMetaData(met stored_files.File) BlockBuilder
-	WithHashTree(ht stored_files.File) BlockBuilder
 	WithTransactions(trs []stored_aggregated_transactions.SignedTransactions) BlockBuilder
 	Now() (Block, error)
 }

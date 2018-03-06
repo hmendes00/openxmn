@@ -1,17 +1,12 @@
 package domain
 
 import (
-	"time"
-
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
-// Block represents a Block instance
+// Block represents multiple SignedTransactions aggregated together and ordered by an HashMap
 type Block interface {
-	GetID() *uuid.UUID
-	GetHashTree() hashtrees.HashTree
+	GetMetaData() metadata.MetaData
 	GetTransactions() []aggregated.SignedTransactions
-	CreatedOn() time.Time
 }

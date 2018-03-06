@@ -2,29 +2,35 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
 	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	concrete_aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
 type blockBuilder struct {
-	htBuilderFactory hashtrees.HashTreeBuilderFactory
-	id               *uuid.UUID
-	trs              []aggregated.SignedTransactions
-	createdOn        *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	met                    metadata.MetaData
+	trs                    []aggregated.SignedTransactions
+	crOn                   *time.Time
 }
 
-func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) blocks.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) blocks.BlockBuilder {
 	out := blockBuilder{
-		htBuilderFactory: htBuilderFactory,
-		id:               nil,
-		trs:              nil,
-		createdOn:        nil,
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
+		id:   nil,
+		met:  nil,
+		trs:  nil,
+		crOn: nil,
 	}
 
 	return &out
@@ -33,8 +39,9 @@ func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) block
 // Create initializes the BlockBuilder instance
 func (build *blockBuilder) Create() blocks.BlockBuilder {
 	build.id = nil
+	build.met = nil
 	build.trs = nil
-	build.createdOn = nil
+	build.crOn = nil
 	return build
 }
 
@@ -44,50 +51,74 @@ func (build *blockBuilder) WithID(id *uuid.UUID) blocks.BlockBuilder {
 	return build
 }
 
-// WithTransactions adds transactions to the BlockBuilder instance
+// WithMetaData adds MetaData to the BlockBuilder instance
+func (build *blockBuilder) WithMetaData(met metadata.MetaData) blocks.BlockBuilder {
+	build.met = met
+	return build
+}
+
+// WithTransactions adds []SignedTransactions to the BlockBuilder instance
 func (build *blockBuilder) WithTransactions(trs []aggregated.SignedTransactions) blocks.BlockBuilder {
 	build.trs = trs
 	return build
 }
 
-// CreatedOn adds a creation time to the BlockBuilder instance
-func (build *blockBuilder) CreatedOn(ts time.Time) blocks.BlockBuilder {
-	build.createdOn = &ts
+// CreatedOn adds creation time to the BlockBuilder instance
+func (build *blockBuilder) CreatedOn(crOn time.Time) blocks.BlockBuilder {
+	build.crOn = &crOn
 	return build
 }
 
 // Now builds a new Block instance
 func (build *blockBuilder) Now() (blocks.Block, error) {
-
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build a Block instance")
-	}
-
-	if build.createdOn == nil {
-		return nil, errors.New("the creation time is mandatory in order to build a Block instance")
-	}
-
 	if build.trs == nil {
-		return nil, errors.New("the aggregated signed transactions are mandatory in order to build a Block instance")
+		return nil, errors.New("the MetaData is mandatory in order to build an Block instance ")
 	}
 
 	if len(build.trs) <= 0 {
-		return nil, errors.New("there must be at least 1 aggregate signed transaction instance, none given")
+		return nil, errors.New("the amount of SignedTransactions must be greater than 0 in order to build an Block instance")
 	}
 
-	htBlocks := [][]byte{}
-	agregatedSignedTrs := []*concrete_aggregated.SignedTransactions{}
-	for _, oneAggSignedTrs := range build.trs {
-		agregatedSignedTrs = append(agregatedSignedTrs, oneAggSignedTrs.(*concrete_aggregated.SignedTransactions))
-		htBlocks = append(htBlocks, oneAggSignedTrs.GetID().Bytes())
+	if build.met == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build an Block instance")
+		}
+
+		if build.crOn == nil {
+			return nil, errors.New("the creation time is mandatory in order to build an Block instance")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
+		}
+
+		for _, oneTrs := range build.trs {
+			blocks = append(blocks, oneTrs.GetMetaData().GetHashTree().GetHash().Get())
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.crOn).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
 	}
 
-	//build the hashtree:
-	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(htBlocks).Now()
-	if htErr != nil {
-		return nil, htErr
+	if build.met == nil {
+		return nil, errors.New("the MetaData is mandatory in order to build an Block instance")
 	}
 
-	out := createBlock(build.id, ht.(*concrete_hashtrees.HashTree), agregatedSignedTrs, *build.createdOn)
+	trs := []*concrete_aggregated.SignedTransactions{}
+	for _, oneTrs := range build.trs {
+		trs = append(trs, oneTrs.(*concrete_aggregated.SignedTransactions))
+	}
+
+	out := createBlock(build.met.(*concrete_metadata.MetaData), trs)
 	return out, nil
 }

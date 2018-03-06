@@ -8,6 +8,5 @@ import (
 // Block represents a stored block
 type Block interface {
 	GetMetaData() stored_files.File
-	GetHashTree() stored_files.File
 	GetTransactions() []stored_aggregated_transactions.SignedTransactions
 }

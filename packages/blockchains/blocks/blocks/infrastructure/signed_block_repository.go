@@ -54,9 +54,7 @@ func (rep *SignedBlockRepository) Retrieve(dirPath string) (blocks.SignedBlock, 
 	}
 
 	//build the signed block:
-	id := met.GetID()
-	ts := met.CreatedOn()
-	signedBlk, signedBlkErr := rep.signedBlkBuilderFactory.Create().Create().WithID(id).WithSignature(sig).WithBlock(blk).CreatedOn(ts).Now()
+	signedBlk, signedBlkErr := rep.signedBlkBuilderFactory.Create().Create().WithMetaData(met).WithSignature(sig).WithBlock(blk).Now()
 	if signedBlkErr != nil {
 		return nil, signedBlkErr
 	}

@@ -1,10 +1,10 @@
 package domain
 
 import (
-	stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
+	stored_block "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
 )
 
-// BlockService represents a Block service
+// BlockService represents a block service
 type BlockService interface {
-	Save(dirPath string, blk Block) (stored_blocks.Block, error)
+	Save(dirPath string, blk Block) (stored_block.Block, error)
 }

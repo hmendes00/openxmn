@@ -7,32 +7,25 @@ import (
 )
 
 type block struct {
-	metadata stored_files.File
-	ht       stored_files.File
-	trs      []stored_aggregated_transactions.SignedTransactions
+	met stored_files.File
+	trs []stored_aggregated_transactions.SignedTransactions
 }
 
-func createBlock(metadata stored_files.File, ht stored_files.File, trs []stored_aggregated_transactions.SignedTransactions) stored_blocks.Block {
+func createBlock(met stored_files.File, trs []stored_aggregated_transactions.SignedTransactions) stored_blocks.Block {
 	out := block{
-		metadata: metadata,
-		ht:       ht,
-		trs:      trs,
+		met: met,
+		trs: trs,
 	}
 
 	return &out
 }
 
-// GetMetaData returns the metadata file
-func (blk *block) GetMetaData() stored_files.File {
-	return blk.metadata
+// GetMetaData returns the MetaData
+func (trs *block) GetMetaData() stored_files.File {
+	return trs.met
 }
 
-// GetHashTree returns the hashtree file
-func (blk *block) GetHashTree() stored_files.File {
-	return blk.ht
-}
-
-// GetTransactions returns the stored transactions
-func (blk *block) GetTransactions() []stored_aggregated_transactions.SignedTransactions {
-	return blk.trs
+// GetTransactions returns the SignedTransactions
+func (trs *block) GetTransactions() []stored_aggregated_transactions.SignedTransactions {
+	return trs.trs
 }

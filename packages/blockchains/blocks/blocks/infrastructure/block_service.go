@@ -4,75 +4,51 @@ import (
 	"path/filepath"
 
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
-	aggregated_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
+	aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
 	stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
 )
 
-// BlockService represents a concrete Block service
+// BlockService represents a concrete BlockService implementation
 type BlockService struct {
-	metaDataBuilderFactory    metadata.MetaDataBuilderFactory
-	metaDataService           metadata.MetaDataService
-	htService                 hashtrees.HashTreeService
-	aggregatedTrsService      aggregated_transactions.SignedTransactionsService
-	storedBlockBuilderFactory stored_blocks.BlockBuilderFactory
+	metaDataService   metadata.MetaDataService
+	signedTrsService  aggregated.SignedTransactionsService
+	blkBuilderFactory stored_blocks.BlockBuilderFactory
 }
 
 // CreateBlockService creates a new BlockService instance
-func CreateBlockService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
-	metaDataService metadata.MetaDataService,
-	htService hashtrees.HashTreeService,
-	aggregatedTrsService aggregated_transactions.SignedTransactionsService,
-	storedBlockBuilderFactory stored_blocks.BlockBuilderFactory,
-) blocks.BlockService {
+func CreateBlockService(metaDataService metadata.MetaDataService, signedTrsService aggregated.SignedTransactionsService, blkBuilderFactory stored_blocks.BlockBuilderFactory) blocks.BlockService {
 	out := BlockService{
-		metaDataBuilderFactory:    metaDataBuilderFactory,
-		metaDataService:           metaDataService,
-		htService:                 htService,
-		aggregatedTrsService:      aggregatedTrsService,
-		storedBlockBuilderFactory: storedBlockBuilderFactory,
+		metaDataService:   metaDataService,
+		signedTrsService:  signedTrsService,
+		blkBuilderFactory: blkBuilderFactory,
 	}
+
 	return &out
 }
 
-// Save saves a Block instance
-func (serv *BlockService) Save(dirPath string, blk blocks.Block) (stored_blocks.Block, error) {
-	//build the metadata:
-	id := blk.GetID()
-	ts := blk.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
-	//save the metadata:
+// Save saves an Block instance
+func (serv *BlockService) Save(dirPath string, trs blocks.Block) (stored_blocks.Block, error) {
+	//save the metaData
+	met := trs.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr
 	}
 
-	//save the hashtree:
-	ht := blk.GetHashTree()
-	storedHt, storedHtErr := serv.htService.Save(dirPath, ht)
-	if storedHtErr != nil {
-		return nil, storedHtErr
-	}
-
-	//save the aggregated transactions:
-	aggTrs := blk.GetTransactions()
-	trsDirPath := filepath.Join(dirPath, "aggregated_transactions")
-	storedTrs, storedTrsErr := serv.aggregatedTrsService.SaveAll(trsDirPath, aggTrs)
+	//save the transactions:
+	signedTrs := trs.GetTransactions()
+	trsPath := filepath.Join(dirPath, "signed_transactions")
+	storedTrs, storedTrsErr := serv.signedTrsService.SaveAll(trsPath, signedTrs)
 	if storedTrsErr != nil {
 		return nil, storedTrsErr
 	}
 
-	//build the stored block:
-	storedBlk, storedBlkErr := serv.storedBlockBuilderFactory.Create().Create().WithHashTree(storedHt).WithMetaData(storedMet).WithTransactions(storedTrs).Now()
-	if storedBlkErr != nil {
-		return nil, storedBlkErr
+	//build the block:
+	out, outErr := serv.blkBuilderFactory.Create().Create().WithMetaData(storedMet).WithTransactions(storedTrs).Now()
+	if outErr != nil {
+		return nil, outErr
 	}
 
-	return storedBlk, nil
+	return out, nil
 }

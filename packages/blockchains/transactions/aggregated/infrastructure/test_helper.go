@@ -55,30 +55,3 @@ func CreateSignedTransactionsForTests(t *testing.T) *SignedTransactions {
 	sigTrs := createSignedTransactions(met.(*concrete_metadata.MetaData), trs, sig)
 	return sigTrs.(*SignedTransactions)
 }
-
-// CreateAggregatedSignedTransactionsForTests creates an AggregatedSignedTransactions instance for tests
-func CreateAggregatedSignedTransactionsForTests(t *testing.T) *AggregatedSignedTransactions {
-	//variables:
-	id := uuid.NewV4()
-	cr := time.Now().UTC()
-	trs := []*SignedTransactions{
-		CreateSignedTransactionsForTests(t),
-		CreateSignedTransactionsForTests(t),
-		CreateSignedTransactionsForTests(t),
-	}
-
-	blocks := [][]byte{
-		id.Bytes(),
-		[]byte(strconv.Itoa(int(cr.UnixNano()))),
-	}
-
-	for _, oneTrs := range trs {
-		blocks = append(blocks, oneTrs.GetMetaData().GetHashTree().GetHash().Get())
-	}
-
-	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
-
-	aggrSignedTrs := createAggregatedSignedTransactions(met.(*concrete_metadata.MetaData), trs)
-	return aggrSignedTrs.(*AggregatedSignedTransactions)
-}

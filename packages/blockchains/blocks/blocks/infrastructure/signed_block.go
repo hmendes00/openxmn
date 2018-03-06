@@ -1,36 +1,33 @@
 package infrastructure
 
 import (
-	"time"
-
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
-	uuid "github.com/satori/go.uuid"
 )
 
 // SignedBlock represents a concrete SignedBlock instance
 type SignedBlock struct {
-	ID   *uuid.UUID                `json:"id"`
-	Blk  *Block                    `json:"block"`
-	Sig  *concrete_users.Signature `json:"signature"`
-	CrOn time.Time                 `json:"created_on"`
+	Met *concrete_metadata.MetaData `json:"metadata"`
+	Blk *Block                      `json:"block"`
+	Sig *concrete_users.Signature   `json:"signature"`
 }
 
-func createSignedBlock(id *uuid.UUID, blk *Block, sig *concrete_users.Signature, createdOn time.Time) blocks.SignedBlock {
+func createSignedBlock(met *concrete_metadata.MetaData, blk *Block, sig *concrete_users.Signature) blocks.SignedBlock {
 	out := SignedBlock{
-		ID:   id,
-		Blk:  blk,
-		Sig:  sig,
-		CrOn: createdOn,
+		Met: met,
+		Blk: blk,
+		Sig: sig,
 	}
 
 	return &out
 }
 
-// GetID returns the ID
-func (blk *SignedBlock) GetID() *uuid.UUID {
-	return blk.ID
+// GetMetaData returns the MetaData
+func (blk *SignedBlock) GetMetaData() metadata.MetaData {
+	return blk.Met
 }
 
 // GetBlock returns the Block
@@ -41,9 +38,4 @@ func (blk *SignedBlock) GetBlock() blocks.Block {
 // GetSignature returns the user Signature
 func (blk *SignedBlock) GetSignature() users.Signature {
 	return blk.Sig
-}
-
-// CreatedOn returns the creation time
-func (blk *SignedBlock) CreatedOn() time.Time {
-	return blk.CrOn
 }
