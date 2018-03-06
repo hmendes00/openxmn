@@ -7,5 +7,5 @@ import (
 // AggregatedSignedTransactions represents multiple SignedTransactions aggregated together and ordered by an HashMap
 type AggregatedSignedTransactions interface {
 	GetMetaData() metadata.MetaData
-	GetTransactions() []Transactions
+	GetTransactions() []SignedTransactions
 }

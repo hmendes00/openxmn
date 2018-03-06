@@ -12,7 +12,7 @@ type AggregatedSignedTransactionsBuilder interface {
 	Create() AggregatedSignedTransactionsBuilder
 	WithID(id *uuid.UUID) AggregatedSignedTransactionsBuilder
 	WithMetaData(met metadata.MetaData) AggregatedSignedTransactionsBuilder
-	WithTransactions(trs []Transactions) AggregatedSignedTransactionsBuilder
+	WithTransactions(trs []SignedTransactions) AggregatedSignedTransactionsBuilder
 	CreatedOn(crOn time.Time) AggregatedSignedTransactionsBuilder
 	Now() (AggregatedSignedTransactions, error)
 }
