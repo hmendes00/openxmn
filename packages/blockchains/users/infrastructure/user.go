@@ -1,30 +1,31 @@
 package infrastructure
 
 import (
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
+	user "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
-	user "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // User represents the concrete user
 type User struct {
-	ID *uuid.UUID                       `json:"id"`
-	PK *concrete_cryptography.PublicKey `json:"public_key"`
+	Met *concrete_metadata.MetaData      `json:"metadata"`
+	PK  *concrete_cryptography.PublicKey `json:"public_key"`
 }
 
-func createUser(id *uuid.UUID, pub *concrete_cryptography.PublicKey) user.User {
+func createUser(met *concrete_metadata.MetaData, pub *concrete_cryptography.PublicKey) user.User {
 	out := User{
-		ID: id,
-		PK: pub,
+		Met: met,
+		PK:  pub,
 	}
 
 	return &out
 }
 
-// GetID returns the user ID
-func (user *User) GetID() *uuid.UUID {
-	return user.ID
+// GetMetaData returns the user MetaData
+func (user *User) GetMetaData() metadata.MetaData {
+	return user.Met
 }
 
 // GetPublicKey returns the PublicKey

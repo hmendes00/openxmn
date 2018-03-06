@@ -1,12 +1,12 @@
 package domain
 
 import (
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // User represents a container of coins
 type User interface {
-	GetID() *uuid.UUID
+	GetMetaData() metadata.MetaData
 	GetPublicKey() cryptography.PublicKey
 }
