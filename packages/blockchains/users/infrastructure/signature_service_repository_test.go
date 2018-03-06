@@ -22,8 +22,8 @@ func TestSaveUserSignature_thenRetrieve_Success(t *testing.T) {
 	}
 
 	sigsMap := map[string]users.Signature{
-		sig.GetKey():       sig,
-		secondSig.GetKey(): secondSig,
+		sig.GetMetaData().GetID().String():       sig,
+		secondSig.GetMetaData().GetID().String(): secondSig,
 	}
 
 	//file variables:
@@ -86,15 +86,15 @@ func TestSaveUserSignature_thenRetrieve_Success(t *testing.T) {
 
 	//compare the signatures:
 	for index, oneRetSig := range retSigs {
-		keyname := oneRetSig.GetKey()
-		if foundSig, ok := sigsMap[keyname]; ok {
+		idAsString := oneRetSig.GetMetaData().GetID().String()
+		if foundSig, ok := sigsMap[idAsString]; ok {
 			if !reflect.DeepEqual(foundSig, oneRetSig) {
-				t.Errorf("the returned signature (index: %d, keyname: %s) is invalid", index, keyname)
+				t.Errorf("the returned signature (index: %d, ID: %s) is invalid", index, idAsString)
 			}
 
 			continue
 		}
 
-		t.Errorf("the signature (keyname: %s) could not be found", keyname)
+		t.Errorf("the signature (ID: %s) could not be found", idAsString)
 	}
 }

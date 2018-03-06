@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	files "github.com/XMNBlockchain/core/packages/blockchains/files/domain"
-	stored_file "github.com/XMNBlockchain/core/packages/storages/files/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
+	stored_file "github.com/XMNBlockchain/core/packages/storages/files/domain"
 )
 
 // SignatureService represents a concrete SignatureService implementation
@@ -51,7 +51,7 @@ func (serv *SignatureService) Save(dirPath string, sig users.Signature) (stored_
 func (serv *SignatureService) SaveAll(dirPath string, sigs []users.Signature) ([]stored_file.File, error) {
 	out := []stored_file.File{}
 	for _, oneSig := range sigs {
-		oneSigPath := filepath.Join(dirPath, oneSig.GetKey())
+		oneSigPath := filepath.Join(dirPath, oneSig.GetMetaData().GetID().String())
 		fil, filErr := serv.Save(oneSigPath, oneSig)
 		if filErr != nil {
 			return nil, filErr

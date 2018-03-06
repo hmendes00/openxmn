@@ -36,9 +36,21 @@ func CreateUserForTests(t *testing.T) *User {
 // CreateSignatureForTests creates a Signature for tests
 func CreateSignatureForTests(t *testing.T) *Signature {
 	//variables:
+	id := uuid.NewV4()
 	sig := concrete_cryptography.CreateSignatureForTests(t)
 	usr := CreateUserForTests(t)
+	crOn := time.Now().UTC()
 
-	userSig := createSignature(sig, usr)
+	blocks := [][]byte{
+		id.Bytes(),
+		[]byte(strconv.Itoa(int(crOn.UnixNano()))),
+		usr.GetMetaData().GetHashTree().GetHash().Get(),
+		[]byte(sig.String()),
+	}
+
+	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
+	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(crOn).Now()
+
+	userSig := createSignature(met.(*concrete_metadata.MetaData), sig, usr)
 	return userSig.(*Signature)
 }
