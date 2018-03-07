@@ -51,7 +51,7 @@ func CreateSignedBlockForTests(t *testing.T) *SignedBlock {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(crOn.UnixNano()))),
 		blk.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()

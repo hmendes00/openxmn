@@ -18,7 +18,7 @@ func TestCreateSignature_Success(t *testing.T) {
 	//variables:
 	id := uuid.NewV4()
 	sig := concrete_cryptography.CreateSignatureForTests(t)
-	usr := CreateUserForTests(t)
+	usr := createUserUsingProvidedPublicKeyForTests(t, sig.GetPublicKey())
 	crOn := time.Now().UTC()
 
 	blocks := [][]byte{
@@ -32,7 +32,10 @@ func TestCreateSignature_Success(t *testing.T) {
 	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(crOn).Now()
 
 	//execute:
-	userSig := createSignature(met.(*concrete_metadata.MetaData), sig, usr)
+	userSig, userSigErr := createSignature(met.(*concrete_metadata.MetaData), sig, usr)
+	if userSigErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", userSigErr.Error())
+	}
 
 	retMetaData := userSig.GetMetaData()
 	retSig := userSig.GetSignature()

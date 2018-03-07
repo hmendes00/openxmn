@@ -31,8 +31,8 @@ func CreateTransactionForTests(t *testing.T) *Transaction {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		js,
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		js,
 	}
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
 	met, _ := concrete_met.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
@@ -57,6 +57,7 @@ func CreateTransactionsForTests(t *testing.T) *Transactions {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 	}
+
 	for _, oneTrs := range trs {
 		blocks = append(blocks, oneTrs.GetMetaData().GetHashTree().GetHash().Get())
 	}

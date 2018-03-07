@@ -44,7 +44,8 @@ func (serv *SignedBlockService) Save(dirPath string, signedBlk blocks.SignedBloc
 
 	//save the signature:
 	sig := signedBlk.GetSignature()
-	storedSig, storedSigErr := serv.userSigService.Save(dirPath, sig)
+	sigPath := filepath.Join(dirPath, "signature")
+	storedSig, storedSigErr := serv.userSigService.Save(sigPath, sig)
 	if storedSigErr != nil {
 		return nil, storedSigErr
 	}

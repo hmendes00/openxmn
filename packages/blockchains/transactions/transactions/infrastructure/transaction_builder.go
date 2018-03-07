@@ -86,8 +86,8 @@ func (build *transactionBuilder) Now() (trs.Transaction, error) {
 
 		blocks := [][]byte{
 			build.id.Bytes(),
-			build.js,
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
+			build.js,
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

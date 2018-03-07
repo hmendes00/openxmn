@@ -12,10 +12,12 @@ import (
 	signed_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/domain"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
+	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	concrete_stored_chunks "github.com/XMNBlockchain/core/packages/storages/chunks/infrastructure"
 	concrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
 	concrete_stored_signed_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/signed/infrastructure"
 	concrete_stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/infrastructure"
+	concrete_stored_users "github.com/XMNBlockchain/core/packages/storages/users/infrastructure"
 )
 
 func TestSaveTransaction_thenRetrieve_Success(t *testing.T) {
@@ -58,9 +60,17 @@ func TestSaveTransaction_thenRetrieve_Success(t *testing.T) {
 	storedTrsBuilderFactory := concrete_stored_transactions.CreateTransactionBuilderFactory()
 	trsService := concrete_transactions.CreateTransactionService(metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
 	signedTrsBuilderFactory := CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
-	userSigRepository := concrete_users.CreateSignatureRepository(fileRepository)
+	pubKeyBuilderFactory := concrete_cryptography.CreatePublicKeyBuilderFactory()
+	sigBuilderFactory := concrete_cryptography.CreateSignatureBuilderFactory(pubKeyBuilderFactory)
+	usrBuilderFactory := concrete_users.CreateUserBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	usrRepository := concrete_users.CreateUserRepository(metaDataRepository, fileRepository, pubKeyBuilderFactory, usrBuilderFactory)
+	storedUserBuilderFactory := concrete_stored_users.CreateUserBuilderFactory()
+	usrService := concrete_users.CreateUserService(metaDataService, fileService, fileBuilderFactory, storedUserBuilderFactory)
+	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactory(sigBuilderFactory, htBuilderFactory, metaDataBuilderFactory)
+	storedSigBuilderFactory := concrete_stored_users.CreateSignatureBuilderFactory()
+	userSigRepository := concrete_users.CreateSignatureRepository(metaDataRepository, usrRepository, fileRepository, userSigBuilderFactory)
+	userSigService := concrete_users.CreateSignatureService(metaDataService, usrService, fileService, fileBuilderFactory, storedSigBuilderFactory)
 	storedSignedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionBuilderFactory()
-	userSigService := concrete_users.CreateSignatureService(fileService, fileBuilderFactory)
 
 	//delete the files folder at the end:
 	defer func() {

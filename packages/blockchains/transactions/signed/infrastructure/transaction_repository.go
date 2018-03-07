@@ -43,7 +43,8 @@ func (rep *TransactionRepository) Retrieve(dirPath string) (signed_trs.Transacti
 	}
 
 	//retrieve the signature:
-	userSig, userSigErr := rep.sigRepository.Retrieve(dirPath)
+	sigPath := filepath.Join(dirPath, "signature")
+	userSig, userSigErr := rep.sigRepository.Retrieve(sigPath)
 	if userSigErr != nil {
 		return nil, userSigErr
 	}

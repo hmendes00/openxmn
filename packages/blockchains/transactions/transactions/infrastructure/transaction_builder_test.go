@@ -40,8 +40,8 @@ func TestCreateBuilder_withUUID_withBody_withCreatedOn_Success(t *testing.T) {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		js,
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		js,
 	}
 
 	ht, htErr := htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

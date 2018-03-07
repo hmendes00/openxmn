@@ -102,7 +102,7 @@ func (build *signedBlockBuilder) Now() (blocks.SignedBlock, error) {
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
 			build.blk.GetMetaData().GetHashTree().GetHash().Get(),
-			[]byte(build.sig.GetSig().String()),
+			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

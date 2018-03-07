@@ -24,9 +24,9 @@ func TestCreateAtomicTransaction_Success(t *testing.T) {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
 	ht, htErr := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()

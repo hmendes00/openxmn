@@ -43,7 +43,8 @@ func (rep *AtomicTransactionRepository) Retrieve(dirPath string) (signed_trs.Ato
 	}
 
 	//retrieve the signature:
-	sig, sigErr := rep.userSigRepository.Retrieve(dirPath)
+	sigPath := filepath.Join(dirPath, "signature")
+	sig, sigErr := rep.userSigRepository.Retrieve(sigPath)
 	if sigErr != nil {
 		return nil, sigErr
 	}

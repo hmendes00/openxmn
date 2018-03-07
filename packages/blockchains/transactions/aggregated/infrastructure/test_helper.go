@@ -46,7 +46,7 @@ func CreateSignedTransactionsForTests(t *testing.T) *SignedTransactions {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(cr.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()

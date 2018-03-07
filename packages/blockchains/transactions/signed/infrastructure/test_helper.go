@@ -22,9 +22,9 @@ func CreateTransactionForTests(t *testing.T) *Transaction {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
 	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
@@ -71,9 +71,9 @@ func CreateAtomicTransactionForTests(t *testing.T) *AtomicTransaction {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()

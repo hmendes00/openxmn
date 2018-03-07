@@ -1,100 +1,78 @@
 package infrastructure
 
 import (
-	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
 
 	concrete_files "github.com/XMNBlockchain/core/packages/blockchains/files/infrastructure"
-	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
+	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	concrete_stored_files "github.com/XMNBlockchain/core/packages/storages/files/infrastructure"
+	concrete_stored_users "github.com/XMNBlockchain/core/packages/storages/users/infrastructure"
 )
 
 func TestSaveUserSignature_thenRetrieve_Success(t *testing.T) {
 
-	//signature:
+	//create the signature:
 	sig := CreateSignatureForTests(t)
-	secondSig := CreateSignatureForTests(t)
-	sigs := []users.Signature{
-		sig,
-		secondSig,
-	}
 
-	sigsMap := map[string]users.Signature{
-		sig.GetMetaData().GetID().String():       sig,
-		secondSig.GetMetaData().GetID().String(): secondSig,
-	}
-
-	//file variables:
-	saveInPath := filepath.Join("test_files", "files")
+	//variables:
+	basePath := filepath.Join("test_files", "files")
 
 	//factories:
-	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
-	fileService := concrete_files.CreateFileService(storedFileBuilderFactory)
+	pubKeyBuilderFactory := concrete_cryptography.CreatePublicKeyBuilderFactory()
+	sigBuilderFactory := concrete_cryptography.CreateSignatureBuilderFactory(pubKeyBuilderFactory)
 	fileBuilderFactory := concrete_files.CreateFileBuilderFactory()
+	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactory()
 	fileRepository := concrete_files.CreateFileRepository(fileBuilderFactory)
+	fileService := concrete_files.CreateFileService(storedFileBuilderFactory)
+	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataRepository := concrete_metadata.CreateMetaDataRepository(fileRepository)
+	metaDataService := concrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	usrBuilderFactory := CreateUserBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	storedUserBuilderFactory := concrete_stored_users.CreateUserBuilderFactory()
+	usrRepository := CreateUserRepository(metaDataRepository, fileRepository, pubKeyBuilderFactory, usrBuilderFactory)
+	usrService := CreateUserService(metaDataService, fileService, fileBuilderFactory, storedUserBuilderFactory)
+	userSigBuilderFactory := CreateSignatureBuilderFactory(sigBuilderFactory, htBuilderFactory, metaDataBuilderFactory)
+	storedSigBuilderFactory := concrete_stored_users.CreateSignatureBuilderFactory()
 
-	//delete the files at the end:
+	//delete the files folder at the end:
 	defer func() {
-		fileService.DeleteAll(saveInPath)
+		fileService.DeleteAll(basePath)
 	}()
 
 	//execute:
-	service := CreateSignatureService(fileService, fileBuilderFactory)
-	repository := CreateSignatureRepository(fileRepository)
+	repository := CreateSignatureRepository(metaDataRepository, usrRepository, fileRepository, userSigBuilderFactory)
+	service := CreateSignatureService(metaDataService, usrService, fileService, fileBuilderFactory, storedSigBuilderFactory)
 
-	//verify that the file do not exists:
-	if _, err := os.Stat(saveInPath); !os.IsNotExist(err) {
-		t.Errorf("the given path was not expected to be a valid directory: %s", saveInPath)
+	//make sure there is no sig:
+	_, noSigErr := repository.Retrieve(basePath)
+	if noSigErr == nil {
+		t.Errorf("there was supposed to be no signature.")
 	}
 
-	//save the signature on disk:
-	_, storedSigErr := service.Save(saveInPath, sig)
+	//save the sig:
+	_, storedSigErr := service.Save(basePath, sig)
 	if storedSigErr != nil {
-		t.Errorf("the error was expected to be nil, error returned: %s", storedSigErr.Error())
+		t.Errorf("the returned error was expected to be nil, error returned: %s", storedSigErr.Error())
 	}
 
-	//retrieve the signature:
-	retSig, retSigErr := repository.Retrieve(saveInPath)
+	//retrieve the sig:
+	retSig, retSigErr := repository.Retrieve(basePath)
 	if retSigErr != nil {
-		t.Errorf("the error was expected to be nil, error returned: %s", retSigErr.Error())
+		t.Errorf("the returned error was expected to be nil, error returned: %s", retSigErr.Error())
 	}
 
-	//compare the signatures:
 	if !reflect.DeepEqual(sig, retSig) {
-		t.Errorf("the returned signature is invalid")
+		t.Errorf("the retrieved signature is invalid")
 	}
 
-	//delete the files:
-	delErr := fileService.DeleteAll(saveInPath)
+	//delete the sig:
+	delErr := fileService.DeleteAll(basePath)
 	if delErr != nil {
-		t.Errorf("the error was expected to be nil, error returned: %s", delErr.Error())
-	}
-
-	//save the signatures:
-	_, storedFilesErr := service.SaveAll(saveInPath, sigs)
-	if storedFilesErr != nil {
-		t.Errorf("the error was expected to be nil, error returned: %s", storedFilesErr.Error())
-	}
-
-	//retrieve the signatures:
-	retSigs, retSigsErr := repository.RetrieveAll(saveInPath)
-	if retSigsErr != nil {
-		t.Errorf("the error was expected to be nil, error returned: %s", retSigsErr.Error())
-	}
-
-	//compare the signatures:
-	for index, oneRetSig := range retSigs {
-		idAsString := oneRetSig.GetMetaData().GetID().String()
-		if foundSig, ok := sigsMap[idAsString]; ok {
-			if !reflect.DeepEqual(foundSig, oneRetSig) {
-				t.Errorf("the returned signature (index: %d, ID: %s) is invalid", index, idAsString)
-			}
-
-			continue
-		}
-
-		t.Errorf("the signature (ID: %s) could not be found", idAsString)
+		t.Errorf("the returned error was expected to be nil, error returned: %s", delErr.Error())
 	}
 }

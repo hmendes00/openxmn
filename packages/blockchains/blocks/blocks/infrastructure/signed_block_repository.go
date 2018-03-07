@@ -41,7 +41,8 @@ func (rep *SignedBlockRepository) Retrieve(dirPath string) (blocks.SignedBlock, 
 	}
 
 	//retrieve the signature:
-	sig, sigErr := rep.userSigRepository.Retrieve(dirPath)
+	sigPath := filepath.Join(dirPath, "signature")
+	sig, sigErr := rep.userSigRepository.Retrieve(sigPath)
 	if sigErr != nil {
 		return nil, sigErr
 	}

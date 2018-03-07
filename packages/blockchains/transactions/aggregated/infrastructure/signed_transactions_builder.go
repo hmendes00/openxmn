@@ -102,7 +102,7 @@ func (build *signedTransactionsBuilder) Now() (aggregated.SignedTransactions, er
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
 			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			[]byte(build.sig.GetSig().String()),
+			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

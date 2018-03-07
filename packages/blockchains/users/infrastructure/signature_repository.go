@@ -6,38 +6,66 @@ import (
 	"path/filepath"
 
 	files "github.com/XMNBlockchain/core/packages/blockchains/files/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
+	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 )
 
 // SignatureRepository represents a concrete SignatureRepository implementation
 type SignatureRepository struct {
-	fileRepository files.FileRepository
+	metaDataRepository    metadata.MetaDataRepository
+	usrRepository         users.UserRepository
+	fileRepository        files.FileRepository
+	userSigBuilderFactory users.SignatureBuilderFactory
 }
 
 // CreateSignatureRepository creates a new SignatureRepository instance
-func CreateSignatureRepository(fileRepository files.FileRepository) users.SignatureRepository {
+func CreateSignatureRepository(metaDataRepository metadata.MetaDataRepository, usrRepository users.UserRepository, fileRepository files.FileRepository, userSigBuilderFactory users.SignatureBuilderFactory) users.SignatureRepository {
 	out := SignatureRepository{
-		fileRepository: fileRepository,
+		metaDataRepository:    metaDataRepository,
+		usrRepository:         usrRepository,
+		fileRepository:        fileRepository,
+		userSigBuilderFactory: userSigBuilderFactory,
 	}
 	return &out
 }
 
 // Retrieve retrieves a Signature instance
 func (rep *SignatureRepository) Retrieve(dirPath string) (users.Signature, error) {
-	fil, filErr := rep.fileRepository.Retrieve(dirPath, "user_signature.json")
-	if filErr != nil {
-		return nil, filErr
+	//retrieve the metadata:
+	met, metErr := rep.metaDataRepository.Retrieve(dirPath)
+	if metErr != nil {
+		return nil, metErr
 	}
 
-	//convert the data to a signature instance:
-	newSig := new(Signature)
-	jsonErr := json.Unmarshal(fil.GetData(), newSig)
-	if jsonErr != nil {
-		return nil, jsonErr
+	//retrieve the user:
+	usrFilePath := filepath.Join(dirPath, "user")
+	usr, usrErr := rep.usrRepository.Retrieve(usrFilePath)
+	if usrErr != nil {
+		return nil, usrErr
 	}
 
-	//return the signature:
-	return newSig, nil
+	//retrieve the signature file:
+	sigFile, sigFileErr := rep.fileRepository.Retrieve(dirPath, "signature.json")
+	if sigFileErr != nil {
+		return nil, sigFileErr
+	}
+
+	//build the signature:
+	sigAsJS := sigFile.GetData()
+	sig := new(concrete_cryptography.Signature)
+	jsErr := json.Unmarshal(sigAsJS, sig)
+	if jsErr != nil {
+		return nil, jsErr
+	}
+
+	//build the user signature:
+	userSig, userSigErr := rep.userSigBuilderFactory.Create().Create().WithMetaData(met).WithUser(usr).WithSignature(sig).Now()
+	if userSigErr != nil {
+		return nil, userSigErr
+	}
+
+	return userSig, nil
 }
 
 // RetrieveAll retrieves []Signature instances

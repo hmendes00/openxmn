@@ -101,9 +101,9 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 
 		blocks := [][]byte{
 			build.id.Bytes(),
-			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			[]byte(build.sig.GetSig().String()),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
+			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

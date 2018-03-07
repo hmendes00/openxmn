@@ -45,7 +45,8 @@ func (serv *TransactionService) Save(dirPath string, signedTrs signed_trs.Transa
 
 	//save the signature:
 	sig := signedTrs.GetSignature()
-	storedSig, storedSigErr := serv.sigService.Save(dirPath, sig)
+	sigPath := filepath.Join(dirPath, "signature")
+	storedSig, storedSigErr := serv.sigService.Save(sigPath, sig)
 	if storedSigErr != nil {
 		return nil, storedSigErr
 	}

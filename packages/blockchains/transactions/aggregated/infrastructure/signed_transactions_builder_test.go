@@ -34,7 +34,7 @@ func TestBuildSignedTransactions_withID_withSignature_withTransactions_createdOn
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(cr.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.GetSig().String()),
+		sig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 
 	ht, _ := htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

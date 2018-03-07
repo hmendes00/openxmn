@@ -45,7 +45,8 @@ func (serv *AtomicTransactionService) Save(dirPath string, atomicTrs signed_trs.
 
 	//save the signature:
 	sig := atomicTrs.GetSignature()
-	storedSig, storedSigErr := serv.userSigService.Save(dirPath, sig)
+	sigPath := filepath.Join(dirPath, "signature")
+	storedSig, storedSigErr := serv.userSigService.Save(sigPath, sig)
 	if storedSigErr != nil {
 		return nil, storedSigErr
 	}

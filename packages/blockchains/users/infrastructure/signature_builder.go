@@ -151,6 +151,10 @@ func (build *signatureBuilder) Now() (users.Signature, error) {
 		return nil, errors.New("the MetaData is mandatory in order to build a Signature instance")
 	}
 
-	out := createSignature(build.met.(*concrete_metadata.MetaData), build.sig.(*concrete_cryptography.Signature), build.usr.(*User))
-	return out, nil
+	out, outErr := createSignature(build.met.(*concrete_metadata.MetaData), build.sig.(*concrete_cryptography.Signature), build.usr.(*User))
+	if outErr != nil {
+		return nil, outErr
+	}
+
+	return out, outErr
 }

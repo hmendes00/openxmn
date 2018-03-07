@@ -5,11 +5,12 @@ import (
 
 	stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/domain"
 	stored_files "github.com/XMNBlockchain/core/packages/storages/files/domain"
+	stored_users "github.com/XMNBlockchain/core/packages/storages/users/domain"
 )
 
 type signedBlockBuilder struct {
 	metaData stored_files.File
-	sig      stored_files.File
+	sig      stored_users.Signature
 	blk      stored_blocks.Block
 }
 
@@ -38,7 +39,7 @@ func (build *signedBlockBuilder) WithMetaData(met stored_files.File) stored_bloc
 }
 
 // WithSignature adds a signature to the SignedBlockBuilder instance
-func (build *signedBlockBuilder) WithSignature(sig stored_files.File) stored_blocks.SignedBlockBuilder {
+func (build *signedBlockBuilder) WithSignature(sig stored_users.Signature) stored_blocks.SignedBlockBuilder {
 	build.sig = sig
 	return build
 }

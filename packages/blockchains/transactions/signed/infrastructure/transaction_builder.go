@@ -102,10 +102,11 @@ func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) 
 
 		blocks := [][]byte{
 			build.id.Bytes(),
-			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			[]byte(build.sig.GetSig().String()),
 			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
+			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
 		}
+
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
 		if htErr != nil {
 			return nil, htErr

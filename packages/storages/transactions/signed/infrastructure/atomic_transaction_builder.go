@@ -6,11 +6,12 @@ import (
 	stored_files "github.com/XMNBlockchain/core/packages/storages/files/domain"
 	stored_signed_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/signed/domain"
 	stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/domain"
+	stored_users "github.com/XMNBlockchain/core/packages/storages/users/domain"
 )
 
 type atomicTransactionBuilder struct {
 	metaData stored_files.File
-	sig      stored_files.File
+	sig      stored_users.Signature
 	trs      stored_transactions.Transactions
 }
 
@@ -38,8 +39,8 @@ func (build *atomicTransactionBuilder) WithMetaData(met stored_files.File) store
 	return build
 }
 
-// WithSignature adds a signature file to the AtomicTransactionBuilder instance
-func (build *atomicTransactionBuilder) WithSignature(sig stored_files.File) stored_signed_transactions.AtomicTransactionBuilder {
+// WithSignature adds a signature to the AtomicTransactionBuilder instance
+func (build *atomicTransactionBuilder) WithSignature(sig stored_users.Signature) stored_signed_transactions.AtomicTransactionBuilder {
 	build.sig = sig
 	return build
 }

@@ -24,9 +24,9 @@ func TestCreateTransactionWithWalletSignature_Success(t *testing.T) {
 
 	blocks := [][]byte{
 		id.Bytes(),
-		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(usrSig.GetSig().String()),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
+		trs.GetMetaData().GetHashTree().GetHash().Get(),
+		usrSig.GetMetaData().GetHashTree().GetHash().Get(),
 	}
 	ht, htErr := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
 	if htErr != nil {

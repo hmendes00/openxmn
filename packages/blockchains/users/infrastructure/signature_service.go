@@ -5,41 +5,70 @@ import (
 	"path/filepath"
 
 	files "github.com/XMNBlockchain/core/packages/blockchains/files/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	stored_file "github.com/XMNBlockchain/core/packages/storages/files/domain"
+	stored_users "github.com/XMNBlockchain/core/packages/storages/users/domain"
 )
 
 // SignatureService represents a concrete SignatureService implementation
 type SignatureService struct {
-	fileService        files.FileService
-	fileBuilderFactory files.FileBuilderFactory
+	metaDataService         metadata.MetaDataService
+	usrService              users.UserService
+	fileService             files.FileService
+	fileBuilderFactory      files.FileBuilderFactory
+	storedSigBuilderFactory stored_users.SignatureBuilderFactory
 }
 
 // CreateSignatureService creates a new SignatureService instance
-func CreateSignatureService(fileService files.FileService, fileBuilderFactory files.FileBuilderFactory) users.SignatureService {
+func CreateSignatureService(metaDataService metadata.MetaDataService, usrService users.UserService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedSigBuilderFactory stored_users.SignatureBuilderFactory) users.SignatureService {
 	out := SignatureService{
-		fileService:        fileService,
-		fileBuilderFactory: fileBuilderFactory,
+		metaDataService:         metaDataService,
+		usrService:              usrService,
+		fileService:             fileService,
+		fileBuilderFactory:      fileBuilderFactory,
+		storedSigBuilderFactory: storedSigBuilderFactory,
 	}
 	return &out
 }
 
 // Save saves a Signature
-func (serv *SignatureService) Save(dirPath string, sig users.Signature) (stored_file.File, error) {
+func (serv *SignatureService) Save(dirPath string, sig users.Signature) (stored_users.Signature, error) {
+	//save the metadata:
+	met := sig.GetMetaData()
+	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
+	if storedMetErr != nil {
+		return nil, storedMetErr
+	}
+
 	//convert the signature to json:
-	js, jsErr := json.Marshal(sig)
-	if jsErr != nil {
-		return nil, jsErr
+	sigSig := sig.GetSignature()
+	sigAsJS, sigAsJSErr := json.Marshal(sigSig)
+	if sigAsJSErr != nil {
+		return nil, sigAsJSErr
 	}
 
 	//build the user signature file:
-	htSig, htSigErr := serv.fileBuilderFactory.Create().Create().WithData(js).WithFileName("user_signature").WithExtension("json").Now()
-	if htSigErr != nil {
-		return nil, htSigErr
+	sigFile, sigFileErr := serv.fileBuilderFactory.Create().Create().WithData(sigAsJS).WithFileName("signature").WithExtension("json").Now()
+	if sigFileErr != nil {
+		return nil, sigFileErr
 	}
 
 	//save the user signature:
-	storedSig, storedSigErr := serv.fileService.Save(dirPath, htSig)
+	storedSigFile, storedSigFileErr := serv.fileService.Save(dirPath, sigFile)
+	if storedSigFileErr != nil {
+		return nil, storedSigFileErr
+	}
+
+	//save the user:
+	usr := sig.GetUser()
+	usrFilePath := filepath.Join(dirPath, "user")
+	storedUser, storedUserErr := serv.usrService.Save(usrFilePath, usr)
+	if storedUserErr != nil {
+		return nil, storedUserErr
+	}
+
+	//build the stored signature:
+	storedSig, storedSigErr := serv.storedSigBuilderFactory.Create().Create().WithMetaData(storedMet).WithSignature(storedSigFile).WithUser(storedUser).Now()
 	if storedSigErr != nil {
 		return nil, storedSigErr
 	}
@@ -48,8 +77,8 @@ func (serv *SignatureService) Save(dirPath string, sig users.Signature) (stored_
 }
 
 // SaveAll saves []Signature instances
-func (serv *SignatureService) SaveAll(dirPath string, sigs []users.Signature) ([]stored_file.File, error) {
-	out := []stored_file.File{}
+func (serv *SignatureService) SaveAll(dirPath string, sigs []users.Signature) ([]stored_users.Signature, error) {
+	out := []stored_users.Signature{}
 	for _, oneSig := range sigs {
 		oneSigPath := filepath.Join(dirPath, oneSig.GetMetaData().GetID().String())
 		fil, filErr := serv.Save(oneSigPath, oneSig)

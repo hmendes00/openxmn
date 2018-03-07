@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"errors"
+
 	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	user "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
@@ -15,14 +17,21 @@ type Signature struct {
 	Usr *User                            `json:"user"`
 }
 
-func createSignature(met *concrete_metadata.MetaData, sig *concrete_cryptography.Signature, usr *User) user.Signature {
+func createSignature(met *concrete_metadata.MetaData, sig *concrete_cryptography.Signature, usr *User) (user.Signature, error) {
+
+	//make sure the public key matches:
+	sigPubKey := sig.GetPublicKey()
+	if !usr.GetPublicKey().Compare(sigPubKey) {
+		return nil, errors.New("the PublicKey of the Signature does not match the PublicKey of the User instance")
+	}
+
 	out := Signature{
 		Met: met,
 		Sig: sig,
 		Usr: usr,
 	}
 
-	return &out
+	return &out, nil
 }
 
 // GetMetaData returns the MetaData
