@@ -1,17 +1,14 @@
 package domain
 
 import (
-	"time"
-
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	uuid "github.com/satori/go.uuid"
 )
 
 // Block represents a block of transactions
 type Block interface {
-	GetID() *uuid.UUID
+	GetMetaData() metadata.MetaData
 	GetBlock() blocks.SignedBlock
-	GetSignatures() []users.Signature
-	CreatedOn() time.Time
+	GetSignatures() users.Signatures
 }

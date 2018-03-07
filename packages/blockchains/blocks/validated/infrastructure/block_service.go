@@ -12,23 +12,20 @@ import (
 
 // BlockService represents a concrete BlockService implementation
 type BlockService struct {
-	metaDataBuilderFactory           metadata.MetaDataBuilderFactory
 	metaDataService                  metadata.MetaDataService
 	signedBlkService                 blocks.SignedBlockService
-	userSigService                   users.SignatureService
+	userSigService                   users.SignaturesService
 	storedValidatedBlkBuilderFactory stored_validated_blocks.BlockBuilderFactory
 }
 
 // CreateBlockService creates a new BlockService instance
 func CreateBlockService(
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory,
 	metaDataService metadata.MetaDataService,
 	signedBlkService blocks.SignedBlockService,
-	userSigService users.SignatureService,
+	userSigService users.SignaturesService,
 	storedValidatedBlkBuilderFactory stored_validated_blocks.BlockBuilderFactory,
 ) validated.BlockService {
 	out := BlockService{
-		metaDataBuilderFactory:           metaDataBuilderFactory,
 		metaDataService:                  metaDataService,
 		signedBlkService:                 signedBlkService,
 		userSigService:                   userSigService,
@@ -39,15 +36,8 @@ func CreateBlockService(
 
 // Save saves a Block
 func (serv *BlockService) Save(dirPath string, validatedBlk validated.Block) (stored_validated_blocks.Block, error) {
-	//build the metadata:
-	id := validatedBlk.GetID()
-	ts := validatedBlk.CreatedOn()
-	met, metErr := serv.metaDataBuilderFactory.Create().Create().WithID(id).CreatedOn(ts).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
 	//save the metadata:
+	met := validatedBlk.GetMetaData()
 	storedMet, storedMetErr := serv.metaDataService.Save(dirPath, met)
 	if storedMetErr != nil {
 		return nil, storedMetErr
@@ -63,8 +53,8 @@ func (serv *BlockService) Save(dirPath string, validatedBlk validated.Block) (st
 
 	//save the user signatures:
 	sigs := validatedBlk.GetSignatures()
-	sigsPath := filepath.Join(dirPath, "user_signatures")
-	storedSigs, storedSigsErr := serv.userSigService.SaveAll(sigsPath, sigs)
+	sigsPath := filepath.Join(dirPath, "signatures")
+	storedSigs, storedSigsErr := serv.userSigService.Save(sigsPath, sigs)
 	if storedSigsErr != nil {
 		return nil, storedSigsErr
 	}

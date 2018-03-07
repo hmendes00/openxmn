@@ -10,10 +10,9 @@ import (
 	concrete_files "github.com/XMNBlockchain/core/packages/blockchains/files/infrastructure"
 	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
 	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
-	concrete_aggregated_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/infrastructure"
+	concrete_aggregated "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/infrastructure"
 	concrete_signed_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/signed/infrastructure"
 	concrete_transactions "github.com/XMNBlockchain/core/packages/blockchains/transactions/transactions/infrastructure"
-	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
 	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
 	concrete_stored_blocks "github.com/XMNBlockchain/core/packages/storages/blocks/blocks/infrastructure"
@@ -23,6 +22,7 @@ import (
 	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/aggregated/infrastructure"
 	concrete_stored_signed_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/signed/infrastructure"
 	concrete_stored_transactions "github.com/XMNBlockchain/core/packages/storages/transactions/transactions/infrastructure"
+	concrete_stored_users "github.com/XMNBlockchain/core/packages/storages/users/infrastructure"
 )
 
 func TestSaveValidatedBlock_thenRetrieve_Success(t *testing.T) {
@@ -50,40 +50,61 @@ func TestSaveValidatedBlock_thenRetrieve_Success(t *testing.T) {
 	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
 	metaDataRepository := concrete_metadata.CreateMetaDataRepository(fileRepository)
 	metaDataService := concrete_metadata.CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
-	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository)
+	trsBuilderFactory := concrete_transactions.CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	transBuilderFactory := concrete_transactions.CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	trsRepository := concrete_transactions.CreateTransactionRepository(chkRepository, metaDataRepository, trsBuilderFactory)
 	storedTrsBuilderFactory := concrete_stored_transactions.CreateTransactionBuilderFactory()
-	trsService := concrete_transactions.CreateTransactionService(metaDataBuilderFactory, metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
-	signedTrsBuilderFactory := concrete_signed_transactions.CreateTransactionBuilderFactory()
-	atomicTrsBuilderFactory := concrete_signed_transactions.CreateAtomicTransactionBuilderFactory(htBuilderFactory)
-	userSigRepository := concrete_users.CreateSignatureRepository(fileRepository)
-	storedSignedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionBuilderFactory()
-	userSigService := concrete_users.CreateSignatureService(fileService, fileBuilderFactory)
-	publicKeyBuilderFactory := concrete_cryptography.CreatePublicKeyBuilderFactory()
-	sigBuilderFactory := concrete_cryptography.CreateSignatureBuilderFactory(publicKeyBuilderFactory)
-	userBuilderFactory := concrete_users.CreateUserBuilderFactory()
-	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactory(sigBuilderFactory, userBuilderFactory)
-	signedTrsRepository := concrete_signed_transactions.CreateTransactionRepository(metaDataRepository, userSigRepository, trsRepository, signedTrsBuilderFactory)
-	signedTrsService := concrete_signed_transactions.CreateTransactionService(metaDataBuilderFactory, metaDataService, trsService, storedSignedTrsBuilderFactory, userSigService)
-	atomicTrsRepository := concrete_signed_transactions.CreateAtomicTransactionRepository(metaDataRepository, userSigRepository, htRepository, trsRepository, atomicTrsBuilderFactory)
+	storedTrsansBuilderFactory := concrete_stored_transactions.CreateTransactionsBuilderFactory()
+	trsService := concrete_transactions.CreateTransactionService(metaDataService, chksBuilderFactory, chkService, storedTrsBuilderFactory)
+	pubKeyBuilderFactory := concrete_cryptography.CreatePublicKeyBuilderFactory()
+	sigBuilderFactory := concrete_cryptography.CreateSignatureBuilderFactory(pubKeyBuilderFactory)
+	usrBuilderFactory := concrete_users.CreateUserBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	usrRepository := concrete_users.CreateUserRepository(metaDataRepository, fileRepository, pubKeyBuilderFactory, usrBuilderFactory)
+	storedUserBuilderFactory := concrete_stored_users.CreateUserBuilderFactory()
+	usrService := concrete_users.CreateUserService(metaDataService, fileService, fileBuilderFactory, storedUserBuilderFactory)
+	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactory(sigBuilderFactory, htBuilderFactory, metaDataBuilderFactory)
+	storedSigBuilderFactory := concrete_stored_users.CreateSignatureBuilderFactory()
+	userSigRepository := concrete_users.CreateSignatureRepository(metaDataRepository, usrRepository, fileRepository, userSigBuilderFactory)
+	userSigService := concrete_users.CreateSignatureService(metaDataService, usrService, fileService, fileBuilderFactory, storedSigBuilderFactory)
+	userSigsBuilderFactory := concrete_users.CreateSignaturesBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	userSigsRepository := concrete_users.CreateSignaturesRepository(metaDataRepository, userSigRepository, userSigsBuilderFactory)
+	storedSigsBuilderFactory := concrete_stored_users.CreateSignaturesBuilderFactory()
+	userSigsService := concrete_users.CreateSignaturesService(metaDataService, userSigService, storedSigsBuilderFactory)
+	transRepository := concrete_transactions.CreateTransactionsRepository(metaDataRepository, trsRepository, transBuilderFactory)
+	transService := concrete_transactions.CreateTransactionsService(metaDataService, trsService, storedTrsansBuilderFactory)
+	atomicTrsBuilderFactory := concrete_signed_transactions.CreateAtomicTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	storedAtomicTrsBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionBuilderFactory()
-	atomicTrsService := concrete_signed_transactions.CreateAtomicTransactionService(metaDataBuilderFactory, metaDataService, htService, userSigService, trsService, storedAtomicTrsBuilderFactory)
-	aggregatedTrsBuilderFactory := concrete_aggregated_transactions.CreateTransactionsBuilderFactory(htBuilderFactory)
-	storedAggregatedTrsBuilderFactory := concrete_stored_aggregated_transactions.CreateTransactionsBuilderFactory()
-	aggregatedTrsRepository := concrete_aggregated_transactions.CreateTransactionsRepository(metaDataRepository, htRepository, signedTrsRepository, atomicTrsRepository, aggregatedTrsBuilderFactory)
-	aggregatedSignedTrsBuilderFactory := concrete_aggregated_transactions.CreateSignedTransactionsBuilderFactory(userSigBuilderFactory)
-	aggregatedTrsService := concrete_aggregated_transactions.CreateTransactionsService(metaDataBuilderFactory, metaDataService, htService, signedTrsService, atomicTrsService, storedAggregatedTrsBuilderFactory)
+	atomicTrsRepository := concrete_signed_transactions.CreateAtomicTransactionRepository(metaDataRepository, userSigRepository, transRepository, atomicTrsBuilderFactory)
+	atomicTrsService := concrete_signed_transactions.CreateAtomicTransactionService(metaDataService, userSigService, transService, storedAtomicTrsBuilderFactory)
+	atomicTransBuilderFactory := concrete_signed_transactions.CreateAtomicTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	storedAtomicTransBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionsBuilderFactory()
+	atomicTransRepository := concrete_signed_transactions.CreateAtomicTransactionsRepository(metaDataRepository, atomicTrsRepository, atomicTransBuilderFactory)
+	signedTrsBuilderFactory := concrete_signed_transactions.CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	transactionRepository := concrete_signed_transactions.CreateTransactionRepository(metaDataRepository, userSigRepository, trsRepository, signedTrsBuilderFactory)
+	storedSignedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionBuilderFactory()
+	transactionService := concrete_signed_transactions.CreateTransactionService(metaDataService, trsService, storedSignedTrsBuilderFactory, userSigService)
+	signedTransBuilderFactory := concrete_signed_transactions.CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	signedStoredTransBuilderFactory := concrete_stored_signed_transactions.CreateTransactionsBuilderFactory()
+	signedTransRepository := concrete_signed_transactions.CreateTransactionsRepository(metaDataRepository, transactionRepository, signedTransBuilderFactory)
+	signedTransService := concrete_signed_transactions.CreateTransactionsService(metaDataService, transactionService, signedStoredTransBuilderFactory)
+	atomicTransService := concrete_signed_transactions.CreateAtomicTransactionsService(metaDataService, atomicTrsService, storedAtomicTransBuilderFactory)
+	aggregatedTrsBuilderFactory := concrete_aggregated.CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	aggregatedStoredTrsBuilderFactory := concrete_stored_aggregated_transactions.CreateTransactionsBuilderFactory()
+	aggregatedTrsRepository := concrete_aggregated.CreateTransactionsRepository(metaDataRepository, signedTransRepository, atomicTransRepository, aggregatedTrsBuilderFactory)
+	aggregatedTrsService := concrete_aggregated.CreateTransactionsService(metaDataService, signedTransService, atomicTransService, aggregatedStoredTrsBuilderFactory)
+	aggregatedSignedTrsBuilderFactory := concrete_aggregated.CreateSignedTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	storedAggregatedSignedTrsBuilderFactory := concrete_stored_aggregated_transactions.CreateSignedTransactionsBuilderFactory()
-	aggrSignedTrsRepository := concrete_aggregated_transactions.CreateSignedTransactionsRepository(metaDataRepository, userSigRepository, aggregatedTrsRepository, aggregatedSignedTrsBuilderFactory)
-	aggrSignedTrsService := concrete_aggregated_transactions.CreateSignedTransactionsService(metaDataBuilderFactory, metaDataService, userSigService, aggregatedTrsService, storedAggregatedSignedTrsBuilderFactory)
+	aggrSignedTrsRepository := concrete_aggregated.CreateSignedTransactionsRepository(metaDataRepository, userSigRepository, aggregatedTrsRepository, aggregatedSignedTrsBuilderFactory)
+	aggrSignedTrsService := concrete_aggregated.CreateSignedTransactionsService(metaDataService, userSigService, aggregatedTrsService, storedAggregatedSignedTrsBuilderFactory)
+	blkBuilderFactory := concrete_blocks.CreateBlockBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
+	blkRepository := concrete_blocks.CreateBlockRepository(metaDataRepository, aggrSignedTrsRepository, blkBuilderFactory)
 	storedBlkBuilderFactory := concrete_stored_blocks.CreateBlockBuilderFactory()
-	blkBuilderFactory := concrete_blocks.CreateBlockBuilderFactory(htBuilderFactory)
-	blkRepository := concrete_blocks.CreateBlockRepository(metaDataRepository, htRepository, aggrSignedTrsRepository, blkBuilderFactory)
-	blkService := concrete_blocks.CreateBlockService(metaDataBuilderFactory, metaDataService, htService, aggrSignedTrsService, storedBlkBuilderFactory)
-	signedBlkBuilderFactory := concrete_blocks.CreateSignedBlockBuilderFactory()
+	blkService := concrete_blocks.CreateBlockService(metaDataService, aggrSignedTrsService, storedBlkBuilderFactory)
+	signedBlkBuilderFactory := concrete_blocks.CreateSignedBlockBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	storedSignedBlkBuilderFactory := concrete_stored_blocks.CreateSignedBlockBuilderFactory()
 	signedBlkRepository := concrete_blocks.CreateSignedBlockRepository(metaDataRepository, userSigRepository, blkRepository, signedBlkBuilderFactory)
-	signedBlkService := concrete_blocks.CreateSignedBlockService(metaDataBuilderFactory, metaDataService, userSigService, blkService, storedSignedBlkBuilderFactory)
-	validatedBlkBuilderFactory := CreateBlockBuilderFactory()
+	signedBlkService := concrete_blocks.CreateSignedBlockService(metaDataService, userSigService, blkService, storedSignedBlkBuilderFactory)
+	validatedBlkBuilderFactory := CreateBlockBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	storedValidatedBlkBuilderFactory := concrete_stored_validated_blocks.CreateBlockBuilderFactory()
 
 	//delete the files folder at the end:
@@ -92,8 +113,8 @@ func TestSaveValidatedBlock_thenRetrieve_Success(t *testing.T) {
 	}()
 
 	//execute:
-	repository := CreateBlockRepository(metaDataRepository, signedBlkRepository, userSigRepository, validatedBlkBuilderFactory)
-	service := CreateBlockService(metaDataBuilderFactory, metaDataService, signedBlkService, userSigService, storedValidatedBlkBuilderFactory)
+	repository := CreateBlockRepository(metaDataRepository, signedBlkRepository, userSigsRepository, validatedBlkBuilderFactory)
+	service := CreateBlockService(metaDataService, signedBlkService, userSigsService, storedValidatedBlkBuilderFactory)
 
 	//make sure there is no blocks:
 	_, noTrsErr := repository.Retrieve(basePath)
@@ -113,40 +134,8 @@ func TestSaveValidatedBlock_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retBlkErr.Error())
 	}
 
-	retID := retBlk.GetID()
-	retBlock := retBlk.GetBlock()
-	retCrOn := retBlk.CreatedOn()
-	retSigs := retBlk.GetSignatures()
-
-	if !reflect.DeepEqual(validatedBlk.GetID(), retID) {
-		t.Errorf("the retrieved block ID is invalid")
-	}
-
-	if !reflect.DeepEqual(validatedBlk.GetBlock(), retBlock) {
-		t.Errorf("the retrieved block signed block is invalid")
-	}
-
-	if !reflect.DeepEqual(validatedBlk.CreatedOn(), retCrOn) {
-		t.Errorf("the retrieved block createdOn is invalid")
-	}
-
-	inSigs := validatedBlk.GetSignatures()
-	if len(retSigs) != len(inSigs) {
-		t.Errorf("the amount of user signatures is invalid.  Expected: %d, Returned: %d", len(retSigs), len(inSigs))
-	}
-
-	userSigMaps := map[string]users.Signature{}
-	for _, oneUserSig := range inSigs {
-		userSigMaps[oneUserSig.GetSig().String()] = oneUserSig
-	}
-
-	for _, oneRetUserSig := range retSigs {
-		sigAsString := oneRetUserSig.GetSig().String()
-		if _, ok := userSigMaps[sigAsString]; ok {
-			continue
-		}
-
-		t.Errorf("there is at least a missing signature in the returned user signatures.  Its key was: %s", sigAsString)
+	if !reflect.DeepEqual(validatedBlk, retBlk) {
+		t.Errorf("the retrieved block is invalid")
 	}
 
 	//delete the block:

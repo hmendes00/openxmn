@@ -13,7 +13,7 @@ import (
 type BlockRepository struct {
 	metaDataRepository         metadata.MetaDataRepository
 	signedBlkRepository        blocks.SignedBlockRepository
-	userSigRepository          users.SignatureRepository
+	userSigRepository          users.SignaturesRepository
 	validatedBlkBuilderFactory validated.BlockBuilderFactory
 }
 
@@ -21,7 +21,7 @@ type BlockRepository struct {
 func CreateBlockRepository(
 	metaDataRepository metadata.MetaDataRepository,
 	signedBlkRepository blocks.SignedBlockRepository,
-	userSigRepository users.SignatureRepository,
+	userSigRepository users.SignaturesRepository,
 	validatedBlkBuilderFactory validated.BlockBuilderFactory,
 ) validated.BlockRepository {
 	out := BlockRepository{
@@ -50,8 +50,8 @@ func (rep *BlockRepository) Retrieve(dirPath string) (validated.Block, error) {
 	}
 
 	//retrieve the user signatures:
-	sigsPath := filepath.Join(dirPath, "user_signatures")
-	userSigs, userSigsErr := rep.userSigRepository.RetrieveAll(sigsPath)
+	sigsPath := filepath.Join(dirPath, "signatures")
+	userSigs, userSigsErr := rep.userSigRepository.Retrieve(sigsPath)
 	if userSigsErr != nil {
 		return nil, userSigsErr
 	}

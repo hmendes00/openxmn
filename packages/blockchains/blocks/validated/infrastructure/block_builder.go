@@ -2,26 +2,36 @@ package infrastructure
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
 	concrete_blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/infrastructure"
 	validated "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/domain"
+	concrete_metadata "github.com/XMNBlockchain/core/packages/blockchains/metadata/infrastructure"
 	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
 	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
 type blockBuilder struct {
-	id  *uuid.UUID
-	blk blocks.SignedBlock
-	ls  []users.Signature
-	ts  *time.Time
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	met                    metadata.MetaData
+	blk                    blocks.SignedBlock
+	ls                     users.Signatures
+	ts                     *time.Time
 }
 
-func createBlockBuilder() validated.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) validated.BlockBuilder {
 	out := blockBuilder{
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
 		id:  nil,
+		met: nil,
 		blk: nil,
 		ls:  nil,
 		ts:  nil,
@@ -33,6 +43,7 @@ func createBlockBuilder() validated.BlockBuilder {
 // Create initializes the BlockBuilder instance
 func (build *blockBuilder) Create() validated.BlockBuilder {
 	build.id = nil
+	build.met = nil
 	build.blk = nil
 	build.ls = nil
 	build.ts = nil
@@ -45,6 +56,12 @@ func (build *blockBuilder) WithID(id *uuid.UUID) validated.BlockBuilder {
 	return build
 }
 
+// WithMetaData adds MetaData to the BlockBuilder instance
+func (build *blockBuilder) WithMetaData(met metadata.MetaData) validated.BlockBuilder {
+	build.met = met
+	return build
+}
+
 // WithBlock adds a Block to the BlockBuilder instance
 func (build *blockBuilder) WithBlock(blk blocks.SignedBlock) validated.BlockBuilder {
 	build.blk = blk
@@ -52,7 +69,7 @@ func (build *blockBuilder) WithBlock(blk blocks.SignedBlock) validated.BlockBuil
 }
 
 // WithSignatures adds a leader signatures to the BlockBuilder instance
-func (build *blockBuilder) WithSignatures(sigs []users.Signature) validated.BlockBuilder {
+func (build *blockBuilder) WithSignatures(sigs users.Signatures) validated.BlockBuilder {
 	build.ls = sigs
 	return build
 }
@@ -66,10 +83,6 @@ func (build *blockBuilder) CreatedOn(ts time.Time) validated.BlockBuilder {
 // Now builds a new Block instance
 func (build *blockBuilder) Now() (validated.Block, error) {
 
-	if build.id == nil {
-		return nil, errors.New("the ID is mandatory in order to build a validated block")
-	}
-
 	if build.blk == nil {
 		return nil, errors.New("the block is mandatory in order to build a validated block")
 	}
@@ -78,19 +91,39 @@ func (build *blockBuilder) Now() (validated.Block, error) {
 		return nil, errors.New("the leader signatures are mandatory in order to build a block instance")
 	}
 
-	if len(build.ls) <= 0 {
-		return nil, errors.New("the leader signatures cannot be empty in order to build a block instance")
+	if build.met == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build a validated block")
+		}
+
+		if build.ts == nil {
+			return nil, errors.New("the creation time is mandatory in order to build a validated block")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			[]byte(strconv.Itoa(int(build.ts.UnixNano()))),
+			build.blk.GetMetaData().GetHashTree().GetHash().Get(),
+			build.ls.GetMetaData().GetHashTree().GetHash().Get(),
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.ts).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
 	}
 
-	if build.ts == nil {
-		return nil, errors.New("the creation time is mandatory in order to build a validated block")
+	if build.met == nil {
+		return nil, errors.New("the MetaData is mandatory in order to build a Block instance")
 	}
 
-	ls := []*concrete_users.Signature{}
-	for _, oneSig := range build.ls {
-		ls = append(ls, oneSig.(*concrete_users.Signature))
-	}
-
-	out := createBlock(build.id, build.blk.(*concrete_blocks.SignedBlock), ls, *build.ts)
+	out := createBlock(build.met.(*concrete_metadata.MetaData), build.blk.(*concrete_blocks.SignedBlock), build.ls.(*concrete_users.Signatures))
 	return out, nil
 }
