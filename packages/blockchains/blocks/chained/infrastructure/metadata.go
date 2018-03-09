@@ -4,23 +4,25 @@ import (
 	"time"
 
 	chained "github.com/XMNBlockchain/core/packages/blockchains/blocks/chained/domain"
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
+	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
 	uuid "github.com/satori/go.uuid"
 )
 
 // MetaData represents a concrete metadata implementation
 type MetaData struct {
-	ID        *uuid.UUID `json:"id"`
-	Index     int        `json:"index"`
-	PrevIndex int        `json:"previous_index"`
-	CrOn      time.Time  `json:"created_on"`
+	ID     *uuid.UUID                   `json:"id"`
+	HT     *concrete_hashtrees.HashTree `json:"hashtree"`
+	PrevID *uuid.UUID                   `json:"previous_id"`
+	CrOn   time.Time                    `json:"created_on"`
 }
 
-func createMetaData(id *uuid.UUID, index int, prevIndex int, createdOn time.Time) chained.MetaData {
+func createMetaData(id *uuid.UUID, ht *concrete_hashtrees.HashTree, prevID *uuid.UUID, createdOn time.Time) chained.MetaData {
 	out := MetaData{
-		ID:        id,
-		Index:     index,
-		PrevIndex: prevIndex,
-		CrOn:      createdOn,
+		ID:     id,
+		HT:     ht,
+		PrevID: prevID,
+		CrOn:   createdOn,
 	}
 
 	return &out
@@ -31,14 +33,14 @@ func (met *MetaData) GetID() *uuid.UUID {
 	return met.ID
 }
 
-// GetIndex returns the index
-func (met *MetaData) GetIndex() int {
-	return met.Index
+// GetHashTree returns the HashTree
+func (met *MetaData) GetHashTree() hashtrees.HashTree {
+	return met.HT
 }
 
-// GetPreviousIndex returns the previous index
-func (met *MetaData) GetPreviousIndex() int {
-	return met.PrevIndex
+// GetPreviousID returns the previous ID
+func (met *MetaData) GetPreviousID() *uuid.UUID {
+	return met.PrevID
 }
 
 // CreatedOn returns the creation time

@@ -6,5 +6,5 @@ import (
 
 // BlockService represents a block service
 type BlockService interface {
-	Save(blk Block) (stored_chained_blocks.Block, error)
+	Save(dirPath string, blk Block) (stored_chained_blocks.Block, error)
 }

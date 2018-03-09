@@ -9,7 +9,6 @@ import (
 type BlockBuilder interface {
 	Create() BlockBuilder
 	WithMetaData(met stored_files.File) BlockBuilder
-	WithHashTree(ht stored_files.File) BlockBuilder
 	WithBlock(blk stored_validated_blocks.Block) BlockBuilder
 	Now() (Block, error)
 }

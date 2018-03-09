@@ -6,5 +6,5 @@ import (
 
 // MetaDataService represents a MetaData service
 type MetaDataService interface {
-	Save(met MetaData) (stored_files.File, error)
+	Save(dirPath string, met MetaData) (stored_files.File, error)
 }

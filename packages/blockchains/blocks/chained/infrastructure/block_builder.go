@@ -3,25 +3,34 @@ package infrastructure
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	chained "github.com/XMNBlockchain/core/packages/blockchains/blocks/chained/domain"
 	validated "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/domain"
 	concrete_validated "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/infrastructure"
 	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
-	concrete_hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/infrastructure"
+	uuid "github.com/satori/go.uuid"
 )
 
 type blockBuilder struct {
-	htBuilderFactory hashtrees.HashTreeBuilderFactory
-	met              chained.MetaData
-	blk              validated.Block
+	htBuilderFactory       hashtrees.HashTreeBuilderFactory
+	metaDataBuilderFactory chained.MetaDataBuilderFactory
+	id                     *uuid.UUID
+	met                    chained.MetaData
+	blk                    validated.Block
+	prevID                 *uuid.UUID
+	crOn                   *time.Time
 }
 
-func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) chained.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory chained.MetaDataBuilderFactory) chained.BlockBuilder {
 	out := blockBuilder{
-		htBuilderFactory: htBuilderFactory,
-		met:              nil,
-		blk:              nil,
+		htBuilderFactory:       htBuilderFactory,
+		metaDataBuilderFactory: metaDataBuilderFactory,
+		id:     nil,
+		met:    nil,
+		blk:    nil,
+		prevID: nil,
+		crOn:   nil,
 	}
 
 	return &out
@@ -29,8 +38,17 @@ func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory) chain
 
 // Create initializes the BlockBuilder instance
 func (build *blockBuilder) Create() chained.BlockBuilder {
+	build.id = nil
 	build.met = nil
 	build.blk = nil
+	build.prevID = nil
+	build.crOn = nil
+	return build
+}
+
+// WithID adds an ID to the BlockBuilder
+func (build *blockBuilder) WithID(id *uuid.UUID) chained.BlockBuilder {
+	build.id = id
 	return build
 }
 
@@ -46,29 +64,64 @@ func (build *blockBuilder) WithBlock(blk validated.Block) chained.BlockBuilder {
 	return build
 }
 
+// WithPreviousID adds a previous ID to the BlockBuilder
+func (build *blockBuilder) WithPreviousID(prevID *uuid.UUID) chained.BlockBuilder {
+	build.prevID = prevID
+	return build
+}
+
+// CreatedOn adds a creation time to the BlockBuilder
+func (build *blockBuilder) CreatedOn(crOn time.Time) chained.BlockBuilder {
+	build.crOn = &crOn
+	return build
+}
+
 // Now builds a Block instance
 func (build *blockBuilder) Now() (chained.Block, error) {
-	if build.met == nil {
-		return nil, errors.New("the metadata is mandatory in order to build a Block instance")
-	}
 
 	if build.blk == nil {
 		return nil, errors.New("the validated block is mandatory in order to build a Block instance")
 	}
 
-	blocks := [][]byte{
-		build.met.GetID().Bytes(),
-		[]byte(strconv.Itoa(build.met.GetIndex())),
-		[]byte(strconv.Itoa(build.met.GetPreviousIndex())),
-		[]byte(strconv.Itoa(int(build.met.CreatedOn().UnixNano()))),
-		build.blk.GetID().Bytes(),
+	if build.met == nil {
+
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build a Block instance")
+		}
+
+		if build.prevID == nil {
+			return nil, errors.New("the previous ID is mandatory in order to build a Block instance")
+		}
+
+		if build.crOn == nil {
+			return nil, errors.New("the previous ID is mandatory in order to build a Block instance")
+		}
+
+		blocks := [][]byte{
+			build.id.Bytes(),
+			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
+			build.prevID.Bytes(),
+			build.blk.GetMetaData().GetHashTree().GetHash().Get(),
+		}
+
+		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
+		if htErr != nil {
+			return nil, htErr
+		}
+
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithPreviousID(build.prevID).WithHashTree(ht).CreatedOn(*build.crOn).Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
+
 	}
 
-	ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
-	if htErr != nil {
-		return nil, htErr
+	if build.met == nil {
+		return nil, errors.New("the MetaData is mandatory in order to build a Block instance")
 	}
 
-	out := createBlock(ht.(*concrete_hashtrees.HashTree), build.met.(*MetaData), build.blk.(*concrete_validated.Block))
+	out := createBlock(build.met.(*MetaData), build.blk.(*concrete_validated.Block))
 	return out, nil
 }

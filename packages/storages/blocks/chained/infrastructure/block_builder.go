@@ -10,14 +10,12 @@ import (
 
 type blockBuilder struct {
 	met stored_files.File
-	ht  stored_files.File
 	blk stored_validated_blocks.Block
 }
 
 func createBlockBuilder() stored_chained_blocks.BlockBuilder {
 	out := blockBuilder{
 		met: nil,
-		ht:  nil,
 		blk: nil,
 	}
 
@@ -27,7 +25,6 @@ func createBlockBuilder() stored_chained_blocks.BlockBuilder {
 // Create initializes the block builder
 func (build *blockBuilder) Create() stored_chained_blocks.BlockBuilder {
 	build.met = nil
-	build.ht = nil
 	build.blk = nil
 	return build
 }
@@ -35,12 +32,6 @@ func (build *blockBuilder) Create() stored_chained_blocks.BlockBuilder {
 // WithMetaData add the metadata file to the block builder
 func (build *blockBuilder) WithMetaData(met stored_files.File) stored_chained_blocks.BlockBuilder {
 	build.met = met
-	return build
-}
-
-// WithHashTree add the hashtree file to the block builder
-func (build *blockBuilder) WithHashTree(ht stored_files.File) stored_chained_blocks.BlockBuilder {
-	build.ht = ht
 	return build
 }
 
@@ -56,14 +47,10 @@ func (build *blockBuilder) Now() (stored_chained_blocks.Block, error) {
 		return nil, errors.New("the metadata file is mandatory in order to build a stored Block instance")
 	}
 
-	if build.ht == nil {
-		return nil, errors.New("the hashtree file is mandatory in order to build a stored Block instance")
-	}
-
 	if build.blk == nil {
 		return nil, errors.New("the stored validated block is mandatory in order to build a stored Block instance")
 	}
 
-	out := createBlock(build.met, build.ht, build.blk)
+	out := createBlock(build.met, build.blk)
 	return out, nil
 }

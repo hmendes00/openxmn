@@ -3,13 +3,14 @@ package domain
 import (
 	"time"
 
+	hashtrees "github.com/XMNBlockchain/core/packages/blockchains/hashtrees/domain"
 	uuid "github.com/satori/go.uuid"
 )
 
 // MetaData represents a chained block metadata
 type MetaData interface {
 	GetID() *uuid.UUID
-	GetIndex() int
-	GetPreviousIndex() int
+	GetPreviousID() *uuid.UUID
+	GetHashTree() hashtrees.HashTree
 	CreatedOn() time.Time
 }
