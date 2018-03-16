@@ -3,28 +3,34 @@ package users
 import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
-type signatures struct {
-	met  stored_files.File
-	sigs []stored_users.Signature
+// Signatures represents a concrete stored signatures implementation
+type Signatures struct {
+	Met  *concrete_stored_files.File `json:"metadata"`
+	Sigs []*Signature                `json:"signatures"`
 }
 
-func createSignatures(met stored_files.File, sigs []stored_users.Signature) stored_users.Signatures {
-	out := signatures{
-		met:  met,
-		sigs: sigs,
+func createSignatures(met *concrete_stored_files.File, sigs []*Signature) stored_users.Signatures {
+	out := Signatures{
+		Met:  met,
+		Sigs: sigs,
 	}
 
 	return &out
 }
 
 // GetMetaData returns the MetaData
-func (sigs *signatures) GetMetaData() stored_files.File {
-	return sigs.met
+func (sigs *Signatures) GetMetaData() stored_files.File {
+	return sigs.Met
 }
 
 // GetSignatures returns the []Signature
-func (sigs *signatures) GetSignatures() []stored_users.Signature {
-	return sigs.sigs
+func (sigs *Signatures) GetSignatures() []stored_users.Signature {
+	out := []stored_users.Signature{}
+	for _, oneSig := range sigs.Sigs {
+		out = append(out, oneSig)
+	}
+	return out
 }

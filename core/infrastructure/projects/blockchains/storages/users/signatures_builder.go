@@ -5,6 +5,7 @@ import (
 
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
 type signaturesBuilder struct {
@@ -50,6 +51,11 @@ func (build *signaturesBuilder) Now() (stored_users.Signatures, error) {
 		return nil, errors.New("the []Signature is mandatory in order to build a Signatures instance")
 	}
 
-	out := createSignatures(build.met, build.sigs)
+	sigs := []*Signature{}
+	for _, oneSig := range build.sigs {
+		sigs = append(sigs, oneSig.(*Signature))
+	}
+
+	out := createSignatures(build.met.(*concrete_stored_files.File), sigs)
 	return out, nil
 }
