@@ -12,16 +12,16 @@ import (
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
 	metaDataService         metadata.MetaDataService
-	chkBuilderFactory       chunks.ChunksBuilderFactory
-	chkService              chunks.ChunksService
+	chkBuilderFactory       chunks.BuilderFactory
+	chkService              chunks.Service
 	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory
 }
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
 	metaDataService metadata.MetaDataService,
-	chkBuilderFactory chunks.ChunksBuilderFactory,
-	chkService chunks.ChunksService,
+	chkBuilderFactory chunks.BuilderFactory,
+	chkService chunks.Service,
 	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory,
 ) trs.TransactionService {
 	out := TransactionService{

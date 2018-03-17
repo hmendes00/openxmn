@@ -81,7 +81,7 @@ func CreateTransactionBuilderFactoryForTests() trs.TransactionBuilderFactory {
 
 // CreateTransactionRepositoryForTests creates a new TransactionRepository for tests
 func CreateTransactionRepositoryForTests() trs.TransactionRepository {
-	chksRepository := concrete_chunks.CreateChunksRepositoryForTests()
+	chksRepository := concrete_chunks.CreateRepositoryForTests()
 	metRepository := concrete_met.CreateMetaDataRepositoryForTests()
 	transactionBuilderFactory := CreateTransactionBuilderFactoryForTests()
 	out := CreateTransactionRepository(chksRepository, metRepository, transactionBuilderFactory)
@@ -91,8 +91,8 @@ func CreateTransactionRepositoryForTests() trs.TransactionRepository {
 // CreateTransactionServiceForTests creates a new TransactionService for tests
 func CreateTransactionServiceForTests() trs.TransactionService {
 	metaDataService := concrete_met.CreateMetaDataServiceForTests()
-	chkBuilderFactory := concrete_chunks.CreateChunksBuilderFactoryForTests()
-	chkService := concrete_chunks.CreateChunksServiceForTests()
+	chkBuilderFactory := concrete_chunks.CreateBuilderFactoryForTests()
+	chkService := concrete_chunks.CreateServiceForTests()
 	storedTrsBuilderFactory := concrete_stored_trs.CreateTransactionBuilderFactoryForTests()
 	out := CreateTransactionService(metaDataService, chkBuilderFactory, chkService, storedTrsBuilderFactory)
 	return out
