@@ -3,7 +3,6 @@ package chunks
 import (
 	"reflect"
 	"testing"
-	"time"
 
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
@@ -18,18 +17,16 @@ func TestBuildChunks_Success(t *testing.T) {
 		concrete_files.CreateFileForTests(),
 		concrete_files.CreateFileForTests(),
 	}
-	createdOn := time.Now().UTC()
 
 	//execute:
 	build := createBuilder()
-	chks, chksErr := build.Create().WithChunks(chksFiles).WithHashTree(htFile).CreatedOn(createdOn).Now()
+	chks, chksErr := build.Create().WithChunks(chksFiles).WithHashTree(htFile).Now()
 	if chksErr != nil {
 		t.Errorf("the returned error was expected to be nil, returned: %s", chksErr.Error())
 	}
 
 	retHt := chks.GetHashTree()
 	retChks := chks.GetChunks()
-	retCreatedOn := chks.CreatedOn()
 
 	if !reflect.DeepEqual(htFile, retHt.(*concrete_files.File)) {
 		t.Errorf("the returned hashtree file was invalid")
@@ -45,33 +42,6 @@ func TestBuildChunks_Success(t *testing.T) {
 		}
 	}
 
-	if createdOn != retCreatedOn {
-		t.Errorf("the returned creation time is invalid")
-	}
-
-}
-
-func TestBuildChunks_withoutCreatedOn_returnsError(t *testing.T) {
-
-	//variables:
-	htFile := concrete_files.CreateFileForTests()
-	chksFiles := []files.File{
-		concrete_files.CreateFileForTests(),
-		concrete_files.CreateFileForTests(),
-		concrete_files.CreateFileForTests(),
-	}
-
-	//execute:
-	build := createBuilder()
-	chks, chksErr := build.Create().WithChunks(chksFiles).WithHashTree(htFile).Now()
-	if chksErr == nil {
-		t.Errorf("the returned error was expected to be valid, nil returned")
-	}
-
-	if chks != nil {
-		t.Errorf("the returned instance was expected to be nil, instance returned")
-	}
-
 }
 
 func TestBuildChunks_withoutHashTree_returnsError(t *testing.T) {
@@ -82,11 +52,10 @@ func TestBuildChunks_withoutHashTree_returnsError(t *testing.T) {
 		concrete_files.CreateFileForTests(),
 		concrete_files.CreateFileForTests(),
 	}
-	createdOn := time.Now().UTC()
 
 	//execute:
 	build := createBuilder()
-	chks, chksErr := build.Create().WithChunks(chksFiles).CreatedOn(createdOn).Now()
+	chks, chksErr := build.Create().WithChunks(chksFiles).Now()
 	if chksErr == nil {
 		t.Errorf("the returned error was expected to be valid, nil returned")
 	}
@@ -101,11 +70,10 @@ func TestBuildChunks_withoutChunks_returnsError(t *testing.T) {
 
 	//variables:
 	htFile := concrete_files.CreateFileForTests()
-	createdOn := time.Now().UTC()
 
 	//execute:
 	build := createBuilder()
-	chks, chksErr := build.Create().WithHashTree(htFile).CreatedOn(createdOn).Now()
+	chks, chksErr := build.Create().WithHashTree(htFile).Now()
 	if chksErr == nil {
 		t.Errorf("the returned error was expected to be valid, nil returned")
 	}
@@ -121,11 +89,10 @@ func TestBuildChunks_withEmptyChunks_returnsError(t *testing.T) {
 	//variables:
 	htFile := concrete_files.CreateFileForTests()
 	chksFiles := []files.File{}
-	createdOn := time.Now().UTC()
 
 	//execute:
 	build := createBuilder()
-	chks, chksErr := build.Create().WithChunks(chksFiles).WithHashTree(htFile).CreatedOn(createdOn).Now()
+	chks, chksErr := build.Create().WithChunks(chksFiles).WithHashTree(htFile).Now()
 	if chksErr == nil {
 		t.Errorf("the returned error was expected to be valid, nil returned")
 	}

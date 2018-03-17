@@ -1,4 +1,4 @@
-package domain
+package users
 
 import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"

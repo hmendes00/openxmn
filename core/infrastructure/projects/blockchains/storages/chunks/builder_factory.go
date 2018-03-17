@@ -9,13 +9,13 @@ type BuilderFactory struct {
 }
 
 // CreateBuilderFactory builds a new BuilderFactory instance
-func CreateBuilderFactory() chunk.ChunksBuilderFactory {
+func CreateBuilderFactory() chunk.BuilderFactory {
 	out := BuilderFactory{}
 	return &out
 }
 
 // Create initializes the ChunksBuilder instance
-func (fac *BuilderFactory) Create() chunk.ChunksBuilder {
+func (fac *BuilderFactory) Create() chunk.Builder {
 	out := createBuilder()
 	return out
 }

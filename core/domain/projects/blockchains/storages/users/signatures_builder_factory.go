@@ -1,4 +1,4 @@
-package domain
+package users
 
 // SignaturesBuilderFactory represents a SignaturesBuilder factory
 type SignaturesBuilderFactory interface {

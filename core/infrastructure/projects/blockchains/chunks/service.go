@@ -2,7 +2,6 @@ package chunks
 
 import (
 	"path/filepath"
-	"time"
 
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/chunks"
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/files"
@@ -10,17 +9,17 @@ import (
 	stored_chunks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/chunks"
 )
 
-// ChunksService represents a concrete ChunksService implementation
-type ChunksService struct {
+// Service represents a concrete ChunksService implementation
+type Service struct {
 	htService               hashtree.HashTreeService
 	fileService             files.FileService
 	fileBuilderFactory      files.FileBuilderFactory
-	storedChkBuilderFactory stored_chunks.ChunksBuilderFactory
+	storedChkBuilderFactory stored_chunks.BuilderFactory
 }
 
-// CreateChunksService creates a new ChunksService instance
-func CreateChunksService(htService hashtree.HashTreeService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedChkBuilderFactory stored_chunks.ChunksBuilderFactory) chunk.ChunksService {
-	out := ChunksService{
+// CreateService creates a new ChunksService instance
+func CreateService(htService hashtree.HashTreeService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedChkBuilderFactory stored_chunks.BuilderFactory) chunk.Service {
+	out := Service{
 		htService:               htService,
 		fileService:             fileService,
 		fileBuilderFactory:      fileBuilderFactory,
@@ -30,7 +29,7 @@ func CreateChunksService(htService hashtree.HashTreeService, fileService files.F
 }
 
 // Save saves a Chunks instance to disk
-func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks.Chunks, error) {
+func (serv *Service) Save(dirPath string, chk chunk.Chunks) (stored_chunks.Chunks, error) {
 	//save the hashtree:
 	ht := chk.GetHashTree()
 	storedHt, storedHtErr := serv.htService.Save(dirPath, ht)
@@ -47,8 +46,7 @@ func (serv *ChunksService) Save(dirPath string, chk chunk.Chunks) (stored_chunks
 	}
 
 	//build the stored chunks:
-	ts := time.Now()
-	storedChk, storedChkErr := serv.storedChkBuilderFactory.Create().Create().WithChunks(storedFiles).WithHashTree(storedHt).CreatedOn(ts).Now()
+	storedChk, storedChkErr := serv.storedChkBuilderFactory.Create().Create().WithChunks(storedFiles).WithHashTree(storedHt).Now()
 	if storedChkErr != nil {
 		return nil, storedChkErr
 	}

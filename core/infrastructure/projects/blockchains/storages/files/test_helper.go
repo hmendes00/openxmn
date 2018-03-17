@@ -1,11 +1,9 @@
 package files
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"time"
 
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
+	dfil "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 )
 
 // CreateFileForTests creates a File for tests
@@ -14,17 +12,21 @@ func CreateFileForTests() *File {
 	path := "/tmp"
 	data := []byte("this is some data")
 	sizeInBytes := len(data)
-	h := sha256.New()
-	h.Write(data)
-	hAsString := hex.EncodeToString(h.Sum(nil))
 	createdOn := time.Now().UTC()
 
-	out := createFile(path, hAsString, sizeInBytes, createdOn)
+	out := createFile(path, sizeInBytes, createdOn)
 	return out.(*File)
 }
 
 // CreateFileBuilderFactoryForTests creates a new FileBuilderFactory for tests
-func CreateFileBuilderFactoryForTests() files.FileBuilderFactory {
+func CreateFileBuilderFactoryForTests() dfil.FileBuilderFactory {
 	out := CreateFileBuilderFactory()
+	return out
+}
+
+// CreateFileRepositoryForTests creates a new FileRepository for tests
+func CreateFileRepositoryForTests() dfil.FileRepository {
+	fileBuilderFactory := CreateFileBuilderFactoryForTests()
+	out := CreateFileRepository(fileBuilderFactory)
 	return out
 }

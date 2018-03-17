@@ -7,31 +7,31 @@ import (
 	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/chunks"
 )
 
-// CreateChunksBuilderFactoryForTests creates a new ChunksBuilderFactory for tests
-func CreateChunksBuilderFactoryForTests() chunk.ChunksBuilderFactory {
+// CreateBuilderFactoryForTests creates a new BuilderFactory for tests
+func CreateBuilderFactoryForTests() chunk.BuilderFactory {
 	fileBuilderFactory := concrete_files.CreateFileBuilderFactoryForTests()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
 	chkSizeInBytes := 16
 	extension := "chks"
-	out := CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	out := CreateBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	return out
 }
 
-// CreateChunksRepositoryForTests creates a new ChunksRepository for tests
-func CreateChunksRepositoryForTests() chunk.ChunksRepository {
+// CreateRepositoryForTests creates a new ChunksRepository for tests
+func CreateRepositoryForTests() chunk.Repository {
 	htRepository := concrete_hashtrees.CreateHashTreeRepositoryForTests()
 	fileRepository := concrete_files.CreateFileRepositoryForTests()
-	chksBuilderFactory := CreateChunksBuilderFactoryForTests()
-	out := CreateChunksRepository(htRepository, fileRepository, chksBuilderFactory)
+	chksBuilderFactory := CreateBuilderFactoryForTests()
+	out := CreateRepository(htRepository, fileRepository, chksBuilderFactory)
 	return out
 }
 
-// CreateChunksServiceForTests creates a new ChunksService for tests
-func CreateChunksServiceForTests() chunk.ChunksService {
+// CreateServiceForTests creates a new ChunksService for tests
+func CreateServiceForTests() chunk.Service {
 	htService := concrete_hashtrees.CreateHashTreeServiceForTests()
 	fileService := concrete_files.CreateFileServiceForTests()
 	fileBuilderFactory := concrete_files.CreateFileBuilderFactoryForTests()
 	storedChkBuilderFactory := concrete_stored_chunks.CreateBuilderFactoryForTests()
-	out := CreateChunksService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
+	out := CreateService(htService, fileService, fileBuilderFactory, storedChkBuilderFactory)
 	return out
 }

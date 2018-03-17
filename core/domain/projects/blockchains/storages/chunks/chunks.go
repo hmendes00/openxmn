@@ -1,8 +1,6 @@
-package domain
+package chunks
 
 import (
-	"time"
-
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 )
 
@@ -10,5 +8,4 @@ import (
 type Chunks interface {
 	GetHashTree() files.File
 	GetChunks() []files.File
-	CreatedOn() time.Time
 }

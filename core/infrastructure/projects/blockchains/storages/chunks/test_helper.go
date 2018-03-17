@@ -1,8 +1,6 @@
 package chunks
 
 import (
-	"time"
-
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/chunks"
 	concrete_file "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
@@ -16,14 +14,13 @@ func CreateChunksForTests() *Chunks {
 		concrete_file.CreateFileForTests(),
 		concrete_file.CreateFileForTests(),
 	}
-	createdOn := time.Now().UTC()
 
-	out := createChunks(htFile, chks, createdOn)
+	out := createChunks(htFile, chks)
 	return out.(*Chunks)
 }
 
 // CreateBuilderFactoryForTests creates a new ChunksBuilderFactory for tests
-func CreateBuilderFactoryForTests() chunk.ChunksBuilderFactory {
+func CreateBuilderFactoryForTests() chunk.BuilderFactory {
 	out := CreateBuilderFactory()
 	return out
 }

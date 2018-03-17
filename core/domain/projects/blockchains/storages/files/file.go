@@ -1,4 +1,4 @@
-package domain
+package files
 
 import (
 	"time"
@@ -7,7 +7,6 @@ import (
 // File represents a file stored on disk
 type File interface {
 	GetPath() string
-	GetHash() string
 	GetSizeInBytes() int
 	CreatedOn() time.Time
 }

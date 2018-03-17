@@ -1,4 +1,4 @@
-package domain
+package chunks
 
 import (
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/files"

@@ -1,7 +1,6 @@
 package files
 
 import (
-	"encoding/hex"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -50,14 +49,11 @@ func (serv *fileService) Save(dirPath string, fil files.File) (stored_files.File
 
 	//build the stored file:
 	ts := time.Now()
-	h := fil.GetHash()
-	hAsString := hex.EncodeToString(h.Sum(nil))
 	sizeInBytes := fil.GetSizeInBytes()
 	storedFile, storedFileErr := serv.storedFileBuilderFactory.
 		Create().
 		Create().
 		WithPath(filePath).
-		WithHash(hAsString).
 		WithSizeInBytes(sizeInBytes).
 		CreatedOn(ts).
 		Now()

@@ -1,8 +1,6 @@
 package files
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"math/rand"
 	"testing"
 	"time"
@@ -14,25 +12,17 @@ func TestCreateFile_Success(t *testing.T) {
 
 	//variables:
 	path := "/tmp"
-	h := sha256.New()
-	h.Write([]byte(path))
-	hAsString := hex.EncodeToString(h.Sum(nil))
 	sizeInBytes := rand.Int()%5000 + 1000
 	createdOn := time.Now()
 
 	//execute:
-	fil := createFile(path, hAsString, sizeInBytes, createdOn)
+	fil := createFile(path, sizeInBytes, createdOn)
 	retPath := fil.GetPath()
-	retHash := fil.GetHash()
 	retSizeInBytes := fil.GetSizeInBytes()
 	retCreatedOn := fil.CreatedOn()
 
 	if path != retPath {
 		t.Errorf("the returned path is invalid.  Expected: %s, Returned: %s", path, retPath)
-	}
-
-	if hAsString != retHash {
-		t.Errorf("the returned hash is invalid.  Expected: %s, Returned: %s", hAsString, retHash)
 	}
 
 	if sizeInBytes != retSizeInBytes {

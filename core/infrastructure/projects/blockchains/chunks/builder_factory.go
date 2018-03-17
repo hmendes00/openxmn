@@ -6,17 +6,17 @@ import (
 	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/hashtrees"
 )
 
-// ChunksBuilderFactory represents a concrete ChunksBuilderFactory implementation
-type ChunksBuilderFactory struct {
+// BuilderFactory represents a concrete BuilderFactory implementation
+type BuilderFactory struct {
 	fileBuilderFactory files.FileBuilderFactory
 	htBuilderFactory   hashtrees.HashTreeBuilderFactory
 	chkSizeInBytes     int
 	extension          string
 }
 
-// CreateChunksBuilderFactory creates a new ChunksBuilderFactory instance
-func CreateChunksBuilderFactory(fileBuilderFactory files.FileBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, chkSizeInBytes int, extension string) chunk.ChunksBuilderFactory {
-	out := ChunksBuilderFactory{
+// CreateBuilderFactory creates a new BuilderFactory instance
+func CreateBuilderFactory(fileBuilderFactory files.FileBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, chkSizeInBytes int, extension string) chunk.BuilderFactory {
+	out := BuilderFactory{
 		fileBuilderFactory: fileBuilderFactory,
 		htBuilderFactory:   htBuilderFactory,
 		chkSizeInBytes:     chkSizeInBytes,
@@ -25,8 +25,8 @@ func CreateChunksBuilderFactory(fileBuilderFactory files.FileBuilderFactory, htB
 	return &out
 }
 
-// Create creates a new ChunksBuilder instance
-func (fac *ChunksBuilderFactory) Create() chunk.ChunksBuilder {
-	out := createChunksBuilder(fac.fileBuilderFactory, fac.htBuilderFactory, fac.chkSizeInBytes, fac.extension)
+// Create creates a new Builder instance
+func (fac *BuilderFactory) Create() chunk.Builder {
+	out := createBuilder(fac.fileBuilderFactory, fac.htBuilderFactory, fac.chkSizeInBytes, fac.extension)
 	return out
 }

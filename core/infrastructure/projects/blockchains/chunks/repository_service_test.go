@@ -34,7 +34,7 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	fileService := concrete_files.CreateFileService(storedFileBuilderFactory)
 	fileBuilderFactory := concrete_files.CreateFileBuilderFactoryForTests()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	chksBuilderFactory := CreateChunksBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	chksBuilderFactory := CreateBuilderFactory(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 
 	//delete the files at the end:
 	defer func() {
@@ -45,8 +45,8 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	chks, _ := chksBuilderFactory.Create().Create().WithData(readData).Now()
 
 	//execute:
-	service := CreateChunksServiceForTests()
-	repository := CreateChunksRepositoryForTests()
+	service := CreateServiceForTests()
+	repository := CreateRepositoryForTests()
 
 	//verify that the chunks do not exists:
 	if _, err := os.Stat(saveInPath); !os.IsNotExist(err) {
@@ -77,11 +77,6 @@ func TestSave_thenRetrieve_Success(t *testing.T) {
 	jsErr := json.Unmarshal(htRead, readHt)
 	if jsErr != nil {
 		t.Errorf("the error was expected to be nil, error returned: %s", jsErr.Error())
-	}
-
-	//compare the hashes of the hashtrees:
-	if htFile.GetHash() != readHt.GetHash().String() {
-		//		t.Errorf("the hash of the stored hashtree is different than the hash of the hashtree on file (%s).  Expected: %s, Read: %s", htFilePath, htFile.GetHash(), readHt.GetHash().String())
 	}
 
 	//make sure the chunk files exists:

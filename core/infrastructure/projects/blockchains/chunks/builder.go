@@ -11,7 +11,7 @@ import (
 	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/hashtrees"
 )
 
-type chunksBuilder struct {
+type builder struct {
 	fileBuilderFactory files.FileBuilderFactory
 	htBuilderFactory   hashtrees.HashTreeBuilderFactory
 	chkSizeInBytes     int
@@ -21,8 +21,8 @@ type chunksBuilder struct {
 	v                  interface{}
 }
 
-func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, chkSizeInBytes int, extension string) chunk.ChunksBuilder {
-	out := chunksBuilder{
+func createBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, chkSizeInBytes int, extension string) chunk.Builder {
+	out := builder{
 		fileBuilderFactory: fileBuilderFactory,
 		htBuilderFactory:   htBuilderFactory,
 		chkSizeInBytes:     chkSizeInBytes,
@@ -35,34 +35,34 @@ func createChunksBuilder(fileBuilderFactory files.FileBuilderFactory, htBuilderF
 	return &out
 }
 
-// Create creates a new ChunksBuilder instance
-func (build *chunksBuilder) Create() chunk.ChunksBuilder {
+// Create creates a new Builder instance
+func (build *builder) Create() chunk.Builder {
 	build.data = nil
 	build.blocks = nil
 	build.v = nil
 	return build
 }
 
-// WithData adds data to the ChunksBuilder instance
-func (build *chunksBuilder) WithData(data []byte) chunk.ChunksBuilder {
+// WithData adds data to the Builder instance
+func (build *builder) WithData(data []byte) chunk.Builder {
 	build.data = data
 	return build
 }
 
-// WithBlocksData adds data blocks to the ChunksBuilder instance
-func (build *chunksBuilder) WithBlocksData(blocks [][]byte) chunk.ChunksBuilder {
+// WithBlocksData adds data blocks to the Builder instance
+func (build *builder) WithBlocksData(blocks [][]byte) chunk.Builder {
 	build.blocks = blocks
 	return build
 }
 
-// WithInstance adds an instance to the ChunksBuilder
-func (build *chunksBuilder) WithInstance(v interface{}) chunk.ChunksBuilder {
+// WithInstance adds an instance to the Builder
+func (build *builder) WithInstance(v interface{}) chunk.Builder {
 	build.v = v
 	return build
 }
 
 // Now builds a Chunks instance
-func (build *chunksBuilder) Now() (chunk.Chunks, error) {
+func (build *builder) Now() (chunk.Chunks, error) {
 
 	if build.v != nil {
 		buf := new(bytes.Buffer)

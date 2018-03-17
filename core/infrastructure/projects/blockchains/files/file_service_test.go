@@ -2,8 +2,6 @@ package files
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/hex"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -21,16 +19,8 @@ func createFileForTests(data []byte, fileName string, ext string) files.File {
 func verifyFilesInServiceForTests(t *testing.T, saveInPath string, fils []files.File, storedFiles []stored_files.File) {
 	for index, oneFile := range fils {
 		storedFile := storedFiles[index]
-		retFirstHash := storedFile.GetHash()
 		retFirstPath := storedFile.GetPath()
 		retFirstSize := storedFile.GetSizeInBytes()
-
-		h := sha256.New()
-		h.Write(oneFile.GetData())
-		hashAsString := hex.EncodeToString(h.Sum(nil))
-		if hashAsString != retFirstHash {
-			t.Errorf("the returned hash is invalid.  Expected: %s, Returned: %s", hashAsString, retFirstHash)
-		}
 
 		fullFilePath := oneFile.GetFilePath()
 		if fullFilePath != retFirstPath {

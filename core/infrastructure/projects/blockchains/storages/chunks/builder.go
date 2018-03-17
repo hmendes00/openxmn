@@ -2,7 +2,6 @@ package chunks
 
 import (
 	"errors"
-	"time"
 
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/chunks"
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
@@ -10,44 +9,35 @@ import (
 )
 
 type builder struct {
-	ht        files.File
-	chks      []files.File
-	createdOn *time.Time
+	ht   files.File
+	chks []files.File
 }
 
-func createBuilder() chunk.ChunksBuilder {
+func createBuilder() chunk.Builder {
 	out := builder{
-		ht:        nil,
-		chks:      nil,
-		createdOn: nil,
+		ht:   nil,
+		chks: nil,
 	}
 
 	return &out
 }
 
 // Create initializes the ChunksBuilder instance
-func (build *builder) Create() chunk.ChunksBuilder {
+func (build *builder) Create() chunk.Builder {
 	build.ht = nil
 	build.chks = nil
-	build.createdOn = nil
 	return build
 }
 
 // WithHashTree adds an HashTree file to the ChunksBuilder instance
-func (build *builder) WithHashTree(ht files.File) chunk.ChunksBuilder {
+func (build *builder) WithHashTree(ht files.File) chunk.Builder {
 	build.ht = ht
 	return build
 }
 
 // WithChunks adds Chunks files to the ChunksBuilder instance
-func (build *builder) WithChunks(fil []files.File) chunk.ChunksBuilder {
+func (build *builder) WithChunks(fil []files.File) chunk.Builder {
 	build.chks = fil
-	return build
-}
-
-// CreatedOn adds creation time to the ChunksBuilder instance
-func (build *builder) CreatedOn(ts time.Time) chunk.ChunksBuilder {
-	build.createdOn = &ts
 	return build
 }
 
@@ -61,10 +51,6 @@ func (build *builder) Now() (chunk.Chunks, error) {
 		return nil, errors.New("the chunks files are mandatory in order to build a Chunks instance")
 	}
 
-	if build.createdOn == nil {
-		return nil, errors.New("the creation time is mandatory in order to build a Chunks instance")
-	}
-
 	if len(build.chks) <= 0 {
 		return nil, errors.New("there must be at least 1 file in the chunks in order to build a Chunks instance")
 	}
@@ -74,6 +60,6 @@ func (build *builder) Now() (chunk.Chunks, error) {
 		chks = append(chks, oneChks.(*concrete_files.File))
 	}
 
-	out := createChunks(build.ht.(*concrete_files.File), chks, *build.createdOn)
+	out := createChunks(build.ht.(*concrete_files.File), chks)
 	return out, nil
 }

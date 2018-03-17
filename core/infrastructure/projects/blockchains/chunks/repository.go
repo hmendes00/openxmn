@@ -9,20 +9,20 @@ import (
 	hashtree "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/hashtrees"
 )
 
-// ChunksRepository represents a concrete ChunksRepository implementation
-type ChunksRepository struct {
+// Repository represents a concrete ChunksRepository implementation
+type Repository struct {
 	htRepository       hashtree.HashTreeRepository
 	fileRepository     files.FileRepository
-	chksBuilderFactory chunk.ChunksBuilderFactory
+	chksBuilderFactory chunk.BuilderFactory
 }
 
-// CreateChunksRepository creates a new ChunksRepository instance
-func CreateChunksRepository(
+// CreateRepository creates a new ChunksRepository instance
+func CreateRepository(
 	htRepository hashtree.HashTreeRepository,
 	fileRepository files.FileRepository,
-	chksBuilderFactory chunk.ChunksBuilderFactory,
-) chunk.ChunksRepository {
-	out := ChunksRepository{
+	chksBuilderFactory chunk.BuilderFactory,
+) chunk.Repository {
+	out := Repository{
 		htRepository:       htRepository,
 		fileRepository:     fileRepository,
 		chksBuilderFactory: chksBuilderFactory,
@@ -31,7 +31,7 @@ func CreateChunksRepository(
 }
 
 // Retrieve retrieves a Chunks instance
-func (rep *ChunksRepository) Retrieve(dirPath string) (chunk.Chunks, error) {
+func (rep *Repository) Retrieve(dirPath string) (chunk.Chunks, error) {
 
 	//create the paths:
 	chksDirPath := filepath.Join(dirPath, "chunks")

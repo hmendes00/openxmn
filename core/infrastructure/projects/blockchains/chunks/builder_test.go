@@ -48,7 +48,7 @@ func TestBuildChunks_Success(t *testing.T) {
 	}
 
 	//execute:
-	build := createChunksBuilder(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	build := createBuilder(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	chks, chksErr := build.Create().WithData(data).Now()
 	if chksErr != nil {
 		t.Errorf("the returned error was expected to be nil, returned: %s", chksErr.Error())
@@ -96,7 +96,7 @@ func TestBuildChunks_withInstance_Success(t *testing.T) {
 	}
 
 	//execute:
-	build := createChunksBuilder(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
+	build := createBuilder(fileBuilderFactory, htBuilderFactory, chkSizeInBytes, extension)
 	chks, chksErr := build.Create().WithInstance(ins).Now()
 	if chksErr != nil {
 		t.Errorf("the returned error was expected to be nil, returned: %s", chksErr.Error())
