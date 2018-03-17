@@ -6,6 +6,8 @@ import (
 	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated"
 	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated/chained"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
+	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/blocks/validated"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
 type blockBuilder struct {
@@ -51,6 +53,6 @@ func (build *blockBuilder) Now() (stored_chained_blocks.Block, error) {
 		return nil, errors.New("the stored validated block is mandatory in order to build a stored Block instance")
 	}
 
-	out := createBlock(build.met, build.blk)
+	out := createBlock(build.met.(*concrete_stored_files.File), build.blk.(*concrete_stored_validated_blocks.Block))
 	return out, nil
 }

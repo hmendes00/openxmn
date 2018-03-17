@@ -7,6 +7,9 @@ import (
 	stored_validated_block "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/blocks"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/users"
 )
 
 type blockBuilder struct {
@@ -65,6 +68,6 @@ func (build *blockBuilder) Now() (stored_validated_block.Block, error) {
 		return nil, errors.New("the signatures is mandatory in order to build a Block instance")
 	}
 
-	out := createBlock(build.metaData, build.blk, build.sigs)
+	out := createBlock(build.metaData.(*concrete_stored_files.File), build.blk.(*concrete_stored_block.SignedBlock), build.sigs.(*concrete_stored_users.Signatures))
 	return out, nil
 }

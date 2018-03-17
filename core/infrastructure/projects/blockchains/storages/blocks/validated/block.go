@@ -5,35 +5,39 @@ import (
 	stored_validated_block "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/blocks"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/users"
 )
 
-type block struct {
-	metaData stored_files.File
-	blk      stored_block.SignedBlock
-	sigs     stored_users.Signatures
+// Block represents a concrete stored validated block implementation
+type Block struct {
+	MetaData *concrete_stored_files.File        `json:"metadata"`
+	Blk      *concrete_stored_block.SignedBlock `json:"signed_block"`
+	Sigs     *concrete_stored_users.Signatures  `json:"signatures"`
 }
 
-func createBlock(metaData stored_files.File, blk stored_block.SignedBlock, sigs stored_users.Signatures) stored_validated_block.Block {
-	out := block{
-		metaData: metaData,
-		blk:      blk,
-		sigs:     sigs,
+func createBlock(metaData *concrete_stored_files.File, blk *concrete_stored_block.SignedBlock, sigs *concrete_stored_users.Signatures) stored_validated_block.Block {
+	out := Block{
+		MetaData: metaData,
+		Blk:      blk,
+		Sigs:     sigs,
 	}
 
 	return &out
 }
 
 // GetMetaData returns the metadata file
-func (blk *block) GetMetaData() stored_files.File {
-	return blk.metaData
+func (blk *Block) GetMetaData() stored_files.File {
+	return blk.MetaData
 }
 
 // GetBlock returns the stored block
-func (blk *block) GetBlock() stored_block.SignedBlock {
-	return blk.blk
+func (blk *Block) GetBlock() stored_block.SignedBlock {
+	return blk.Blk
 }
 
 // GetSignatures returns the stored signatures
-func (blk *block) GetSignatures() stored_users.Signatures {
-	return blk.sigs
+func (blk *Block) GetSignatures() stored_users.Signatures {
+	return blk.Sigs
 }

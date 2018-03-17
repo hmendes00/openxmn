@@ -6,6 +6,8 @@ import (
 	stored_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed/aggregated"
+	conrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/transactions/signed/aggregated"
 )
 
 type blockBuilder struct {
@@ -51,6 +53,11 @@ func (build *blockBuilder) Now() (stored_blocks.Block, error) {
 		return nil, errors.New("the SignedTransactions are mandatory in order to build a Block instance")
 	}
 
-	out := createBlock(build.met, build.trs)
+	trs := []*concrete_stored_aggregated_transactions.SignedTransactions{}
+	for _, oneTrs := range build.trs {
+		trs = append(trs, oneTrs.(*concrete_stored_aggregated_transactions.SignedTransactions))
+	}
+
+	out := createBlock(build.met.(*conrete_stored_files.File), trs)
 	return out, nil
 }
