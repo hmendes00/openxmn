@@ -5,6 +5,7 @@ import (
 
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
 type transactionsBuilder struct {
@@ -50,6 +51,11 @@ func (build *transactionsBuilder) Now() (stored_signed_transactions.Transactions
 		return nil, errors.New("the []Transaction is mandatory in order to build a Transactions instance")
 	}
 
-	out := createTransactions(build.met, build.trs)
+	trs := []*Transaction{}
+	for _, oneTrs := range build.trs {
+		trs = append(trs, oneTrs.(*Transaction))
+	}
+
+	out := createTransactions(build.met.(*concrete_stored_files.File), trs)
 	return out, nil
 }

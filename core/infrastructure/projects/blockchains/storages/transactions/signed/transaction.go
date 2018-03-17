@@ -5,35 +5,39 @@ import (
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions"
 	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/transactions"
+	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/users"
 )
 
-type transaction struct {
-	metaData stored_files.File
-	sig      stored_users.Signature
-	trs      stored_transactions.Transaction
+// Transaction represents a concrete stored signed transaction implementation
+type Transaction struct {
+	MetaData *concrete_stored_files.File               `json:"metadata"`
+	Sig      *concrete_stored_users.Signature          `json:"signature"`
+	Trs      *concrete_stored_transactions.Transaction `json:"transaction"`
 }
 
-func createTransaction(metaData stored_files.File, sig stored_users.Signature, trs stored_transactions.Transaction) stored_signed_transactions.Transaction {
-	out := transaction{
-		metaData: metaData,
-		sig:      sig,
-		trs:      trs,
+func createTransaction(metaData *concrete_stored_files.File, sig *concrete_stored_users.Signature, trs *concrete_stored_transactions.Transaction) stored_signed_transactions.Transaction {
+	out := Transaction{
+		MetaData: metaData,
+		Sig:      sig,
+		Trs:      trs,
 	}
 
 	return &out
 }
 
 // GetMetaData returns the metadata file
-func (trs *transaction) GetMetaData() stored_files.File {
-	return trs.metaData
+func (trs *Transaction) GetMetaData() stored_files.File {
+	return trs.MetaData
 }
 
 // GetSignature returns the signature
-func (trs *transaction) GetSignature() stored_users.Signature {
-	return trs.sig
+func (trs *Transaction) GetSignature() stored_users.Signature {
+	return trs.Sig
 }
 
 // GetTransaction returns the stored transaction
-func (trs *transaction) GetTransaction() stored_transactions.Transaction {
-	return trs.trs
+func (trs *Transaction) GetTransaction() stored_transactions.Transaction {
+	return trs.Trs
 }

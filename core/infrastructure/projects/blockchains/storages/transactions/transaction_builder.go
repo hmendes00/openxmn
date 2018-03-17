@@ -6,6 +6,8 @@ import (
 	stored_chunks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/chunks"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions"
+	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/chunks"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
 type transactionBuilder struct {
@@ -51,6 +53,6 @@ func (build *transactionBuilder) Now() (stored_transactions.Transaction, error) 
 		return nil, errors.New("the chunk files is mandatory in order to build a Transaction instance")
 	}
 
-	out := createTransaction(build.metaData, build.chks)
+	out := createTransaction(build.metaData.(*concrete_stored_files.File), build.chks.(*concrete_stored_chunks.Chunks))
 	return out, nil
 }

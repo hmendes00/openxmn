@@ -5,35 +5,39 @@ import (
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions"
 	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	conrete_stored_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/transactions"
+	conrete_stored_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/users"
 )
 
-type atomicTransaction struct {
-	metaData stored_files.File
-	sig      stored_users.Signature
-	trs      stored_transactions.Transactions
+// AtomicTransaction represents a concrete stored AtomicTransaction implementation
+type AtomicTransaction struct {
+	MetaData *concrete_stored_files.File               `json:"metadata"`
+	Sig      *conrete_stored_users.Signature           `json:"signature"`
+	Trs      *conrete_stored_transactions.Transactions `json:"transactions"`
 }
 
-func createAtomicTransaction(metaData stored_files.File, sig stored_users.Signature, trs stored_transactions.Transactions) stored_signed_transactions.AtomicTransaction {
-	out := atomicTransaction{
-		metaData: metaData,
-		sig:      sig,
-		trs:      trs,
+func createAtomicTransaction(metaData *concrete_stored_files.File, sig *conrete_stored_users.Signature, trs *conrete_stored_transactions.Transactions) stored_signed_transactions.AtomicTransaction {
+	out := AtomicTransaction{
+		MetaData: metaData,
+		Sig:      sig,
+		Trs:      trs,
 	}
 
 	return &out
 }
 
 // GetMetaData returns the metadata file
-func (trs *atomicTransaction) GetMetaData() stored_files.File {
-	return trs.metaData
+func (trs *AtomicTransaction) GetMetaData() stored_files.File {
+	return trs.MetaData
 }
 
 // GetSignature returns the signature file
-func (trs *atomicTransaction) GetSignature() stored_users.Signature {
-	return trs.sig
+func (trs *AtomicTransaction) GetSignature() stored_users.Signature {
+	return trs.Sig
 }
 
 // GetTransactions returns the stored transactions
-func (trs *atomicTransaction) GetTransactions() stored_transactions.Transactions {
-	return trs.trs
+func (trs *AtomicTransaction) GetTransactions() stored_transactions.Transactions {
+	return trs.Trs
 }

@@ -6,6 +6,8 @@ import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed/aggregated"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/users"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/users"
 )
 
 type signedTransactionsBuilder struct {
@@ -64,6 +66,6 @@ func (build *signedTransactionsBuilder) Now() (stored_aggregated_transactions.Si
 		return nil, errors.New("the stored transactions are mandatory in order to build a SignedTransactions instance")
 	}
 
-	out := createSignedTransactions(build.metaData, build.sig, build.trs)
+	out := createSignedTransactions(build.metaData.(*concrete_stored_files.File), build.sig.(*concrete_stored_users.Signature), build.trs.(*Transactions))
 	return out, nil
 }

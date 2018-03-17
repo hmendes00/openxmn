@@ -3,28 +3,34 @@ package transactions
 import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
 
-type transactions struct {
-	met stored_files.File
-	trs []stored_transactions.Transaction
+// Transactions represents a concrete stored transactions implemetation
+type Transactions struct {
+	Met *concrete_stored_files.File `json:"metadata"`
+	Trs []*Transaction              `json:"transactions"`
 }
 
-func createTransactions(met stored_files.File, trs []stored_transactions.Transaction) stored_transactions.Transactions {
-	out := transactions{
-		met: met,
-		trs: trs,
+func createTransactions(met *concrete_stored_files.File, trs []*Transaction) stored_transactions.Transactions {
+	out := Transactions{
+		Met: met,
+		Trs: trs,
 	}
 
 	return &out
 }
 
 // GetMetaData returns the metadata
-func (trs *transactions) GetMetaData() stored_files.File {
-	return trs.met
+func (trs *Transactions) GetMetaData() stored_files.File {
+	return trs.Met
 }
 
 // GetTransactions returns the transactions
-func (trs *transactions) GetTransactions() []stored_transactions.Transaction {
-	return trs.trs
+func (trs *Transactions) GetTransactions() []stored_transactions.Transaction {
+	out := []stored_transactions.Transaction{}
+	for _, oneTrs := range trs.Trs {
+		out = append(out, oneTrs)
+	}
+	return out
 }

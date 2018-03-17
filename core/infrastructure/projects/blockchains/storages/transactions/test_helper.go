@@ -2,7 +2,31 @@ package transactions
 
 import (
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions"
+	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/chunks"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
 )
+
+// CreateTransactionForTests creates a Transaction for tests
+func CreateTransactionForTests() *Transaction {
+	met := concrete_stored_files.CreateFileForTests()
+	chks := concrete_stored_chunks.CreateChunksForTests()
+	out := createTransaction(met, chks)
+	return out.(*Transaction)
+}
+
+// CreateTransactionsForTests creates a Transactions for tests
+func CreateTransactionsForTests() *Transactions {
+	met := concrete_stored_files.CreateFileForTests()
+	trs := []*Transaction{
+		CreateTransactionForTests(),
+		CreateTransactionForTests(),
+		CreateTransactionForTests(),
+		CreateTransactionForTests(),
+	}
+
+	out := createTransactions(met, trs)
+	return out.(*Transactions)
+}
 
 // CreateTransactionBuilderFactoryForTests creates a new TransactionBuilderFactory for tests
 func CreateTransactionBuilderFactoryForTests() stored_transactions.TransactionBuilderFactory {
@@ -10,8 +34,8 @@ func CreateTransactionBuilderFactoryForTests() stored_transactions.TransactionBu
 	return out
 }
 
-// CreateTransactionsBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
-func CreateTransactionsBuilderFactoryForTests() stored_transactions.TransactionsBuilderFactory {
-	out := CreateTransactionsBuilderFactory()
+// CreateBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
+func CreateBuilderFactoryForTests() stored_transactions.TransactionsBuilderFactory {
+	out := CreateBuilderFactory()
 	return out
 }

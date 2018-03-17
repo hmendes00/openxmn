@@ -6,6 +6,8 @@ import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"
 	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed"
 	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/transactions/signed/aggregated"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/files"
+	concrete_stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/transactions/signed"
 )
 
 type transactionsBuilder struct {
@@ -64,6 +66,6 @@ func (build *transactionsBuilder) Now() (stored_aggregated_transactions.Transact
 		return nil, errors.New("the atomic transactions file is mandatory in order to build a Transactions instance")
 	}
 
-	out := createTransactions(build.metaData, build.trs, build.atomicTrs)
+	out := createTransactions(build.metaData.(*concrete_stored_files.File), build.trs.(*concrete_stored_signed_transactions.Transactions), build.atomicTrs.(*concrete_stored_signed_transactions.AtomicTransactions))
 	return out, nil
 }
