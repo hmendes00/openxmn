@@ -119,7 +119,7 @@ func CreateTransactionsRepositoryForTests() trs.TransactionsRepository {
 func CreateTransactionsServiceForTests() trs.TransactionsService {
 	metaDataService := concrete_met.CreateMetaDataServiceForTests()
 	trsService := CreateTransactionServiceForTests()
-	storedTrsBuilderFactory := concrete_stored_trs.CreateTransactionsBuilderFactoryForTests()
+	storedTrsBuilderFactory := concrete_stored_trs.CreateBuilderFactory()
 	out := CreateTransactionsService(metaDataService, trsService, storedTrsBuilderFactory)
 	return out
 }
