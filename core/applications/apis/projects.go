@@ -3,28 +3,32 @@ package apis
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	projs "github.com/XMNBlockchain/exmachina-network/core/domain/projects"
-	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks/validated"
-	chained_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks/validated/chained"
+	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated"
+	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated/chained"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )
 
 // Projects represents the projects API
 type Projects struct {
+	blockchainDirPath      string
 	projsBuilderFactory    projs.BuilderFactory
-	validatedBlkRepository validated_blocks.BlockRepository
-	chainedBlkRepository   chained_blocks.BlockRepository
+	validatedBlkRepository stored_validated_blocks.BlockRepository
+	chainedBlkRepository   stored_chained_blocks.BlockRepository
 	projs                  projs.Projects
 }
 
 // CreateProjects creates a new Projects API instance
-func CreateProjects(routePrefix string, router *mux.Router, projsBuilderFactory projs.BuilderFactory, validatedBlkRepository validated_blocks.BlockRepository, chainedBlkRepository chained_blocks.BlockRepository, projs projs.Projects) *Projects {
+func CreateProjects(routePrefix string, router *mux.Router, blockchainDirPath string, projsBuilderFactory projs.BuilderFactory, validatedBlkRepository stored_validated_blocks.BlockRepository, chainedBlkRepository stored_chained_blocks.BlockRepository, projs projs.Projects) *Projects {
 
 	proj := Projects{
+		blockchainDirPath:   blockchainDirPath,
 		projsBuilderFactory: projsBuilderFactory,
 		projs:               projs,
 	}
@@ -37,6 +41,7 @@ func CreateProjects(routePrefix string, router *mux.Router, projsBuilderFactory 
 		"retrieve_project_blockchain":                       fmt.Sprintf("%s/%s/blockchain", routePrefix, idPattern),
 		"retrieve_project_blockchain_floor_validated_block": fmt.Sprintf("%s/%s/blockchain/floor", routePrefix, idPattern),
 		"retrieve_project_blockchain_ceil_chained_block":    fmt.Sprintf("%s/%s/blockchain/ceil", routePrefix, idPattern),
+		"retrieve_project_blockchain_file":                  fmt.Sprintf("%s/%s/blockchain/file/{filepath:[.]+}", routePrefix, idPattern),
 	}
 
 	//create the route handlers:
@@ -45,6 +50,7 @@ func CreateProjects(routePrefix string, router *mux.Router, projsBuilderFactory 
 	router.HandleFunc(rtes["retrieve_project_blockchain"], proj.retrieveProjectBlockchain).Methods("GET")
 	router.HandleFunc(rtes["retrieve_project_blockchain_floor_validated_block"], proj.retrieveBlockchainFloorBlock).Methods("GET")
 	router.HandleFunc(rtes["retrieve_project_blockchain_ceil_chained_block"], proj.retrieveBlockchainCeilBlock).Methods("GET")
+	router.HandleFunc(rtes["retrieve_project_blockchain_file"], proj.retrieveBlockchainFile).Methods("GET")
 
 	//create all the API endpoints to retrieve parts of the blockchain
 	//join the dependencies API: servers, sourcecontrol, wealth, custom
@@ -165,8 +171,19 @@ func (proj *Projects) retrieveProjectBlockchain(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	//retrieve the blockchain associated with the project:
+	//get the blockchain and output it:
+	blkChain := curProj.GetBlockchain()
+	js, jsErr := json.Marshal(blkChain)
+	if jsErr != nil {
+		str := fmt.Sprintf("there was a problem while converting the Blockchain instance to json: %s", jsErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
 
+	//output:
+	w.WriteHeader(http.StatusOK)
+	w.Write(js)
 }
 
 /**
@@ -174,9 +191,123 @@ func (proj *Projects) retrieveProjectBlockchain(w http.ResponseWriter, r *http.R
  */
 
 func (proj *Projects) retrieveBlockchainCeilBlock(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, idErr := uuid.FromString(vars["id"])
+	if idErr != nil {
+		str := fmt.Sprintf("the project ID is invalid, received: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//retrieve the project by ID:
+	curProj := proj.projs.GetByID(&id)
+	if curProj == nil {
+		str := fmt.Sprintf("there is no project at ID: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//retrieve the ceil chained block:
+	diskFilePath := filepath.Join(proj.blockchainDirPath, curProj.GetID().String())
+	ceilChainedBlk, ceilChainedBlkErr := proj.chainedBlkRepository.Retrieve(diskFilePath)
+	if ceilChainedBlkErr != nil {
+		str := fmt.Sprintf("there was an error while retrieving the stored ceil chained block: %s", ceilChainedBlkErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//convert the ceil chained block:
+	js, jsErr := json.Marshal(ceilChainedBlk)
+	if jsErr != nil {
+		str := fmt.Sprintf("there was a problem while converting the ceil chained block instance to json: %s", jsErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//output:
+	w.WriteHeader(http.StatusOK)
+	w.Write(js)
 
 }
 
 func (proj *Projects) retrieveBlockchainFloorBlock(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, idErr := uuid.FromString(vars["id"])
+	if idErr != nil {
+		str := fmt.Sprintf("the project ID is invalid, received: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
 
+	//retrieve the project by ID:
+	curProj := proj.projs.GetByID(&id)
+	if curProj == nil {
+		str := fmt.Sprintf("there is no project at ID: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//retrieve the floor validated block:
+	diskFilePath := filepath.Join(proj.blockchainDirPath, curProj.GetID().String())
+	floorValidatedBlk, floorValidatedBlkErr := proj.validatedBlkRepository.Retrieve(diskFilePath)
+	if floorValidatedBlkErr != nil {
+		str := fmt.Sprintf("there was an error while retrieving the stored floor validated block: %s", floorValidatedBlkErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//convert the floor validated block:
+	js, jsErr := json.Marshal(floorValidatedBlk)
+	if jsErr != nil {
+		str := fmt.Sprintf("there was a problem while converting the floor validated block instance to json: %s", jsErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//output:
+	w.WriteHeader(http.StatusOK)
+	w.Write(js)
+}
+
+func (proj *Projects) retrieveBlockchainFile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, idErr := uuid.FromString(vars["id"])
+	if idErr != nil {
+		str := fmt.Sprintf("the project ID is invalid, received: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//retrieve the project by ID:
+	curProj := proj.projs.GetByID(&id)
+	if curProj == nil {
+		str := fmt.Sprintf("there is no project at ID: %s", id.String())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//retrieve the file by path:
+	filePath := vars["filepath"]
+	diskFilePath := filepath.Join(proj.blockchainDirPath, curProj.GetID().String(), filePath)
+	dat, datErr := ioutil.ReadFile(diskFilePath)
+	if datErr != nil {
+		str := fmt.Sprintf("there was an error while reading the file (path: %s): %s", filePath, datErr.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(str))
+		return
+	}
+
+	//output:
+	w.WriteHeader(http.StatusOK)
+	w.Write(dat)
 }

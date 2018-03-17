@@ -36,3 +36,23 @@ func CreateSignedTransactionsBuilderFactoryForTests() stored_aggregated_transact
 	out := CreateSignedTransactionsBuilderFactory()
 	return out
 }
+
+// CreateTransactionsRepositoryForTests creates a TransactionsRepository for tests
+func CreateTransactionsRepositoryForTests() stored_aggregated_transactions.TransactionsRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	transRepository := concrete_stored_signed_transactions.CreateTransactionsRepositoryForTests()
+	atomicTransRepository := concrete_stored_signed_transactions.CreateAtomicTransactionsRepositoryForTests()
+	aggrTransBuilderFactory := CreateTransactionsBuilderFactoryForTests()
+	out := CreateTransactionsRepository(fileRepository, transRepository, atomicTransRepository, aggrTransBuilderFactory)
+	return out
+}
+
+// CreateSignedTransactionsRepositoryForTests creates a SignedTransactionsRepository for tests
+func CreateSignedTransactionsRepositoryForTests() stored_aggregated_transactions.SignedTransactionsRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	sigRepository := concrete_stored_users.CreateSignatureRepositoryForTests()
+	transRepository := CreateTransactionsRepositoryForTests()
+	signedTransBuilderFactory := CreateSignedTransactionsBuilderFactoryForTests()
+	out := CreateSignedTransactionsRepository(fileRepository, sigRepository, transRepository, signedTransBuilderFactory)
+	return out
+}

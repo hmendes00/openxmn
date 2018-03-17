@@ -41,3 +41,22 @@ func CreateSignedBlockBuilderFactoryForTests() stored_blocks.SignedBlockBuilderF
 	out := CreateSignedBlockBuilderFactory()
 	return out
 }
+
+// CreateBlockRepositoryForTests creates a BlockRepository for tests
+func CreateBlockRepositoryForTests() stored_blocks.BlockRepository {
+	fileRepository := conrete_stored_files.CreateFileRepositoryForTests()
+	aggrTransRepository := concrete_stored_aggregated_transactions.CreateSignedTransactionsRepositoryForTests()
+	blkBuilderFactory := CreateBlockBuilderFactoryForTests()
+	out := CreateBlockRepository(fileRepository, aggrTransRepository, blkBuilderFactory)
+	return out
+}
+
+// CreateSignedBlockRepositoryForTests creates a SignedBlockRepository for tests
+func CreateSignedBlockRepositoryForTests() stored_blocks.SignedBlockRepository {
+	fileRepository := conrete_stored_files.CreateFileRepositoryForTests()
+	sigRepository := concrete_stored_users.CreateSignatureRepositoryForTests()
+	blkRepository := CreateBlockRepositoryForTests()
+	signedBlkBuilderFactory := CreateSignedBlockBuilderFactoryForTests()
+	out := CreateSignedBlockRepository(fileRepository, sigRepository, blkRepository, signedBlkBuilderFactory)
+	return out
+}

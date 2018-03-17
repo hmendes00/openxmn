@@ -12,11 +12,11 @@ import (
 type TransactionsService struct {
 	metaDataService         metadata.MetaDataService
 	trsService              transactions.TransactionService
-	storedTrsBuilderFactory stored_transactions.TransactionsBuilderFactory
+	storedTrsBuilderFactory stored_transactions.BuilderFactory
 }
 
 // CreateTransactionsService creates a new TransactionsService
-func CreateTransactionsService(metaDataService metadata.MetaDataService, trsService transactions.TransactionService, storedTrsBuilderFactory stored_transactions.TransactionsBuilderFactory) transactions.TransactionsService {
+func CreateTransactionsService(metaDataService metadata.MetaDataService, trsService transactions.TransactionService, storedTrsBuilderFactory stored_transactions.BuilderFactory) transactions.TransactionsService {
 	out := TransactionsService{
 		metaDataService:         metaDataService,
 		trsService:              trsService,

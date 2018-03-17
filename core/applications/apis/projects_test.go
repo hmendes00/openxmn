@@ -10,8 +10,8 @@ import (
 	"github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 	concrete_projects "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects"
-	concrete_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks/validated"
-	concrete_chained_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks/validated/chained"
+	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/blocks/validated"
+	concrete_stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/storages/blocks/validated/chained"
 	concrete_sdks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/sdks"
 	concrete_servers "github.com/XMNBlockchain/exmachina-network/core/infrastructure/servers"
 	"github.com/gorilla/mux"
@@ -20,12 +20,13 @@ import (
 func startProjectsAPI() (*http.Server, *concrete_projects.Projects, sdks.Projects, servers.Server) {
 	//factories:
 	projsBuilderFactory := concrete_projects.CreateBuilderFactory()
-	validatedBlkRepository := concrete_validated_blocks.CreateBlockRepositoryForTests()
-	chainedBlkRepository := concrete_chained_blocks.CreateBlockRepositoryForTests()
+	validatedBlkRepository := concrete_stored_validated_blocks.CreateBlockRepositoryForTests()
+	chainedBlkRepository := concrete_stored_chained_blocks.CreateBlockRepositoryForTests()
 
 	//variables:
 	port := 8080
 	routePrefix := "/projects"
+	blockchainDirPath := "test_files"
 	projs := concrete_projects.CreateBuilderFactory().Create().Create().Now().(*concrete_projects.Projects)
 	router := mux.NewRouter()
 	urlAsString := fmt.Sprintf("http://127.0.0.1:%d", port)
@@ -39,7 +40,7 @@ func startProjectsAPI() (*http.Server, *concrete_projects.Projects, sdks.Project
 	}
 
 	//create the api app:
-	CreateProjects(routePrefix, router, projsBuilderFactory, validatedBlkRepository, chainedBlkRepository, projs)
+	CreateProjects(routePrefix, router, blockchainDirPath, projsBuilderFactory, validatedBlkRepository, chainedBlkRepository, projs)
 
 	//starts the http server:
 	go httpServer.ListenAndServe()

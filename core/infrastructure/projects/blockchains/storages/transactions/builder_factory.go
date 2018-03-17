@@ -9,13 +9,13 @@ type BuilderFactory struct {
 }
 
 // CreateBuilderFactory creates a new BuilderFactory instance
-func CreateBuilderFactory() stored_transactions.TransactionsBuilderFactory {
+func CreateBuilderFactory() stored_transactions.BuilderFactory {
 	out := BuilderFactory{}
 	return &out
 }
 
 // Create creates a new TransactionsBuilder instance
-func (fac *BuilderFactory) Create() stored_transactions.TransactionsBuilder {
+func (fac *BuilderFactory) Create() stored_transactions.Builder {
 	out := createBuilder()
 	return out
 }

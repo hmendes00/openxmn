@@ -35,7 +35,25 @@ func CreateTransactionBuilderFactoryForTests() stored_transactions.TransactionBu
 }
 
 // CreateBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
-func CreateBuilderFactoryForTests() stored_transactions.TransactionsBuilderFactory {
+func CreateBuilderFactoryForTests() stored_transactions.BuilderFactory {
 	out := CreateBuilderFactory()
+	return out
+}
+
+// CreateTransactionRepositoryForTests creates a TransactionRepository for tests
+func CreateTransactionRepositoryForTests() stored_transactions.TransactionRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	chkRepository := concrete_stored_chunks.CreateRepositoryForTests()
+	trsBuilderFactory := CreateTransactionBuilderFactoryForTests()
+	out := CreateTransactionRepository(fileRepository, chkRepository, trsBuilderFactory)
+	return out
+}
+
+// CreateRepositoryForTests creates a Repository for tests
+func CreateRepositoryForTests() stored_transactions.Repository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	trsRepository := CreateTransactionRepositoryForTests()
+	transBuilderFactory := CreateBuilderFactoryForTests()
+	out := CreateRepository(fileRepository, trsRepository, transBuilderFactory)
 	return out
 }

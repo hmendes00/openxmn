@@ -24,3 +24,11 @@ func CreateBuilderFactoryForTests() chunk.BuilderFactory {
 	out := CreateBuilderFactory()
 	return out
 }
+
+// CreateRepositoryForTests creates a Repository for tests
+func CreateRepositoryForTests() chunk.Repository {
+	fileRepository := concrete_file.CreateFileRepositoryForTests()
+	chkBuilderFactory := CreateBuilderFactoryForTests()
+	out := CreateRepository(fileRepository, chkBuilderFactory)
+	return out
+}

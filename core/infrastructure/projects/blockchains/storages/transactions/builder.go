@@ -13,7 +13,7 @@ type builder struct {
 	trs []stored_transactions.Transaction
 }
 
-func createBuilder() stored_transactions.TransactionsBuilder {
+func createBuilder() stored_transactions.Builder {
 	out := builder{
 		met: nil,
 		trs: nil,
@@ -23,20 +23,20 @@ func createBuilder() stored_transactions.TransactionsBuilder {
 }
 
 // Create initializes the Transactions bulder
-func (build *builder) Create() stored_transactions.TransactionsBuilder {
+func (build *builder) Create() stored_transactions.Builder {
 	build.met = nil
 	build.trs = nil
 	return build
 }
 
 // WithMetaData adds MetaData to the Transactions builder
-func (build *builder) WithMetaData(met stored_files.File) stored_transactions.TransactionsBuilder {
+func (build *builder) WithMetaData(met stored_files.File) stored_transactions.Builder {
 	build.met = met
 	return build
 }
 
 // WithTransactions adds Transactions to the Transactions builder
-func (build *builder) WithTransactions(trs []stored_transactions.Transaction) stored_transactions.TransactionsBuilder {
+func (build *builder) WithTransactions(trs []stored_transactions.Transaction) stored_transactions.Builder {
 	build.trs = trs
 	return build
 }

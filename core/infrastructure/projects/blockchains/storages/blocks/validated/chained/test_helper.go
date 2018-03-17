@@ -19,3 +19,12 @@ func CreateBlockBuilderFactoryForTests() stored_chained_blocks.BlockBuilderFacto
 	out := CreateBlockBuilderFactory()
 	return out
 }
+
+// CreateBlockRepositoryForTests creates a BlockRepository for tests
+func CreateBlockRepositoryForTests() stored_chained_blocks.BlockRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	validatedBlkRepository := concrete_stored_validated_blocks.CreateBlockRepositoryForTests()
+	chainedBlkBuilderFactory := CreateBlockBuilderFactoryForTests()
+	out := CreateBlockRepository(fileRepository, validatedBlkRepository, chainedBlkBuilderFactory)
+	return out
+}

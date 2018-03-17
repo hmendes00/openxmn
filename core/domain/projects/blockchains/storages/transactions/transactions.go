@@ -1,4 +1,4 @@
-package domain
+package transactions
 
 import (
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/files"

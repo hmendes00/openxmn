@@ -72,3 +72,41 @@ func CreateAtomicTransactionsBuilderFactoryForTests() stored_signed_transactions
 	out := CreateAtomicTransactionsBuilderFactory()
 	return out
 }
+
+// CreateTransactionRepositoryForTests creates a TransactionRepository for tests
+func CreateTransactionRepositoryForTests() stored_signed_transactions.TransactionRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	sigRepository := concrete_stored_users.CreateSignatureRepositoryForTests()
+	trsRepository := concrete_stored_transactions.CreateTransactionRepositoryForTests()
+	signedTrsBuilderFactory := CreateTransactionBuilderFactoryForTests()
+	out := CreateTransactionRepository(fileRepository, sigRepository, trsRepository, signedTrsBuilderFactory)
+	return out
+}
+
+// CreateTransactionsRepositoryForTests creates a TransactionsRepository for tests
+func CreateTransactionsRepositoryForTests() stored_signed_transactions.TransactionsRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	signedTrsRepository := CreateTransactionRepositoryForTests()
+	signedTransBuilderFactory := CreateTransactionsBuilderFactoryForTests()
+	out := CreateTransactionsRepository(fileRepository, signedTrsRepository, signedTransBuilderFactory)
+	return out
+}
+
+// CreateAtomicTransactionRepositoryForTests creates a AtomicTransactionRepository for tests
+func CreateAtomicTransactionRepositoryForTests() stored_signed_transactions.AtomicTransactionRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	sigRepository := concrete_stored_users.CreateSignatureRepositoryForTests()
+	transRepository := concrete_stored_transactions.CreateRepositoryForTests()
+	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactoryForTests()
+	out := CreateAtomicTransactionRepository(fileRepository, sigRepository, transRepository, atomicTrsBuilderFactory)
+	return out
+}
+
+// CreateAtomicTransactionsRepositoryForTests creates a AtomicTransactionsRepository for tests
+func CreateAtomicTransactionsRepositoryForTests() stored_signed_transactions.AtomicTransactionsRepository {
+	fileRepository := concrete_stored_files.CreateFileRepositoryForTests()
+	atomicTrsRepository := CreateAtomicTransactionRepositoryForTests()
+	atomicTransBuilderFactory := CreateAtomicTransactionsBuilderFactoryForTests()
+	out := CreateAtomicTransactionsRepository(fileRepository, atomicTrsRepository, atomicTransBuilderFactory)
+	return out
+}

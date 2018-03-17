@@ -1,4 +1,4 @@
-package domain
+package chained
 
 import (
 	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/storages/blocks/validated"
