@@ -1,32 +1,32 @@
-package leaders
+package agents
 
 import (
 	"log"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	aggr_trs "github.com/XMNBlockchain/core/packages/blockchains/transactions/aggregated/domain"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
+	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions/signed/aggregated"
 	uuid "github.com/satori/go.uuid"
 )
 
-// Push represents an application that take the tranactions received from the API, to the leader
-type Push struct {
+// PushAggregatedTransactionsFromLeadersToBlocks represents an application that takes the aggregated transactions from the leaders and push it to the blocks
+type PushAggregatedTransactionsFromLeadersToBlocks struct {
 	blkBuilderFactory blocks.BlockBuilderFactory
 	blkTimeDuration   time.Duration
-	newSignedAggrTrs  <-chan aggr_trs.SignedTransactions
+	newSignedAggrTrs  <-chan aggregated_transactions.SignedTransactions
 	newBlk            chan<- blocks.Block
 	stop              bool
 }
 
-// CreatePush creates a new Push instance
-func CreatePush(
+// CreatePushAggregatedTransactionsFromLeadersToBlocks creates a new PushAggregatedTransactionsFromLeadersToBlocks instance
+func CreatePushAggregatedTransactionsFromLeadersToBlocks(
 	blkBuilderFactory blocks.BlockBuilderFactory,
 	blkTimeDuration time.Duration,
-	newSignedAggrTrs <-chan aggr_trs.SignedTransactions,
+	newSignedAggrTrs <-chan aggregated_transactions.SignedTransactions,
 	newBlk chan<- blocks.Block,
 	stop bool,
-) *Push {
-	out := Push{
+) *PushAggregatedTransactionsFromLeadersToBlocks {
+	out := PushAggregatedTransactionsFromLeadersToBlocks{
 		blkBuilderFactory: blkBuilderFactory,
 		blkTimeDuration:   blkTimeDuration,
 		newSignedAggrTrs:  newSignedAggrTrs,
@@ -37,16 +37,16 @@ func CreatePush(
 	return &out
 }
 
-// Stop stops the push signed aggregated transactions application
-func (pu *Push) Stop() {
+// Stop stops the application
+func (pu *PushAggregatedTransactionsFromLeadersToBlocks) Stop() {
 	pu.stop = true
 }
 
-// Execute executes the push signed aggregated transactions application
-func (pu *Push) Execute() {
+// Execute executes the application
+func (pu *PushAggregatedTransactionsFromLeadersToBlocks) Execute() {
 
 	curTime := time.Now().UTC()
-	aggrSignedTrs := []aggr_trs.SignedTransactions{}
+	aggrSignedTrs := []aggregated_transactions.SignedTransactions{}
 
 	for {
 
@@ -87,7 +87,7 @@ func (pu *Push) Execute() {
 
 		//reset:
 		curTime = time.Now().UTC()
-		aggrSignedTrs = []aggr_trs.SignedTransactions{}
+		aggrSignedTrs = []aggregated_transactions.SignedTransactions{}
 	}
 
 }

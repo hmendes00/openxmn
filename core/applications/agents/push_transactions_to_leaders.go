@@ -1,4 +1,4 @@
-package transactions
+package agents
 
 import (
 	"log"
@@ -45,12 +45,12 @@ func CreatePushTransactionsToLeanders(
 	return &out
 }
 
-// Stop stops the push transactions application
+// Stop stops the application
 func (pu *PushTransactionsToLeanders) Stop() {
 	pu.stop = true
 }
 
-// Execute executes the push transactions application
+// Execute executes the application
 func (pu *PushTransactionsToLeanders) Execute() {
 
 	curTime := time.Now().UTC()
