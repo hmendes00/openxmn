@@ -1,8 +1,8 @@
 hash: 0e5772ce69efdb0bb187985711d7b2d39ee5eaf07e708dda185ced133700b018
-updated: 2018-02-02T20:37:08.142684-05:00
+updated: 2018-03-17T23:15:27.43951-04:00
 imports:
 - name: github.com/go-resty/resty
-  version: 00cb083b8cdc8b0fb1e1f5ebe24bbc23e0ff0cf6
+  version: 65798e030a35b911602b4d1d743d6f50ac93b665
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
