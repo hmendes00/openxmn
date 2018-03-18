@@ -39,7 +39,6 @@ func CreateLeaders(
 
 	//create the route handlers:
 	router.HandleFunc(rtes["push_aggregated_transactions"], lead.postTransactions).Methods("POST")
-
 	return &lead
 
 }

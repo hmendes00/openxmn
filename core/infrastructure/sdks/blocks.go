@@ -1,38 +1,42 @@
-package infrastructure
+package sdks
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	concrete_blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/infrastructure"
-	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
-	cryptography "github.com/XMNBlockchain/core/packages/cryptography/domain"
-	servers "github.com/XMNBlockchain/core/packages/servers/domain"
-	sdk "github.com/XMNBlockchain/core/sdks/domain"
+	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
+	dblocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	sdks "github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
+	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
+	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks"
 	"github.com/go-resty/resty"
+	uuid "github.com/satori/go.uuid"
 )
 
-type databases struct {
+type blocks struct {
 	sigBuilderFactory users.SignatureBuilderFactory
+	routePrefix       string
 	pk                cryptography.PrivateKey
 	user              users.User
 }
 
-// CreateDatabases creates a new Databases SDK instance
-func CreateDatabases(sigBuilderFactory users.SignatureBuilderFactory, pk cryptography.PrivateKey, user users.User) sdk.Databases {
-	out := databases{
+// CreateBlocks creates a new Blocks SDK instance
+func CreateBlocks(sigBuilderFactory users.SignatureBuilderFactory, routePrefix string, pk cryptography.PrivateKey, user users.User) sdks.Blocks {
+	out := blocks{
 		sigBuilderFactory: sigBuilderFactory,
+		routePrefix:       routePrefix,
 		pk:                pk,
 		user:              user,
 	}
 	return &out
 }
 
-// SaveBlock saves a block to the database
-func (sdkdb *databases) SaveBlock(serv servers.Server, blk blocks.Block) (blocks.SignedBlock, error) {
-	url := fmt.Sprintf("%s/block", serv.String())
+// SaveBlock saves a block to the blocks
+func (sdkblks *blocks) SaveBlock(serv servers.Server, blk dblocks.Block) (dblocks.SignedBlock, error) {
+	url := fmt.Sprintf("%s%s/block", serv.String(), sdkblks.routePrefix)
 	js, jsErr := json.Marshal(blk)
 	if jsErr != nil {
 		str := fmt.Sprintf("the given block could not be converted to JSON: %s", jsErr.Error())
@@ -43,7 +47,9 @@ func (sdkdb *databases) SaveBlock(serv servers.Server, blk blocks.Block) (blocks
 		"block": string(js),
 	}
 
-	userSig, userSigErr := sdkdb.sigBuilderFactory.Create().Create().WithUser(sdkdb.user).WithPrivateKey(sdkdb.pk).WithInterface(blk).Now()
+	id := uuid.NewV4()
+	crOn := time.Now().UTC()
+	userSig, userSigErr := sdkblks.sigBuilderFactory.Create().Create().WithID(&id).CreatedOn(crOn).WithUser(sdkblks.user).WithPrivateKey(sdkblks.pk).WithInterface(blk).Now()
 	if userSigErr != nil {
 		str := fmt.Sprintf("there was an error while building the user signature: %s", userSigErr.Error())
 		return nil, errors.New(str)
@@ -51,8 +57,7 @@ func (sdkdb *databases) SaveBlock(serv servers.Server, blk blocks.Block) (blocks
 
 	resp, respErr := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetHeader("signature", userSig.GetSignature().String()).
-		SetHeader("user_id", userSig.GetUser().GetMetaData().GetID().String()).
+		SetHeader("signature", userSig.String()).
 		SetFormData(formData).
 		Post(url)
 
