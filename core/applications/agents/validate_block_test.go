@@ -1,4 +1,4 @@
-package databases
+package agents
 
 import (
 	"crypto/rand"
@@ -8,18 +8,33 @@ import (
 	"testing"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	concrete_block "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/infrastructure"
-	validated_blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/domain"
-	concrete_validated_block "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/infrastructure"
-	concrete_users "github.com/XMNBlockchain/core/packages/blockchains/users/infrastructure"
-	concrete_cryptography "github.com/XMNBlockchain/core/packages/cryptography/infrastructure/rsa"
+	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
+	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks/validated"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"
+	concrete_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks"
+	concrete_validated_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks/validated"
+	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 
 func TestValidateBlock_Success(t *testing.T) {
 
-	t.Parallel()
+	//create users:
+	generateUserAndPKFn := func() (users.User, cryptography.PrivateKey) {
+		//generate private key:
+		reader := rand.Reader
+		bitSize := 4096
+		rawPK, _ := rsa.GenerateKey(reader, bitSize)
+		pk, _ := concrete_cryptography.CreatePrivateKeyBuilderFactory().Create().Create().WithKey(rawPK).Now()
+
+		//create the user:
+		rawPubKey := pk.GetKey().PublicKey
+		pubKey, _ := concrete_cryptography.CreatePublicKeyBuilderFactory().Create().Create().WithKey(&rawPubKey).Now()
+		user := concrete_users.CreateUserUsingProvidedPublicKeyForTests(pubKey)
+		return user, pk
+	}
 
 	//gets the validate block from the passed chan:
 	getValidatedBlockFn := func(newValidatedBlk <-chan validated_blocks.Block) validated_blocks.Block {
@@ -32,14 +47,14 @@ func TestValidateBlock_Success(t *testing.T) {
 	}
 
 	//validate block fn:
-	verifyValidatedBlockFn := func(validatedBlk validated_blocks.Block, blk blocks.Block, firstUserID *uuid.UUID, secondUserID *uuid.UUID, t *testing.T) bool {
+	verifyValidatedBlockFn := func(validatedBlk validated_blocks.Block, blk blocks.Block, firstUser users.User, secondUser users.User, t *testing.T) bool {
 		if validatedBlk == nil {
 			t.Errorf("the block should be validated after the second user")
 			return false
 		}
 
 		retBlk := validatedBlk.GetBlock().GetBlock()
-		retLeaderSigs := validatedBlk.GetSignatures()
+		retLeaderSigs := validatedBlk.GetSignatures().GetSignatures()
 
 		if !reflect.DeepEqual(retBlk, blk) {
 			t.Errorf("the block inside the validated block is invalid")
@@ -51,16 +66,16 @@ func TestValidateBlock_Success(t *testing.T) {
 			return false
 		}
 
-		retFirstUserID := retLeaderSigs[0].GetUser().GetID()
-		retSecondUserID := retLeaderSigs[1].GetUser().GetID()
+		retFirstUser := retLeaderSigs[0].GetUser()
+		retSecondUser := retLeaderSigs[1].GetUser()
 
-		if !reflect.DeepEqual(retFirstUserID, firstUserID) {
-			t.Errorf("the userID in the first leader signature is invalid.  Expected: %s, Returned: %s", firstUserID.String(), retFirstUserID.String())
+		if !reflect.DeepEqual(retFirstUser, firstUser) {
+			t.Errorf("the user in the first leader signature is invalid")
 			return false
 		}
 
-		if !reflect.DeepEqual(retSecondUserID, secondUserID) {
-			t.Errorf("the userID in the first leader signature is invalid.  Expected: %s, Returned: %s", secondUserID.String(), retSecondUserID.String())
+		if !reflect.DeepEqual(retSecondUser, secondUser) {
+			t.Errorf("the user in the second leader signature is invalid")
 			return false
 		}
 
@@ -72,88 +87,90 @@ func TestValidateBlock_Success(t *testing.T) {
 	waitBeforeRemovalTs := time.Duration(time.Second * 20)
 
 	//create a block:
-	blk := concrete_block.CreateBlockForTests(t)
+	blk := concrete_block.CreateBlockForTests()
 
-	//user IDs and stake:
-	invalidUserID := uuid.NewV4()
-	firstUserID := uuid.NewV4()
-	secondUserID := uuid.NewV4()
-	thirdUserID := uuid.NewV4()
+	//create users:
+	invalidUser, invalidPK := generateUserAndPKFn()
+	firstUser, firstPK := generateUserAndPKFn()
+	secondUser, secondPK := generateUserAndPKFn()
+	thirdUser, thirdPK := generateUserAndPKFn()
 
 	firstUserStake := mathrand.Float64() + 5.0
 	secondUserStake := mathrand.Float64() + 10.0
 	thirdUserStake := mathrand.Float64() + 2.0
 	usersStake := map[string]float64{
-		firstUserID.String():  firstUserStake,
-		secondUserID.String(): secondUserStake,
-		thirdUserID.String():  thirdUserStake,
+		firstUser.GetMetaData().GetID().String():  firstUserStake,
+		secondUser.GetMetaData().GetID().String(): secondUserStake,
+		thirdUser.GetMetaData().GetID().String():  thirdUserStake,
 	}
 
 	neededStake := firstUserStake + (secondUserStake / 2)
 
-	//create the private keys:
-	reader := rand.Reader
-	bitSize := 4096
-	invalidRawPK, _ := rsa.GenerateKey(reader, bitSize)
-	invalidPK, _ := concrete_cryptography.CreatePrivateKeyBuilderFactory().Create().WithKey(invalidRawPK).Now()
-	firstRawPK, _ := rsa.GenerateKey(reader, bitSize)
-	firstPK, _ := concrete_cryptography.CreatePrivateKeyBuilderFactory().Create().WithKey(firstRawPK).Now()
-	secondRawPK, _ := rsa.GenerateKey(reader, bitSize)
-	secondPK, _ := concrete_cryptography.CreatePrivateKeyBuilderFactory().Create().WithKey(secondRawPK).Now()
-	thirdRawPK, _ := rsa.GenerateKey(reader, bitSize)
-	thirdPK, _ := concrete_cryptography.CreatePrivateKeyBuilderFactory().Create().WithKey(thirdRawPK).Now()
-
 	//create factories:
-	publicKeyBuilderFactory := concrete_cryptography.CreatePublicKeyBuilderFactory()
-	sigBuilderFactory := concrete_cryptography.CreateSignatureBuilderFactory(publicKeyBuilderFactory)
-	userBuilderFactory := concrete_users.CreateUserBuilderFactory()
-	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactory(sigBuilderFactory, userBuilderFactory)
-	signedBlockBuilderFactory := concrete_block.CreateSignedBlockBuilderFactory()
-	valBlkBuilderFactory := concrete_validated_block.CreateBlockBuilderFactory()
+	userSigBuilderFactory := concrete_users.CreateSignatureBuilderFactoryForTests()
+	userSigsBuilderFactory := concrete_users.CreateSignaturesBuilderFactoryForTests()
+	signedBlockBuilderFactory := concrete_block.CreateSignedBlockBuilderFactoryForTests()
+	valBlkBuilderFactory := concrete_validated_block.CreateBlockBuilderFactoryForTests()
 
 	//sign the blocks:
-	invalidSig, invalidSigErr := userSigBuilderFactory.Create().Create().WithUserID(&invalidUserID).WithPrivateKey(invalidPK).WithInterface(blk).Now()
+	invalidSigID := uuid.NewV4()
+	invalidSigCrOn := time.Now().UTC()
+	invalidSig, invalidSigErr := userSigBuilderFactory.Create().Create().WithID(&invalidSigID).CreatedOn(invalidSigCrOn).WithUser(invalidUser).WithPrivateKey(invalidPK).WithInterface(blk).Now()
 	if invalidSigErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", invalidSigErr.Error())
+		return
 	}
 
 	invalidSignedBlkID := uuid.NewV4()
 	invalidSignedBlk, invalidSignedBlkErr := signedBlockBuilderFactory.Create().Create().WithID(&invalidSignedBlkID).CreatedOn(createdOn).WithBlock(blk).WithSignature(invalidSig).Now()
 	if invalidSignedBlkErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", invalidSignedBlkErr.Error())
+		return
 	}
 
-	firstSig, firstSigErr := userSigBuilderFactory.Create().Create().WithUserID(&firstUserID).WithPrivateKey(firstPK).WithInterface(blk).Now()
+	firstSigID := uuid.NewV4()
+	firstSigCrOn := time.Now().UTC()
+	firstSig, firstSigErr := userSigBuilderFactory.Create().Create().WithID(&firstSigID).CreatedOn(firstSigCrOn).WithUser(firstUser).WithPrivateKey(firstPK).WithInterface(blk).Now()
 	if firstSigErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", firstSigErr.Error())
+		return
 	}
 
 	firstSignedBlkID := uuid.NewV4()
 	firstSignedBlk, firstSignedBlkErr := signedBlockBuilderFactory.Create().Create().WithID(&firstSignedBlkID).CreatedOn(createdOn).WithBlock(blk).WithSignature(firstSig).Now()
 	if firstSignedBlkErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", firstSignedBlkErr.Error())
+		return
 	}
 
-	secondSig, secondSigErr := userSigBuilderFactory.Create().Create().WithUserID(&secondUserID).WithPrivateKey(secondPK).WithInterface(blk).Now()
+	secondSigID := uuid.NewV4()
+	secondSigCrOn := time.Now().UTC()
+	secondSig, secondSigErr := userSigBuilderFactory.Create().Create().WithID(&secondSigID).CreatedOn(secondSigCrOn).WithUser(secondUser).WithPrivateKey(secondPK).WithInterface(blk).Now()
 	if secondSigErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", secondSigErr.Error())
+		return
 	}
 
 	secondSignedBlkID := uuid.NewV4()
 	secondSignedBlk, secondSignedBlkErr := signedBlockBuilderFactory.Create().Create().WithID(&secondSignedBlkID).CreatedOn(createdOn).WithBlock(blk).WithSignature(secondSig).Now()
 	if secondSignedBlkErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", secondSignedBlkErr.Error())
+		return
 	}
 
-	thirdSig, thirdSigErr := userSigBuilderFactory.Create().Create().WithUserID(&thirdUserID).WithPrivateKey(thirdPK).WithInterface(blk).Now()
+	thirdSigID := uuid.NewV4()
+	thirdSigCrOn := time.Now().UTC()
+	thirdSig, thirdSigErr := userSigBuilderFactory.Create().Create().WithID(&thirdSigID).CreatedOn(thirdSigCrOn).WithUser(thirdUser).WithPrivateKey(thirdPK).WithInterface(blk).Now()
 	if thirdSigErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", thirdSigErr.Error())
+		return
 	}
 
 	thirdSignedBlkID := uuid.NewV4()
 	thirdSignedBlk, thirdSignedBlkErr := signedBlockBuilderFactory.Create().Create().WithID(&thirdSignedBlkID).CreatedOn(createdOn).WithBlock(blk).WithSignature(thirdSig).Now()
 	if thirdSignedBlkErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", thirdSignedBlkErr.Error())
+		return
 	}
 
 	//create the channels:
@@ -161,7 +178,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	newValidatedBlks := make(chan validated_blocks.Block, 20)
 
 	//create the application:
-	validateApp := CreateValidateBlock(valBlkBuilderFactory, neededStake, usersStake, waitBeforeRemovalTs, newSignedBlks, newValidatedBlks)
+	validateApp := CreateValidateBlock(valBlkBuilderFactory, userSigsBuilderFactory, neededStake, usersStake, waitBeforeRemovalTs, newSignedBlks, newValidatedBlks)
 	defer validateApp.Stop()
 
 	//execute:
@@ -174,7 +191,7 @@ func TestValidateBlock_Success(t *testing.T) {
 		return
 	}
 
-	//add the invalid signed block (the user is not in the stake list:
+	//add the invalid signed block (the user is not in the stake list):
 	newSignedBlks <- invalidSignedBlk
 	time.Sleep(time.Second)
 	invalidValidatedBlk := getValidatedBlockFn(newValidatedBlks)
@@ -195,7 +212,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	newSignedBlks <- secondSignedBlk
 	time.Sleep(time.Second)
 	secondValidatedBlk := getValidatedBlockFn(newValidatedBlks)
-	if !verifyValidatedBlockFn(secondValidatedBlk, blk, &firstUserID, &secondUserID, t) {
+	if !verifyValidatedBlockFn(secondValidatedBlk, blk, firstUser, secondUser, t) {
 		return
 	}
 
@@ -222,7 +239,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	newSignedBlks <- secondSignedBlk
 	time.Sleep(time.Second)
 	againValidatedBlk := getValidatedBlockFn(newValidatedBlks)
-	if !verifyValidatedBlockFn(againValidatedBlk, blk, &firstUserID, &secondUserID, t) {
+	if !verifyValidatedBlockFn(againValidatedBlk, blk, firstUser, secondUser, t) {
 		return
 	}
 

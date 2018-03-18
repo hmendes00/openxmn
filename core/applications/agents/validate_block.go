@@ -1,31 +1,33 @@
-package databases
+package agents
 
 import (
 	"log"
 	"time"
 
-	blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/blocks/domain"
-	validated_blocks "github.com/XMNBlockchain/core/packages/blockchains/blocks/validated/domain"
-	users "github.com/XMNBlockchain/core/packages/blockchains/users/domain"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
+	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks/validated"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 
 // ValidateBlock represents an application that received SignedBlocks and created validated Blocks
 type ValidateBlock struct {
-	valBlkBuilderFactory validated_blocks.BlockBuilderFactory
-	neededStakerPerBlk   float64
-	usersStake           map[string]float64
-	toRemoveSignedBlks   map[string]time.Time
-	signedBlks           map[string][]blocks.SignedBlock
-	newSignedBlks        <-chan blocks.SignedBlock
-	newValidatedBlks     chan<- validated_blocks.Block
-	stop                 bool
-	waitBeforeRemovalTs  time.Duration
+	valBlkBuilderFactory   validated_blocks.BlockBuilderFactory
+	userSigsBuilderFactory users.SignaturesBuilderFactory
+	neededStakerPerBlk     float64
+	usersStake             map[string]float64
+	toRemoveSignedBlks     map[string]time.Time
+	signedBlks             map[string][]blocks.SignedBlock
+	newSignedBlks          <-chan blocks.SignedBlock
+	newValidatedBlks       chan<- validated_blocks.Block
+	stop                   bool
+	waitBeforeRemovalTs    time.Duration
 }
 
 // CreateValidateBlock creates a new ValidateBlock instance
 func CreateValidateBlock(
 	valBlkBuilderFactory validated_blocks.BlockBuilderFactory,
+	userSigsBuilderFactory users.SignaturesBuilderFactory,
 	neededStakerPerBlk float64,
 	usersStake map[string]float64,
 	waitBeforeRemovalTs time.Duration,
@@ -33,15 +35,16 @@ func CreateValidateBlock(
 	newValidatedBlks chan<- validated_blocks.Block,
 ) *ValidateBlock {
 	out := ValidateBlock{
-		valBlkBuilderFactory: valBlkBuilderFactory,
-		neededStakerPerBlk:   neededStakerPerBlk,
-		usersStake:           usersStake,
-		waitBeforeRemovalTs:  waitBeforeRemovalTs,
-		toRemoveSignedBlks:   map[string]time.Time{},
-		signedBlks:           map[string][]blocks.SignedBlock{},
-		newSignedBlks:        newSignedBlks,
-		newValidatedBlks:     newValidatedBlks,
-		stop:                 false,
+		valBlkBuilderFactory:   valBlkBuilderFactory,
+		userSigsBuilderFactory: userSigsBuilderFactory,
+		neededStakerPerBlk:     neededStakerPerBlk,
+		usersStake:             usersStake,
+		waitBeforeRemovalTs:    waitBeforeRemovalTs,
+		toRemoveSignedBlks:     map[string]time.Time{},
+		signedBlks:             map[string][]blocks.SignedBlock{},
+		newSignedBlks:          newSignedBlks,
+		newValidatedBlks:       newValidatedBlks,
+		stop:                   false,
 	}
 
 	return &out
@@ -68,7 +71,7 @@ func (blk *ValidateBlock) Execute() {
 		case oneSignedBlk := <-blk.newSignedBlks:
 
 			//get the hash of the block:
-			hashAsString := oneSignedBlk.GetBlock().GetHashTree().GetHash().String()
+			hashAsString := oneSignedBlk.GetBlock().GetMetaData().GetHashTree().GetHash().String()
 
 			//if the hash exists in the toRemove map:
 			if _, ok := blk.toRemoveSignedBlks[hashAsString]; ok {
@@ -79,7 +82,7 @@ func (blk *ValidateBlock) Execute() {
 			//if the hash already exists in the map:
 			if _, ok := blk.signedBlks[hashAsString]; ok {
 				//writing the logs:
-				userID := oneSignedBlk.GetSignature().GetUser().GetID().String()
+				userID := oneSignedBlk.GetSignature().GetUser().GetMetaData().GetID().String()
 				log.Printf("Adding a new verification from userID (%s) to the block (hash: %s)\n", userID, hashAsString)
 
 				//adding the signed block to the list:
@@ -130,7 +133,7 @@ func (blk *ValidateBlock) Execute() {
 				leaderSig := oneSignedBlk.GetSignature()
 
 				//add the received stake:
-				userIDAsString := leaderSig.GetUser().GetID().String()
+				userIDAsString := leaderSig.GetUser().GetMetaData().GetID().String()
 				if userKarma, ok := blk.usersStake[userIDAsString]; ok {
 					//add the stake:
 					receivedStake += userKarma
@@ -144,9 +147,18 @@ func (blk *ValidateBlock) Execute() {
 
 			//if we have enough stake, build the validated block and remove the signedBlks from the list:
 			if receivedStake >= blk.neededStakerPerBlk {
+
+				userSigsID := uuid.NewV4()
+				userSigsCrOn := time.Now().UTC()
+				userSigs, userSigsErr := blk.userSigsBuilderFactory.Create().Create().WithID(&userSigsID).CreatedOn(userSigsCrOn).WithSignatures(leaderSignatures).Now()
+				if userSigsErr != nil {
+					log.Printf("the user signatures instance could not be built: %s", userSigsErr.Error())
+					continue
+				}
+
 				validatedBlkID := uuid.NewV4()
 				validatedBlkTs := time.Now().UTC()
-				validatedBlk, validatedBlkErr := blk.valBlkBuilderFactory.Create().Create().WithID(&validatedBlkID).CreatedOn(validatedBlkTs).WithBlock(signedBlks[0]).WithSignatures(leaderSignatures).Now()
+				validatedBlk, validatedBlkErr := blk.valBlkBuilderFactory.Create().Create().WithID(&validatedBlkID).CreatedOn(validatedBlkTs).WithBlock(signedBlks[0]).WithSignatures(userSigs).Now()
 				if validatedBlkErr != nil {
 					log.Printf("there was an error while building a validated block: %s", validatedBlkErr.Error())
 					continue
