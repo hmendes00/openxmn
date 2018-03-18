@@ -1,5 +1,5 @@
 hash: 0e5772ce69efdb0bb187985711d7b2d39ee5eaf07e708dda185ced133700b018
-updated: 2018-03-17T23:15:27.43951-04:00
+updated: 2018-03-18T01:14:58.113768-04:00
 imports:
 - name: github.com/go-resty/resty
   version: 65798e030a35b911602b4d1d743d6f50ac93b665
