@@ -1,8 +1,8 @@
 package sdks
 
 import (
-	transactions "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions"
-	signed "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions/signed"
+	transactions "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions"
+	signed "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 )
 

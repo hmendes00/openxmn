@@ -9,17 +9,17 @@ import (
 	"testing"
 	"time"
 
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
 	sdks "github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/users"
 	concrete_sdk "github.com/XMNBlockchain/exmachina-network/core/infrastructure/sdks"
 	concrete_server "github.com/XMNBlockchain/exmachina-network/core/infrastructure/servers"
 	"github.com/gorilla/mux"
 
-	aggregated_trs "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions/signed/aggregated"
-	concrete_aggregated_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/transactions/signed/aggregated"
+	aggregated_trs "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed/aggregated"
+	concrete_aggregated_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions/signed/aggregated"
 )
 
 func startLeadersAPI() (*http.Server, []aggregated_trs.Transactions, users.User, sdks.Leaders, servers.Server, chan aggregated_trs.SignedTransactions) {

@@ -1,7 +1,7 @@
 package sdks
 
 import (
-	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 )
 

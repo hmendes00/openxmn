@@ -9,19 +9,19 @@ import (
 	"testing"
 	"time"
 
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/users"
 	concrete_sdk "github.com/XMNBlockchain/exmachina-network/core/infrastructure/sdks"
 	concrete_server "github.com/XMNBlockchain/exmachina-network/core/infrastructure/servers"
 	"github.com/gorilla/mux"
 
-	trs "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions"
-	signed_trs "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/transactions/signed"
+	trs "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions"
+	signed_trs "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed"
 	"github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
-	concrete_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/transactions"
-	concrete_signed_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/transactions/signed"
+	concrete_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions"
+	concrete_signed_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions/signed"
 
 	uuid "github.com/satori/go.uuid"
 )

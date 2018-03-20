@@ -7,11 +7,11 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	dblocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	dblocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
 	sdks "github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
-	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks"
+	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/blocks"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 )

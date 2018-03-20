@@ -9,13 +9,13 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks"
-	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/blocks/validated"
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/projects/blockchains/users"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
+	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks/validated"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
 	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"
-	concrete_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks"
-	concrete_validated_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/blocks/validated"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/projects/blockchains/users"
+	concrete_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/blocks"
+	concrete_validated_block "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/blocks/validated"
+	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 
