@@ -3,7 +3,7 @@ package transactions
 import (
 	"path/filepath"
 
-	chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
+	chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/chunks"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/transactions"
 	trs "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"

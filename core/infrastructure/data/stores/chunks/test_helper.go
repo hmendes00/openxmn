@@ -1,7 +1,7 @@
 package chunks
 
 import (
-	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/chunks"
+	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/chunks"
 	concrete_file "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 

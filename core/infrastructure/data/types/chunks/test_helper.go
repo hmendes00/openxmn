@@ -1,10 +1,10 @@
 package chunks
 
 import (
-	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
+	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/chunks"
 	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
-	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/chunks"
+	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/chunks"
 )
 
 // CreateBuilderFactoryForTests creates a new BuilderFactory for tests

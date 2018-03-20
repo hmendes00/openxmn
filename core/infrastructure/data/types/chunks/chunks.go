@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
+	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/chunks"
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )

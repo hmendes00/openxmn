@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
+	chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/chunks"
 	met "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	trs "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"
 )

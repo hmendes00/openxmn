@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	stored_chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/chunks"
+	stored_chunks "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/chunks"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/transactions"
 )
