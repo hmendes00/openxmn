@@ -7,6 +7,7 @@ import (
 // Organization represents an organized group of user
 type Organization interface {
 	GetMetaData() types.MetaData
+	GetUser() User
 	GetAcceptedToken() Token
 	GetPercentNeededForConcensus() float64
 }
