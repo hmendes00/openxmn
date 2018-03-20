@@ -2,7 +2,7 @@ package chunks
 
 import (
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/chunks"
 )

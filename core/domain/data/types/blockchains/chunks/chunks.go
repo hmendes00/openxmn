@@ -1,7 +1,7 @@
 package chunks
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 )
 
 // CreateHashTreeForTests creates an HashTree for tests

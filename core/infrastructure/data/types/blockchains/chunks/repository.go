@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	hashtree "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 

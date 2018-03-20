@@ -3,7 +3,7 @@ package metadata
 import (
 	"encoding/json"
 
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	met "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )

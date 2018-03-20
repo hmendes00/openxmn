@@ -2,7 +2,7 @@ package users
 
 import (
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 )

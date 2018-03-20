@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )

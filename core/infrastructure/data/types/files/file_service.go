@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 

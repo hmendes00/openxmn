@@ -1,7 +1,7 @@
 package users
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/users"
 	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"

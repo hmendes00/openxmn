@@ -7,7 +7,7 @@ import (
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
 	user "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_user "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/users"

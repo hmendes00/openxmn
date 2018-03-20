@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	chained "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated/chained"
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/files"
 )
 
 // MetaDataRepository represents a concrete MetaData repository implementation

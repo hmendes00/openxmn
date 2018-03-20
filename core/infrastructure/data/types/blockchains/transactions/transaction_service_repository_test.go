@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"
-	conncrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	conncrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 )
 
 func TestSave_thenRetrieve_Success(t *testing.T) {

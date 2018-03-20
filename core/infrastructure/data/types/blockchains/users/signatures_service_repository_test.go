@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/files"
 )
 
 func TestSaveUserSignatures_thenRetrieve_Success(t *testing.T) {
