@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 type builder struct {

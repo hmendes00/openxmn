@@ -3,7 +3,7 @@ package hashtrees
 import (
 	"bytes"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 
 type leaf struct {

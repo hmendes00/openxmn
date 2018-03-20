@@ -3,7 +3,7 @@ package chunks
 import (
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 
 // BuilderFactory represents a concrete BuilderFactory implementation

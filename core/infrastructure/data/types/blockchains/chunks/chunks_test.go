@@ -6,7 +6,7 @@ import (
 
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
 	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 )
 
 func TestCreateChunks_Success(t *testing.T) {

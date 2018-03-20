@@ -6,7 +6,7 @@ import (
 	"time"
 
 	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
 	concrete_metadata "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 	concrete_signed "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/transactions/signed"
 	convert "github.com/XMNBlockchain/exmachina-network/core/infrastructure/tests/jsonify/helpers"

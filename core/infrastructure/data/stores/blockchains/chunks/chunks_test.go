@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 	convert "github.com/XMNBlockchain/exmachina-network/core/infrastructure/tests/jsonify/helpers"
 )
 

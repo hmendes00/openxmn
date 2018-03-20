@@ -5,7 +5,7 @@ import (
 
 	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/blocks/validated"
 	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/blocks/validated/chained"
-	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 // BlockRepository represents a concrete stored chained BlockRepository implementation

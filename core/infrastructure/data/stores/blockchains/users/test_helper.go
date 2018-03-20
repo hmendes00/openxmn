@@ -2,7 +2,7 @@ package users
 
 import (
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/users"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 // CreateUserForTests creates a User for tests

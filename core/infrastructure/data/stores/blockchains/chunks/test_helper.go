@@ -2,7 +2,7 @@ package chunks
 
 import (
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/chunks"
-	concrete_file "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_file "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 // CreateChunksForTests creates a Chunks for tests

@@ -1,7 +1,7 @@
 package signed
 
 import (
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed"
 )

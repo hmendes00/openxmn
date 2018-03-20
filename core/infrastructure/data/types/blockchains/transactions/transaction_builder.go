@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	met "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	trs "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"
 	concrete_met "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"

@@ -3,7 +3,7 @@ package transactions
 import (
 	stored_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/transactions"
 	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/chunks"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 // CreateTransactionForTests creates a Transaction for tests

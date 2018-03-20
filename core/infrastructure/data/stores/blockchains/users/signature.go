@@ -1,9 +1,9 @@
 package users
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 	stored_users "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/users"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 // Signature represents a concrete stored user signature implementation

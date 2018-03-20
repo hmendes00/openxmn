@@ -6,7 +6,7 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
 	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/core/infrastructure/cryptography/rsa"

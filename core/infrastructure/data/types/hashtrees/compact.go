@@ -1,7 +1,7 @@
 package hashtrees
 
 import (
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 
 // Compact represents an HashTree, with only the root hash and the block leaves

@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 )
 
 // CreateFileForTests creates a File for tests

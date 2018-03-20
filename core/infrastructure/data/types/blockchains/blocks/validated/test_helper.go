@@ -6,7 +6,7 @@ import (
 
 	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated"
 	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/blocks"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/blocks/validated"
 	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/users"

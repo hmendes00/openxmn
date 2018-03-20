@@ -1,7 +1,7 @@
 package users
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 // SignatureBuilder represents a stored signature builder

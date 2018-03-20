@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_met "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 )
 

@@ -3,9 +3,9 @@ package metadata
 import (
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	met "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	uuid "github.com/satori/go.uuid"
 )
 

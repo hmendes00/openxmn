@@ -7,7 +7,7 @@ import (
 
 	trs "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"
 	concrete_chunks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/chunks"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_met "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_trs "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/transactions"
 	uuid "github.com/satori/go.uuid"

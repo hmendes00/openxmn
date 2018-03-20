@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	dfil "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	dfil "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 type fileBuilder struct {

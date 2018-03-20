@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 
 // HashTreeRepository represents a concrete HashTree service

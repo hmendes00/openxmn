@@ -5,7 +5,7 @@ import (
 
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
 	met "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/metadata"
-	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 // MetaDataService represents a concrete MetaData service implementation

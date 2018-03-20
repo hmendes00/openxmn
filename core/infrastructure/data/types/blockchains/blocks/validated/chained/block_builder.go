@@ -7,7 +7,7 @@ import (
 
 	validated "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated"
 	chained "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated/chained"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtrees "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 	concrete_validated "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/blocks/validated"
 	uuid "github.com/satori/go.uuid"
 )

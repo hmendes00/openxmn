@@ -5,7 +5,7 @@ import (
 	"time"
 
 	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_aggregated "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
 	concrete_signed "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/transactions/signed"

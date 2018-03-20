@@ -1,7 +1,7 @@
 package chunks
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 // Chunks represents chunks stored on disk

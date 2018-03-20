@@ -1,7 +1,7 @@
 package signed
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/blockchains/files"
+	stored_files "github.com/XMNBlockchain/exmachina-network/core/domain/data/stores/files"
 )
 
 // Transactions represents stored signed Transactions

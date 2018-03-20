@@ -7,9 +7,9 @@ import (
 	chained "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated/chained"
 	concrete_validated "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/blocks/validated"
 	concrete_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/files"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/hashtrees"
 	concrete_stored_chained "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/blocks/validated/chained"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/blockchains/files"
+	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/stores/files"
 	uuid "github.com/satori/go.uuid"
 )
 

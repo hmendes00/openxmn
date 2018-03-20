@@ -6,7 +6,7 @@ import (
 
 	chunk "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/chunks"
 	files "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/files"
-	hashtree "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/hashtrees"
+	hashtree "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/hashtrees"
 )
 
 // Repository represents a concrete ChunksRepository implementation
