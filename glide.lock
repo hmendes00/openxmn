@@ -1,5 +1,5 @@
-hash: 0e5772ce69efdb0bb187985711d7b2d39ee5eaf07e708dda185ced133700b018
-updated: 2018-03-18T01:14:58.113768-04:00
+hash: bb8ad21dd5b4b0ba84d32ec2963d2309057af261a1b084ef15036f80efd87f87
+updated: 2018-03-20T15:25:10.598475-04:00
 imports:
 - name: github.com/go-resty/resty
   version: 65798e030a35b911602b4d1d743d6f50ac93b665
@@ -7,8 +7,6 @@ imports:
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: 53c1911da2b537f792e7cafcb446b05ffe33b996
-- name: github.com/montanaflynn/stats
-  version: eeaced052adbcfeea372c749c281099ed7fdaa38
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: golang.org/x/net

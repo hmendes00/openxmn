@@ -1,5 +1,5 @@
-# core
-These are the core packages/applications that a decentralized application should implement
+# OpenXMN
+ OpenXMN is a project that aims to create an open network of computers. It uses a blockchain database. 
 
 ## Run tests
 Type this command to execute the tests:

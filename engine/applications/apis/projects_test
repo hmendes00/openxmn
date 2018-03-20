@@ -1,0 +1,123 @@
+package apis
+
+import (
+	"fmt"
+	"net/http"
+	"reflect"
+	"testing"
+	"time"
+
+	"github.com/XMNBlockchain/exmachina-network/engine/domain/sdks"
+	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	concrete_projects "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/projects"
+	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks/validated"
+	concrete_stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks/validated/chained"
+	concrete_sdks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/sdks"
+	concrete_servers "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/servers"
+	"github.com/gorilla/mux"
+)
+
+func startProjectsAPI() (*http.Server, *concrete_projects.Projects, sdks.Projects, servers.Server) {
+	//factories:
+	projsBuilderFactory := concrete_projects.CreateBuilderFactory()
+	validatedBlkRepository := concrete_stored_validated_blocks.CreateBlockRepositoryForTests()
+	chainedBlkRepository := concrete_stored_chained_blocks.CreateBlockRepositoryForTests()
+
+	//variables:
+	port := 8080
+	routePrefix := "/projects"
+	blockchainDirPath := "test_files"
+	projs := concrete_projects.CreateBuilderFactory().Create().Create().Now().(*concrete_projects.Projects)
+	router := mux.NewRouter()
+	urlAsString := fmt.Sprintf("http://127.0.0.1:%d", port)
+	serv, _ := concrete_servers.CreateServerBuilderFactory().Create().Create().WithURL(urlAsString).Now()
+	httpServer := &http.Server{
+		Handler: router,
+		Addr:    fmt.Sprintf(":%d", port),
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	//create the api app:
+	CreateProjects(routePrefix, router, blockchainDirPath, projsBuilderFactory, validatedBlkRepository, chainedBlkRepository, projs)
+
+	//starts the http server:
+	go httpServer.ListenAndServe()
+
+	//create the SDK:
+	sdk := concrete_sdks.CreateProjects(routePrefix)
+
+	return httpServer, projs, sdk, serv
+}
+
+func TestRetrieveProjects_Success(t *testing.T) {
+
+	//start the API:
+	httpServer, projs, sdk, serv := startProjectsAPI()
+	defer httpServer.Close()
+
+	//retrieve the projects, should be empty:
+	retEmptyProjs, retEmptyProjsErr := sdk.Retrieve(serv, 0, 200)
+	if retEmptyProjsErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", retEmptyProjsErr.Error())
+	}
+
+	if retEmptyProjs.GetAmount() != 0 {
+		t.Errorf("the returned Projects instance was expected to be empty, %d Project instance returned in the Projects list", retEmptyProjs.GetAmount())
+	}
+
+	//add projects to the pointer:
+	*projs = *concrete_projects.CreateProjectsForTests()
+
+	//retrieve the projects, should now contains projects:
+	retProjs, retProjsErr := sdk.Retrieve(serv, 0, 200)
+	if retProjsErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", retProjsErr.Error())
+	}
+
+	if !reflect.DeepEqual(projs, retProjs) {
+		t.Errorf("the returns Projects is invalid")
+	}
+
+	slicedProjs := concrete_projects.CreateBuilderFactory().Create().Create().WithProjects(projs.GetProjects(1, 2)).Now().(*concrete_projects.Projects)
+	retSlicedProjs, retSlicedProjsErr := sdk.Retrieve(serv, 1, 2)
+	if retSlicedProjsErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", retSlicedProjsErr.Error())
+	}
+
+	if !reflect.DeepEqual(slicedProjs, retSlicedProjs) {
+		t.Errorf("the returns sliced Projects is invalid")
+	}
+}
+
+func TestRetrieveProjectsByID_Success(t *testing.T) {
+
+	//variables:
+	allProjs := concrete_projects.CreateProjectsForTests()
+	firstProjList := allProjs.GetProjects(0, 1)
+	firstProj := firstProjList[0]
+
+	//start the API:
+	httpServer, projs, sdk, serv := startProjectsAPI()
+	defer httpServer.Close()
+
+	//retrieve the project by ID, should be empty:
+	_, retProjErr := sdk.RetrieveByID(serv, firstProj.GetID())
+	if retProjErr == nil {
+		t.Errorf("the returned error was expected to valid, nil returned")
+	}
+
+	//add projects to the pointer:
+	*projs = *allProjs
+
+	//retrieve the project by ID, should now work:
+	retProj, retProjErr := sdk.RetrieveByID(serv, firstProj.GetID())
+	if retProjErr != nil {
+		t.Errorf("the returned error was expected to be nil, error returned: %s", retProjErr.Error())
+	}
+
+	if !reflect.DeepEqual(firstProj, retProj) {
+		t.Errorf("the returns Projects is invalid")
+	}
+}
