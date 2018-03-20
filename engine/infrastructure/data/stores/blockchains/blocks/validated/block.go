@@ -1,13 +1,13 @@
 package validated
 
 import (
-	stored_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
-	stored_validated_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
-	concrete_stored_block "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/users"
+	stored_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
+	stored_validated_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	concrete_stored_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
 )
 
 // Block represents a concrete stored validated block implementation

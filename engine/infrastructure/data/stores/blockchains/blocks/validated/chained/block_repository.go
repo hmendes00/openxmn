@@ -3,9 +3,9 @@ package chained
 import (
 	"path/filepath"
 
-	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
-	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated/chained"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	stored_validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_chained_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated/chained"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // BlockRepository represents a concrete stored chained BlockRepository implementation

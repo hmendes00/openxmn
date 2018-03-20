@@ -3,9 +3,9 @@ package metadata
 import (
 	"encoding/json"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // MetaDataService represents a concrete MetaData service implementation

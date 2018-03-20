@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
+	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
 )
 
 // SignedBlockService represents a signed block service

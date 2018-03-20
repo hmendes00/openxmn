@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/cryptography/rsa"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Signature represents the concrete user signature

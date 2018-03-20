@@ -1,9 +1,9 @@
 package chained
 
 import (
-	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated/chained"
-	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks/validated"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	stored_chained_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated/chained"
+	concrete_stored_validated_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks/validated"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 // CreateBlockForTests creates a Block for tests

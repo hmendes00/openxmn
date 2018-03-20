@@ -1,9 +1,9 @@
 package transactions
 
 import (
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 )
 
 type transactionBuilderFactory struct {

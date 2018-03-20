@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 )
 
 func verifyFilesInRepositoryForTests(t *testing.T, expectedFiles []files.File, retrievedFiles []files.File) {

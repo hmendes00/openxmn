@@ -3,10 +3,10 @@ package aggregated
 import (
 	"path/filepath"
 
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
-	aggregated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // SignedTransactionsService represents a concrete SignedTransactions service

@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	uuid "github.com/satori/go.uuid"
 )
 

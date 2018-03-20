@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // MetaDataService represents a MetaData service

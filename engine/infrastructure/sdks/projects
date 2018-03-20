@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"strconv"
 
-	projs "github.com/XMNBlockchain/exmachina-network/engine/domain/projects"
-	sdks "github.com/XMNBlockchain/exmachina-network/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
-	concrete_projects "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/projects"
+	projs "github.com/XMNBlockchain/openxmn/engine/domain/projects"
+	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
+	concrete_projects "github.com/XMNBlockchain/openxmn/engine/infrastructure/projects"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 )

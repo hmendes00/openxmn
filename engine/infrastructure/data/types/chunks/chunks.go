@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	chunk "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
+	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
 type chunks struct {

@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	conncrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	conncrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 )
 
 func TestSave_thenRetrieve_Success(t *testing.T) {

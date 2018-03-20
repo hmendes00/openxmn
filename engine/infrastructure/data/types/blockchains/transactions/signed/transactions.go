@@ -1,9 +1,9 @@
 package signed
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Transactions represents []Transaction ordered by an HashMap

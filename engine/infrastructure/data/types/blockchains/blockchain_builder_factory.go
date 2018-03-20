@@ -1,7 +1,7 @@
 package blockchains
 
 import (
-	blockchains "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains"
+	blockchains "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains"
 )
 
 // BlockchainBuilderFactory represents a concrete BlockchainBuilderFactory implementation

@@ -3,10 +3,10 @@ package validated
 import (
 	"path/filepath"
 
-	stored_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
-	stored_validated_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
+	stored_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
+	stored_validated_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
 )
 
 // BlockRepository represents a concrete stored validated BlockRepository implementation

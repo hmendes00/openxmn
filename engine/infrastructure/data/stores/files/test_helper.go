@@ -3,7 +3,7 @@ package files
 import (
 	"time"
 
-	dfil "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	dfil "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // CreateFileForTests creates a File for tests

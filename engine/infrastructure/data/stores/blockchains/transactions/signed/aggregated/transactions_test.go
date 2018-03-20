@@ -3,7 +3,7 @@ package aggregated
 import (
 	"testing"
 
-	convert "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/tests/jsonify/helpers"
+	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 )
 
 func TestCreateTransaction_convertToJS_convertToInstance_Success(t *testing.T) {

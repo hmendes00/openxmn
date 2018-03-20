@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"time"
 
-	validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
-	concrete_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks/validated"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/users"
+	validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
+	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_stored_validated_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks/validated"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 

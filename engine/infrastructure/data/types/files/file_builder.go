@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 )
 
 type fileBuilder struct {

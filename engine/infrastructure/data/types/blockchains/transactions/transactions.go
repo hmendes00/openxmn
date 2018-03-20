@@ -1,10 +1,10 @@
 package transactions
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Transactions represents a concrete Transactions implementation

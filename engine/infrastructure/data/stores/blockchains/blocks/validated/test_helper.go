@@ -1,10 +1,10 @@
 package validated
 
 import (
-	stored_validated_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
-	concrete_stored_block "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/blocks"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/users"
+	stored_validated_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
+	concrete_stored_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
 )
 
 // CreateBlockForTests creates a Block for tests

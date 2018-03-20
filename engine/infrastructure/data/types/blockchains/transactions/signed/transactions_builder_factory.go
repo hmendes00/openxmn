@@ -1,9 +1,9 @@
 package signed
 
 import (
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
 )
 
 // TransactionsBuilderFactory represents a concrete TransactionsBuilderFactory implementation

@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	validated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	concrete_validated "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks/validated"
+	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	concrete_validated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks/validated"
 	uuid "github.com/satori/go.uuid"
 )
 

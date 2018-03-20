@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	uuid "github.com/satori/go.uuid"
 )
 

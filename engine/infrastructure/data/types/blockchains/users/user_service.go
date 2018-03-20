@@ -1,10 +1,10 @@
 package users
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // UserService represents a concrete UserService implementation

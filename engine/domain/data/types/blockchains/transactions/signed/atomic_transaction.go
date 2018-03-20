@@ -1,9 +1,9 @@
 package domain
 
 import (
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // AtomicTransaction represents multiple transactions that must be executed all at once, signed by a wallet

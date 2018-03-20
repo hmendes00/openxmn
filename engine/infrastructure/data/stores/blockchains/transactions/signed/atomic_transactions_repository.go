@@ -3,8 +3,8 @@ package signed
 import (
 	"path/filepath"
 
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
 )
 
 // AtomicTransactionsRepository represents a stored AtomicTransactionsRepository implementation

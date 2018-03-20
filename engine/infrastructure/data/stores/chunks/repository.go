@@ -3,8 +3,8 @@ package chunks
 import (
 	"path/filepath"
 
-	chunk "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // Repository represents a concrete stored chunks repository implementation

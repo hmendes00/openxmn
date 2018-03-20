@@ -1,9 +1,9 @@
 package users
 
 import (
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // UserBuilderFactory represents a concrete UserBuilderFactory

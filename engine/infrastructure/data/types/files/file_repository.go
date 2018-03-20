@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 )
 
 type fileRepository struct {

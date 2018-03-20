@@ -3,9 +3,9 @@ package chained
 import (
 	"encoding/json"
 
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // MetaDataService represents a concrete MetaData service implementation

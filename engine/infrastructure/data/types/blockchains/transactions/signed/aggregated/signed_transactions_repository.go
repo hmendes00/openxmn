@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	aggregated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // SignedTransactionsRepository represents a concrete SignedTransactions repository

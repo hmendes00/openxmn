@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	validated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
+	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 	uuid "github.com/satori/go.uuid"
 )
 

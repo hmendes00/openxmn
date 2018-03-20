@@ -1,8 +1,8 @@
 package sdks
 
 import (
-	blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 // Blocks represents the Blocks SDK

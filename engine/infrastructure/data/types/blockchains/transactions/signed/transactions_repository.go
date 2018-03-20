@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	signed_trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	signed_trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
 )
 
 // TransactionsRepository represents a concrete TransactionsRepository implementation

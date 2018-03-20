@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
+	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 )
 
 func TestSaveAtomicTrs_thenRetrieve_Success(t *testing.T) {

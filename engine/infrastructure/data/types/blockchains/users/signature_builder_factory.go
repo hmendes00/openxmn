@@ -1,10 +1,10 @@
 package users
 
 import (
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // SignatureBuilderFactory represents a concrete SignatureBuilderFactory

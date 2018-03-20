@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	uuid "github.com/satori/go.uuid"
 )
 

@@ -1,9 +1,9 @@
 package users
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Signatures represents a concrete Signatures implementation

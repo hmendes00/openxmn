@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 )
 
 func TestCreateBuilder_Success(t *testing.T) {

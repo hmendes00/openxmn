@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	uuid "github.com/satori/go.uuid"
 )
 

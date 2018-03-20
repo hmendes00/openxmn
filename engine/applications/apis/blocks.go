@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	helpers "github.com/XMNBlockchain/exmachina-network/engine/applications/apis/helpers"
-	blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks"
-	concrete_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks"
+	helpers "github.com/XMNBlockchain/openxmn/engine/applications/apis/helpers"
+	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
+	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

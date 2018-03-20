@@ -4,7 +4,7 @@ import (
 	"hash"
 	"time"
 
-	dfil "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	dfil "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // FileBuilderFactory represents a concrete FileBuilderFactory implementation

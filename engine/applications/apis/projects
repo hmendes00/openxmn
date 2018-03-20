@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strconv"
 
-	projs "github.com/XMNBlockchain/exmachina-network/engine/domain/projects"
-	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
-	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated/chained"
+	projs "github.com/XMNBlockchain/openxmn/engine/domain/projects"
+	stored_validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_chained_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated/chained"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

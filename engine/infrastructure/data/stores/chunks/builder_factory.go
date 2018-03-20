@@ -1,7 +1,7 @@
 package chunks
 
 import (
-	chunk "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
+	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
 )
 
 // BuilderFactory represents a concrete ChunksBuilderFactory implementation

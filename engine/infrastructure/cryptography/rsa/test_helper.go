@@ -6,7 +6,7 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 )
 
 // CreatePublicKeyForTests creates a PublicKey for tests

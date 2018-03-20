@@ -1,11 +1,11 @@
 package aggregated
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed"
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/transactions/signed"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed"
 )
 
 // Transactions represents a concrete stored aggregated Transactions implementation

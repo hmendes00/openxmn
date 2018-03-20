@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 func TestBuildChunks_Success(t *testing.T) {

@@ -1,7 +1,7 @@
 package domain
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 )
 
 // AtomicTransactions represents signed []AtomicTransaction ordered by an HashMap

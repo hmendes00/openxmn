@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks"
-	validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/cryptography/rsa"
-	concrete_block "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks"
-	concrete_validated_block "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks/validated"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/users"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
+	validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
+	concrete_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
+	concrete_validated_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks/validated"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 

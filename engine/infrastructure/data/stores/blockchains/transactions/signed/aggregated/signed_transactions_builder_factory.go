@@ -1,7 +1,7 @@
 package aggregated
 
 import (
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
 )
 
 // SignedTransactionsBuilderFactory represents a concrete SignedTransactionsBuilderFactory implementation

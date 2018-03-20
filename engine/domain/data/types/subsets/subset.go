@@ -1,7 +1,7 @@
 package subsets
 
 import (
-	sets "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/sets"
+	sets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/sets"
 )
 
 // SubSet represents a subset of a full set

@@ -1,7 +1,7 @@
 package servers
 
 import (
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 // BuilderFactory represents a concrete BuilderFactory implementation

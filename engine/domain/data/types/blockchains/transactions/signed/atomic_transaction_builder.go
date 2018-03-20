@@ -3,9 +3,9 @@ package domain
 import (
 	"time"
 
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 

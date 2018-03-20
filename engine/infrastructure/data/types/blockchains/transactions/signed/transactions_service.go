@@ -3,9 +3,9 @@ package signed
 import (
 	"path/filepath"
 
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_signed_transaction "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed"
-	signed_trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_signed_transaction "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
+	signed_trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
 )
 
 // TransactionsService represents a concrete TransactionsService implementation

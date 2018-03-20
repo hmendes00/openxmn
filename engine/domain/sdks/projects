@@ -1,8 +1,8 @@
 package sdks
 
 import (
-	projects "github.com/XMNBlockchain/exmachina-network/engine/domain/projects"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	projects "github.com/XMNBlockchain/openxmn/engine/domain/projects"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	uuid "github.com/satori/go.uuid"
 )
 

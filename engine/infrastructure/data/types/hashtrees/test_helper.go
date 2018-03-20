@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"testing"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 )
 
 // CreateHashTreeForTests creates an HashTree for tests

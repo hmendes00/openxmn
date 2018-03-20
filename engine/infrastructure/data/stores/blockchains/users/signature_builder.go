@@ -3,9 +3,9 @@ package users
 import (
 	"errors"
 
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 type signatureBuilder struct {

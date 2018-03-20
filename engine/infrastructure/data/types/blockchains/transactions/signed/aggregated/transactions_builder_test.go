@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_signed "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/transactions/signed"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_signed "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed"
 	uuid "github.com/satori/go.uuid"
 )
 

@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	concrete_cryptography "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/cryptography/rsa"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
 )
 
 // SignatureRepository represents a concrete SignatureRepository implementation

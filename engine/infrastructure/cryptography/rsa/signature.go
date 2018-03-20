@@ -9,7 +9,7 @@ import (
 	"errors"
 	"hash"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 )
 
 // Signature represents a cryptographic signature

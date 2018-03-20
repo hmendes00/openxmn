@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
 // HashTree represents the concrete implementation of the HashTree

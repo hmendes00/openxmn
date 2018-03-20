@@ -1,10 +1,10 @@
 package aggregated
 
 import (
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/transactions/signed"
-	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/users"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed"
+	concrete_stored_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
 )
 
 // CreateTransactionsForTests creates a Transactions for tests

@@ -1,11 +1,11 @@
 package aggregated
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	signed "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
-	aggregated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_signed "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/transactions/signed"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	signed "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_signed "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed"
 )
 
 // Transactions represents the concrete aggregated transactions

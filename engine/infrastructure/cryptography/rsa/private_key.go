@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 )
 
 // PrivateKey represents a private key

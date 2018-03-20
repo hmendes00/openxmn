@@ -1,7 +1,7 @@
 package validated
 
 import (
-	stored_validated_block "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_validated_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
 )
 
 // BlockBuilderFactory represents a concrete BlockBuilderFactory implementation

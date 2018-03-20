@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
 )
 
 // SignedTransactionsRepository represents a concrete aggregated signed transactions repository implementation

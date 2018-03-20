@@ -3,11 +3,11 @@ package blocks
 import (
 	"errors"
 
-	stored_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
-	conrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
+	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed/aggregated"
+	conrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
 )
 
 type blockBuilder struct {

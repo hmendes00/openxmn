@@ -1,9 +1,9 @@
 package transactions
 
 import (
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	concrete_met "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	concrete_met "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Transaction represents the concrete transaction

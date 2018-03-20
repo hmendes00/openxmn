@@ -3,11 +3,11 @@ package transactions
 import (
 	"errors"
 
-	stored_chunks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions"
-	concrete_stored_chunks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/chunks"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	stored_chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
+	concrete_stored_chunks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/chunks"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 type transactionBuilder struct {

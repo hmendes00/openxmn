@@ -3,8 +3,8 @@ package metadata
 import (
 	"encoding/json"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 )
 
 // MetaDataRepository represents a concrete MetaData repository implementation

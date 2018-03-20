@@ -3,8 +3,8 @@ package files
 import (
 	"crypto/sha256"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 // CreateFileForTests creates a File for tests

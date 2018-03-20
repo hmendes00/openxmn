@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_metadata "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/metadata"
-	convert "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/tests/jsonify/helpers"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 )
 
 func TestCreate_Success(t *testing.T) {

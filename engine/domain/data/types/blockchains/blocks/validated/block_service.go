@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_validated_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated"
+	stored_validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
 )
 
 // BlockService represents a Block service

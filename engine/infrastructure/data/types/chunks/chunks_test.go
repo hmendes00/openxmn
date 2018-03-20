@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 )
 
 func TestCreateChunks_Success(t *testing.T) {

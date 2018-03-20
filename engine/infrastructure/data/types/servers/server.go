@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 // Server represents a concrete server implementation

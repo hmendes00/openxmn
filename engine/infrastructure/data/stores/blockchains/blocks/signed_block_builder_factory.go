@@ -1,7 +1,7 @@
 package blocks
 
 import (
-	stored_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
+	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
 )
 
 // SignedBlockBuilderFactory represents a concrete SignedBlockBuilderFactory implementation

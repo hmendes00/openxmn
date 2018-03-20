@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/users"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // SignatureService represents a concrete SignatureService implementation

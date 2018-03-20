@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
-	concrete_hashtrees "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/hashtrees"
-	concrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	uuid "github.com/satori/go.uuid"
 )
 

@@ -1,7 +1,7 @@
 package users
 
 import (
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // UserBuilder represents a stored user builder

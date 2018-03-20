@@ -3,7 +3,7 @@ package blockchains
 import (
 	"time"
 
-	blockchains "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains"
+	blockchains "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains"
 	uuid "github.com/satori/go.uuid"
 )
 

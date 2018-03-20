@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions"
+	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
 )
 
 // TransactionService represents a transaction service

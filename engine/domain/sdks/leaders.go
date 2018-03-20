@@ -1,8 +1,8 @@
 package sdks
 
 import (
-	aggregated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 // Leaders represents the leaders SDK

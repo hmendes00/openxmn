@@ -3,8 +3,8 @@ package chained
 import (
 	"encoding/json"
 
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 )
 
 // MetaDataRepository represents a concrete MetaData repository implementation

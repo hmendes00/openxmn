@@ -1,7 +1,7 @@
 package files
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 )
 
 // FileBuilderFactory represents a concrete FileBuilderFactory implementation

@@ -1,9 +1,9 @@
 package chained
 
 import (
-	validated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
-	concrete_validated "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks/validated"
+	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	concrete_validated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks/validated"
 )
 
 // Block represents a concrete block implementation

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	convert "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/tests/jsonify/helpers"
+	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 )
 
 func TestCreateFile_Success(t *testing.T) {

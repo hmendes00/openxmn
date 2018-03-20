@@ -1,7 +1,7 @@
 package chunks
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // Builder represents a Chunks builder

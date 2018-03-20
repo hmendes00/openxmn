@@ -1,7 +1,7 @@
 package chained
 
 import (
-	stored_chained_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks/validated/chained"
+	stored_chained_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated/chained"
 )
 
 // BlockBuilderFactory represents a concrete BlockBuilderFactory implementation

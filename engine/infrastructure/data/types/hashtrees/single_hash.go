@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
 type singleHash struct {

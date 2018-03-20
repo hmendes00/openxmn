@@ -1,7 +1,7 @@
 package signed
 
 import (
-	stored_signed_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed"
+	stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
 )
 
 // TransactionsBuilderFactory represents a concrete TransactionsBuilderFactory implementation

@@ -3,10 +3,10 @@ package chunks
 import (
 	"path/filepath"
 
-	chunk "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	hashtree "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	stored_chunks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
+	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	hashtree "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	stored_chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
 )
 
 // Service represents a concrete ChunksService implementation

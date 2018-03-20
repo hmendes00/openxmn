@@ -3,10 +3,10 @@ package transactions
 import (
 	"path/filepath"
 
-	chunks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/chunks"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	stored_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions"
-	trs "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
+	chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
+	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 )
 
 // TransactionService represents a concrete TransactionService implementation

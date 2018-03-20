@@ -1,9 +1,9 @@
 package chunks
 
 import (
-	chunk "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
+	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 // Chunks represents a concrete Chunks implementation

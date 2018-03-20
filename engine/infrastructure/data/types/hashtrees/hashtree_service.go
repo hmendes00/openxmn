@@ -3,9 +3,9 @@ package hashtrees
 import (
 	"encoding/json"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
-	stored_file "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
+	stored_file "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // HashTreeService represents a concrete HashTree service

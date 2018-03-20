@@ -1,7 +1,7 @@
 package domain
 
 import (
-	validated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated"
+	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 )
 
 // Block represents a chained block

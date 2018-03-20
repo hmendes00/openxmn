@@ -1,7 +1,7 @@
 package rsa
 
 import (
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 )
 
 // CipherBuilderFactory represents a CipherBuilder factory

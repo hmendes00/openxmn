@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	met "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
+	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	uuid "github.com/satori/go.uuid"
 )
 

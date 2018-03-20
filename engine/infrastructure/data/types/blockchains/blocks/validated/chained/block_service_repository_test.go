@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/files"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 )
 
 func TestSaveChainedBlk_thenRetrieve_Success(t *testing.T) {

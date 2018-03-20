@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"time"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	sdks "github.com/XMNBlockchain/exmachina-network/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 
-	aggregated "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	concrete_aggregated "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
+	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	concrete_aggregated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
 )
 
 type leaders struct {

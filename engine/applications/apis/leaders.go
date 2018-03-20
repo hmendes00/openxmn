@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	helpers "github.com/XMNBlockchain/exmachina-network/engine/applications/apis/helpers"
-	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	concrete_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
+	helpers "github.com/XMNBlockchain/openxmn/engine/applications/apis/helpers"
+	aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	concrete_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

@@ -1,7 +1,7 @@
 package chained
 
 import (
-	chained "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks/validated/chained"
+	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
 )
 
 // MetaDataBuilderFactory represents a concrete MetaDataBuilderFactory implementation

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	convert "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/tests/jsonify/helpers"
+	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 )
 
 // we must also split data, create a tree, create a compact tree, and pass the shuffled data to it, to get it back in order

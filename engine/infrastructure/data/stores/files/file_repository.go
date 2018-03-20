@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	dfil "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	dfil "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // FileRepository represents a stored file repository

@@ -1,10 +1,10 @@
 package users
 
 import (
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 )
 
 // UserRepository represents a concrete UserRepository implementation

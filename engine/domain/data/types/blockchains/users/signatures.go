@@ -1,7 +1,7 @@
 package domain
 
 import (
-	metadata "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 )
 
 // Signatures represents []Signature ordered by an HashMap

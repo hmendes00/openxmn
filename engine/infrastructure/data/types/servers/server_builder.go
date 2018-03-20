@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 type serverBuilder struct {

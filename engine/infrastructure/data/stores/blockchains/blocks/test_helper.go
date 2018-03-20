@@ -1,10 +1,10 @@
 package blocks
 
 import (
-	stored_blocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/blocks"
-	conrete_stored_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
-	concrete_stored_users "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/blockchains/users"
+	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
+	conrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	concrete_stored_aggregated_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
+	concrete_stored_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
 )
 
 // CreateBlockForTests creates a Block for tests

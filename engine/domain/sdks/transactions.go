@@ -1,9 +1,9 @@
 package sdks
 
 import (
-	transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions"
-	signed "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/transactions/signed"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
+	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	signed "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 )
 
 // Transactions represents the Transactions SDK

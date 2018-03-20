@@ -1,8 +1,8 @@
 package chunks
 
 import (
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	hashtrees "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/hashtrees"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
 // Chunks represents a list of files to reproduce a total file

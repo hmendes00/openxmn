@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/files"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 func createFileForTests(data []byte, fileName string, ext string) files.File {

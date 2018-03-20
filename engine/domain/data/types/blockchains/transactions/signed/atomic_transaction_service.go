@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_signed_transaction "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions/signed"
+	stored_signed_transaction "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
 )
 
 // AtomicTransactionService represents a transaction service

@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	concrete_files "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/stores/files"
-	convert "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/tests/jsonify/helpers"
+	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
+	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 )
 
 func TestCreateChunks_Success(t *testing.T) {

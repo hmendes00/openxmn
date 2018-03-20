@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	stored_chunks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/chunks"
-	stored_files "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/files"
-	stored_transactions "github.com/XMNBlockchain/exmachina-network/engine/domain/data/stores/blockchains/transactions"
+	stored_chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
+	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
+	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
 )
 
 // TransactionRepository represents a concrete stored transaction repository implementation

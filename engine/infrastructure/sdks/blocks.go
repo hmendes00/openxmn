@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	cryptography "github.com/XMNBlockchain/exmachina-network/engine/domain/cryptography"
-	dblocks "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/blocks"
-	users "github.com/XMNBlockchain/exmachina-network/engine/domain/data/types/blockchains/users"
-	sdks "github.com/XMNBlockchain/exmachina-network/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/exmachina-network/engine/domain/servers"
-	concrete_blocks "github.com/XMNBlockchain/exmachina-network/engine/infrastructure/data/types/blockchains/blocks"
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	dblocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
+	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
+	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 )
