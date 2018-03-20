@@ -13,7 +13,7 @@ import (
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
 	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
-	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 	concrete_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
 	concrete_sdk "github.com/XMNBlockchain/openxmn/engine/infrastructure/sdks"

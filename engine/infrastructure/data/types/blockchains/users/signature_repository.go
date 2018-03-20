@@ -8,7 +8,7 @@ import (
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
-	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 )
 
 // SignatureRepository represents a concrete SignatureRepository implementation

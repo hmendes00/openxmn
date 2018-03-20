@@ -1,4 +1,4 @@
-package application
+package applications
 
 import (
 	types "github.com/XMNBlockchain/openxmn/engine/domain/data/types"

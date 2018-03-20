@@ -9,7 +9,7 @@ import (
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
-	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography/rsa"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	uuid "github.com/satori/go.uuid"
 )
