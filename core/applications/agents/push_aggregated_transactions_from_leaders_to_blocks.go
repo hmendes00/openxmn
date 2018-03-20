@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
-	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed/aggregated"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks"
+	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
 	uuid "github.com/satori/go.uuid"
 )
 

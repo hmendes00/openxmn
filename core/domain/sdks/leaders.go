@@ -1,7 +1,7 @@
 package sdks
 
 import (
-	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed/aggregated"
+	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 )
 

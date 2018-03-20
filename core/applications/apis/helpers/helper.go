@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
-	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/users"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/users"
 )
 
 // FromRequestToUserSignature converts an HTTP Request to a User Signature

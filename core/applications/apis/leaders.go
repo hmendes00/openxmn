@@ -7,8 +7,8 @@ import (
 	"time"
 
 	helpers "github.com/XMNBlockchain/exmachina-network/core/applications/apis/helpers"
-	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed/aggregated"
-	concrete_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions/signed/aggregated"
+	aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
+	concrete_aggregated_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/transactions/signed/aggregated"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

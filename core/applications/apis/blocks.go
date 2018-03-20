@@ -7,8 +7,8 @@ import (
 	"time"
 
 	helpers "github.com/XMNBlockchain/exmachina-network/core/applications/apis/helpers"
-	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
-	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/blocks"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks"
+	concrete_blocks "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/blocks"
 	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )

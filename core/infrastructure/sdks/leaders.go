@@ -7,14 +7,14 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 	sdks "github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 
-	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed/aggregated"
-	concrete_aggregated "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions/signed/aggregated"
+	aggregated "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed/aggregated"
+	concrete_aggregated "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/transactions/signed/aggregated"
 )
 
 type leaders struct {

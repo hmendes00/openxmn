@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks"
-	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/blocks/validated"
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
+	blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks"
+	validated_blocks "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/blocks/validated"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 	uuid "github.com/satori/go.uuid"
 )
 

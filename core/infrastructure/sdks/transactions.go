@@ -7,12 +7,12 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
-	trs "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions"
-	signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/transactions/signed"
-	users "github.com/XMNBlockchain/exmachina-network/core/domain/datastores/blockchains/users"
+	trs "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions"
+	signed_transactions "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/transactions/signed"
+	users "github.com/XMNBlockchain/exmachina-network/core/domain/data/types/blockchains/users"
 	sdks "github.com/XMNBlockchain/exmachina-network/core/domain/sdks"
 	servers "github.com/XMNBlockchain/exmachina-network/core/domain/servers"
-	concrete_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/datastores/blockchains/transactions/signed"
+	concrete_signed_transactions "github.com/XMNBlockchain/exmachina-network/core/infrastructure/data/types/blockchains/transactions/signed"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 )
