@@ -11,14 +11,20 @@ import (
 
 // CreatePublicKeyForTests creates a PublicKey for tests
 func CreatePublicKeyForTests() *PublicKey {
+	pk := CreatePrivateKeyForTests()
+	return pk.GetPublicKey().(*PublicKey)
+}
+
+// CreatePrivateKeyForTests creates a PrivateKey for tests
+func CreatePrivateKeyForTests() *PrivateKey {
 	//variables:
 	bitSize := 4096
 	reader := rand.Reader
 	key, _ := rsa.GenerateKey(reader, bitSize)
 
 	//execute:
-	pk := createPublicKey(&key.PublicKey)
-	return pk.(*PublicKey)
+	pk := createPrivateKey(key)
+	return pk.(*PrivateKey)
 }
 
 // CreateSignatureForTests creates a Signature for tests
@@ -52,5 +58,20 @@ func CreateSignatureBuilderFactoryForTests() cryptography.SignatureBuilderFactor
 // CreatePrivateKeyBuilderFactoryForTests creates a new PrivateKeyBuilderFactory for tests
 func CreatePrivateKeyBuilderFactoryForTests() cryptography.PrivateKeyBuilderFactory {
 	out := CreatePrivateKeyBuilderFactory()
+	return out
+}
+
+// CreateCipherBuilderFactoryForTests creates a new CipherBuilderFactory for tests
+func CreateCipherBuilderFactoryForTests() cryptography.CipherBuilderFactory {
+	sigBuilderFactory := CreateSignatureBuilderFactoryForTests()
+	pk := CreatePrivateKeyForTests()
+	out := CreateCipherBuilderFactory(sigBuilderFactory, pk)
+	return out
+}
+
+// CreateCipherBuilderFactoryWithCustomPKForTests creates a new CipherBuilderFactory with custom PrivateKey for tests
+func CreateCipherBuilderFactoryWithCustomPKForTests(pk cryptography.PrivateKey) cryptography.CipherBuilderFactory {
+	sigBuilderFactory := CreateSignatureBuilderFactoryForTests()
+	out := CreateCipherBuilderFactory(sigBuilderFactory, pk)
 	return out
 }

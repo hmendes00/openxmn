@@ -9,12 +9,13 @@ import (
 	cryptography "github.com/XMNBlockchain/exmachina-network/core/domain/cryptography"
 )
 
-type privateKey struct {
+// PrivateKey represents a private key
+type PrivateKey struct {
 	key *rsa.PrivateKey
 }
 
 func createPrivateKey(key *rsa.PrivateKey) cryptography.PrivateKey {
-	out := privateKey{
+	out := PrivateKey{
 		key: key,
 	}
 
@@ -22,12 +23,18 @@ func createPrivateKey(key *rsa.PrivateKey) cryptography.PrivateKey {
 }
 
 // GetKey returns the *rsa.Privatekey
-func (pk *privateKey) GetKey() *rsa.PrivateKey {
+func (pk *PrivateKey) GetKey() *rsa.PrivateKey {
 	return pk.key
 }
 
+// GetPublicKey returns the PublicKey of the PrivateKey
+func (pk *PrivateKey) GetPublicKey() cryptography.PublicKey {
+	pubKey := createPublicKey(&pk.key.PublicKey)
+	return pubKey
+}
+
 // String represents a string representation of the PrivateKey
-func (pk *privateKey) String() string {
+func (pk *PrivateKey) String() string {
 	var privateKey = &pem.Block{
 		Type:  "PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(pk.key),
