@@ -7,7 +7,7 @@ import (
 	stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // AtomicTransactionService represents a concrete AtomicTransactionService implementation

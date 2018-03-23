@@ -3,9 +3,9 @@ package aggregated
 import (
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 )
 
 // SignedTransactions represents the concrete signed transactions

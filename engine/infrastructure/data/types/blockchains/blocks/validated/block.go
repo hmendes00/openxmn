@@ -4,10 +4,10 @@ import (
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 )
 
 // Block represents a concrete validated Block implementation

@@ -9,10 +9,10 @@ import (
 	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
 

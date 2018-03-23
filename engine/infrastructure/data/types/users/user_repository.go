@@ -4,7 +4,7 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // UserRepository represents a concrete UserRepository implementation

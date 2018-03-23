@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignaturesRepository represents a concrete SignaturesRepository implementation

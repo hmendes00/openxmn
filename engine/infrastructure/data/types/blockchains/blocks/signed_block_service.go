@@ -6,7 +6,7 @@ import (
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignedBlockService represents a concrete SignedBlockService implementation

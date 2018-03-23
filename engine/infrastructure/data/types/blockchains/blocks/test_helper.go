@@ -9,7 +9,7 @@ import (
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks"
 	concrete_aggregated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
 

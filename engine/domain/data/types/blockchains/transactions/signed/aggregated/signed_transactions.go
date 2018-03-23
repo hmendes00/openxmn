@@ -2,7 +2,7 @@ package domain
 
 import (
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignedTransactions represents the aggregated signed transactions, then signed by a pointer

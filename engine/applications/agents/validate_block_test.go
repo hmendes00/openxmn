@@ -11,11 +11,11 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 	concrete_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	concrete_validated_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks/validated"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
 

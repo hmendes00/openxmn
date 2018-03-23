@@ -7,7 +7,7 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
 	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	"github.com/go-resty/resty"

@@ -7,7 +7,7 @@ import (
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignatureService represents a concrete SignatureService implementation

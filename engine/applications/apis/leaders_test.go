@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
 	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
-	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	concrete_sdk "github.com/XMNBlockchain/openxmn/engine/infrastructure/sdks"
 	concrete_server "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/servers"
 	"github.com/gorilla/mux"

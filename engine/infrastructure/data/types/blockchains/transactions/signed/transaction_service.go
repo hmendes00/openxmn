@@ -7,7 +7,7 @@ import (
 	stored_signed_transaction "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions/signed"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // TransactionService represents a concrete TransactionService implementation

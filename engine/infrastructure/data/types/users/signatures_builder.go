@@ -7,7 +7,7 @@ import (
 
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	uuid "github.com/satori/go.uuid"
 )

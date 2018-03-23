@@ -7,7 +7,7 @@ import (
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )

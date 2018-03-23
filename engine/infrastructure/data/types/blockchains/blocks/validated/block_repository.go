@@ -6,7 +6,7 @@ import (
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // BlockRepository represents a concrete BlockRepository implementation

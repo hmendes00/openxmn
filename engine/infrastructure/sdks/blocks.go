@@ -8,7 +8,7 @@ import (
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	dblocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
 	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"

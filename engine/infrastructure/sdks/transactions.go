@@ -9,7 +9,7 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
 	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	concrete_signed_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed"

@@ -5,7 +5,7 @@ import (
 
 	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
 

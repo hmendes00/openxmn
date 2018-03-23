@@ -4,7 +4,7 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/users"
+	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignatureBuilderFactory represents a concrete SignatureBuilderFactory
