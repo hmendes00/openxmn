@@ -1,4 +1,4 @@
-package wealth
+package processors
 
 import (
 	"errors"
@@ -11,15 +11,15 @@ import (
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
-// Front represents the front transaction
-type Front struct {
+// Transactions represents a concrete transactions processor implementation
+type Transactions struct {
 	processors         []processors.SingleTransaction
 	cmdsBuilderFactory commands.BuilderFactory
 }
 
-// CreateSaveOrganization creates a new SaveOrganization instance
-func CreateSaveOrganization(processors []processors.SingleTransaction, cmdsBuilderFactory commands.BuilderFactory) processors.Transaction {
-	out := Front{
+// CreateTransactions creates a new Transactions instance
+func CreateTransactions(processors []processors.SingleTransaction, cmdsBuilderFactory commands.BuilderFactory) processors.Transactions {
+	out := Transactions{
 		processors:         processors,
 		cmdsBuilderFactory: cmdsBuilderFactory,
 	}
@@ -28,7 +28,7 @@ func CreateSaveOrganization(processors []processors.SingleTransaction, cmdsBuild
 }
 
 // Process processes a transaction
-func (fr *Front) Process(signedTrs signed_transactions.Transaction) (commands.Command, error) {
+func (fr *Transactions) Process(signedTrs signed_transactions.Transaction) (commands.Command, error) {
 	trs := signedTrs.GetTransaction()
 	usr := signedTrs.GetSignature().GetUser()
 	cmd, cmdErr := fr.processPass(trs, usr)
@@ -40,7 +40,7 @@ func (fr *Front) Process(signedTrs signed_transactions.Transaction) (commands.Co
 }
 
 // AtomicProcess processes an atomic transaction
-func (fr *Front) AtomicProcess(atomicTrs signed_transactions.AtomicTransaction) (commands.Commands, error) {
+func (fr *Transactions) AtomicProcess(atomicTrs signed_transactions.AtomicTransaction) (commands.Commands, error) {
 	out := []commands.Command{}
 	usr := atomicTrs.GetSignature().GetUser()
 	trans := atomicTrs.GetTransactions().GetTransactions()
@@ -61,7 +61,7 @@ func (fr *Front) AtomicProcess(atomicTrs signed_transactions.AtomicTransaction) 
 	return cmds, nil
 }
 
-func (fr *Front) processPass(trs transactions.Transaction, usr users.User) (commands.Command, error) {
+func (fr *Transactions) processPass(trs transactions.Transaction, usr users.User) (commands.Command, error) {
 	for _, oneProc := range fr.processors {
 		cmd, cmdErr := oneProc.Process(trs, usr)
 		if cmdErr != nil {

@@ -11,14 +11,14 @@ import (
 // Block represents a concrete block processor
 type Block struct {
 	tok                tokens.Token
-	trsProcessor       processors.Transaction
+	trsProcessor       processors.Transactions
 	billBuilderFactory bills.BillBuilderFactory
 	cmdBuilderFactory  commands.CommandBuilderFactory
 	cmdsBuilderFactory commands.BuilderFactory
 }
 
 // CreateBlock creates a new block processor instance
-func CreateBlock(tok tokens.Token, trsProcessor processors.Transaction, billBuilderFactory bills.BillBuilderFactory, cmdBuilderFactory commands.CommandBuilderFactory, cmdsBuilderFactory commands.BuilderFactory) processors.Block {
+func CreateBlock(tok tokens.Token, trsProcessor processors.Transactions, billBuilderFactory bills.BillBuilderFactory, cmdBuilderFactory commands.CommandBuilderFactory, cmdsBuilderFactory commands.BuilderFactory) processors.Block {
 	out := Block{
 		tok:                tok,
 		trsProcessor:       trsProcessor,

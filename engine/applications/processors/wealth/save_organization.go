@@ -33,7 +33,7 @@ func CreateSaveOrganization(
 	cmdBuilderFactory commands.CommandBuilderFactory,
 	updateBuilderFactory commands.UpdateBuilderFactory,
 	insertBuilderFactory commands.InsertBuilderFactory,
-) processors.SingleTransaction {
+) processors.Transaction {
 	out := SaveOrganization{
 		orgDB:                      orgDB,
 		tokenDB:                    tokenDB,
