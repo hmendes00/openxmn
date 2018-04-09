@@ -9,11 +9,11 @@ import (
 // TransactionBuilderFactory represents a concrete TransactionBuilder factory
 type TransactionBuilderFactory struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 }
 
 // CreateTransactionBuilderFactory creates a new TransactionBuilderFactory instance
-func CreateTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) signed_transactions.TransactionBuilderFactory {
+func CreateTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) signed_transactions.TransactionBuilderFactory {
 	out := TransactionBuilderFactory{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

@@ -16,14 +16,14 @@ import (
 
 type blockBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	trs                    []aggregated.SignedTransactions
 	crOn                   *time.Time
 }
 
-func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) blocks.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) blocks.BlockBuilder {
 	out := blockBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

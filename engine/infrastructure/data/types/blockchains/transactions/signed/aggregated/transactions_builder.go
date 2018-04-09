@@ -16,7 +16,7 @@ import (
 
 type aggregatedTransactionsBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	trs                    signed.Transactions
@@ -24,7 +24,7 @@ type aggregatedTransactionsBuilder struct {
 	createdOn              *time.Time
 }
 
-func createTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) aggregated.TransactionsBuilder {
+func createTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) aggregated.TransactionsBuilder {
 	out := aggregatedTransactionsBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

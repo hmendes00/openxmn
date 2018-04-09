@@ -46,8 +46,24 @@ func TestSaveUserSignatures_thenRetrieve_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", retSigErr.Error())
 	}
 
-	if !reflect.DeepEqual(sigs, retSigs) {
-		t.Errorf("the retrieved signatures is invalid")
+	if !reflect.DeepEqual(retSigs.GetMetaData(), sigs.GetMetaData()) {
+		t.Errorf("the signatures metadata was invalid")
+	}
+
+	//the returned signatures can be in another order:
+	for _, oneRetSig := range retSigs.GetSignatures() {
+		isFound := false
+		for _, oneSig := range sigs.GetSignatures() {
+			if reflect.DeepEqual(oneRetSig, oneSig) {
+				isFound = true
+				continue
+			}
+		}
+
+		if !isFound {
+			t.Errorf("the returned signature (ID: %s) could not be found in the original signatures", oneRetSig.GetMetaData().GetID())
+		}
+
 	}
 
 	//delete the sig:

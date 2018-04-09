@@ -11,7 +11,7 @@ import (
 
 // BlockRepository represents a concrete BlockRepository implementation
 type BlockRepository struct {
-	metaDataRepository         metadata.MetaDataRepository
+	metaDataRepository         metadata.Repository
 	signedBlkRepository        blocks.SignedBlockRepository
 	userSigRepository          users.SignaturesRepository
 	validatedBlkBuilderFactory validated.BlockBuilderFactory
@@ -19,7 +19,7 @@ type BlockRepository struct {
 
 // CreateBlockRepository creates a new BlockRepository instance
 func CreateBlockRepository(
-	metaDataRepository metadata.MetaDataRepository,
+	metaDataRepository metadata.Repository,
 	signedBlkRepository blocks.SignedBlockRepository,
 	userSigRepository users.SignaturesRepository,
 	validatedBlkBuilderFactory validated.BlockBuilderFactory,

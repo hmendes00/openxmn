@@ -10,13 +10,13 @@ import (
 
 // AtomicTransactionsService represents a concrete AtomicTransactionsService implementation
 type AtomicTransactionsService struct {
-	metaDataService               metadata.MetaDataService
+	metaDataService               metadata.Service
 	atomicTrsService              signed_trs.AtomicTransactionService
 	storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionsBuilderFactory
 }
 
 // CreateAtomicTransactionsService creates a new AtomicTransactionsService instance
-func CreateAtomicTransactionsService(metaDataService metadata.MetaDataService, atomicTrsService signed_trs.AtomicTransactionService, storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionsBuilderFactory) signed_trs.AtomicTransactionsService {
+func CreateAtomicTransactionsService(metaDataService metadata.Service, atomicTrsService signed_trs.AtomicTransactionService, storedAtomicTrsBuilderFactory stored_signed_transactions.AtomicTransactionsBuilderFactory) signed_trs.AtomicTransactionsService {
 	out := AtomicTransactionsService{
 		metaDataService:               metaDataService,
 		atomicTrsService:              atomicTrsService,

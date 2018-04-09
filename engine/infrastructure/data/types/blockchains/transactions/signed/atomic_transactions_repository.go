@@ -13,13 +13,13 @@ import (
 
 // AtomicTransactionsRepository represents a concrete AtomicTransactionsRepostory implementation
 type AtomicTransactionsRepository struct {
-	metaDataRepository        metadata.MetaDataRepository
+	metaDataRepository        metadata.Repository
 	atomicTrsRepository       signed_trs.AtomicTransactionRepository
 	atomicTransBuilderFactory signed_trs.AtomicTransactionsBuilderFactory
 }
 
 // CreateAtomicTransactionsRepository creates a new AtomicTransactionsRepository instance
-func CreateAtomicTransactionsRepository(metaDataRepository metadata.MetaDataRepository, atomicTrsRepository signed_trs.AtomicTransactionRepository, atomicTransBuilderFactory signed_trs.AtomicTransactionsBuilderFactory) signed_trs.AtomicTransactionsRepository {
+func CreateAtomicTransactionsRepository(metaDataRepository metadata.Repository, atomicTrsRepository signed_trs.AtomicTransactionRepository, atomicTransBuilderFactory signed_trs.AtomicTransactionsBuilderFactory) signed_trs.AtomicTransactionsRepository {
 	out := AtomicTransactionsRepository{
 		metaDataRepository:        metaDataRepository,
 		atomicTrsRepository:       atomicTrsRepository,

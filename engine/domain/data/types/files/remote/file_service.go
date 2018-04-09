@@ -1,7 +1,7 @@
 package remote
 
 import (
-	stored_files_remote "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files/remote"
+	stored_files_remote "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 )
 
 // FileService represents a remote file service

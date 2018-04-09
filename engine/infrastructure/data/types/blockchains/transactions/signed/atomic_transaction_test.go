@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
@@ -26,7 +26,7 @@ func TestCreateAtomicTransaction_Success(t *testing.T) {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 
 	ht, htErr := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
@@ -34,7 +34,7 @@ func TestCreateAtomicTransaction_Success(t *testing.T) {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", htErr.Error())
 	}
 
-	met, metErr := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, metErr := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 	if metErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", metErr.Error())
 	}

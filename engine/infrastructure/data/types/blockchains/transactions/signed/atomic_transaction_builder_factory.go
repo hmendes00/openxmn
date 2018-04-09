@@ -9,11 +9,11 @@ import (
 // AtomicTransactionBuilderFactory represents a concrete AtomicTransactionBuilder factory
 type AtomicTransactionBuilderFactory struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory met.MetaDataBuilderFactory
+	metaDataBuilderFactory met.BuilderFactory
 }
 
 // CreateAtomicTransactionBuilderFactory creates a new AtomicTransactionBuilderFactory instance
-func CreateAtomicTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) signed_transactions.AtomicTransactionBuilderFactory {
+func CreateAtomicTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.BuilderFactory) signed_transactions.AtomicTransactionBuilderFactory {
 	out := AtomicTransactionBuilderFactory{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

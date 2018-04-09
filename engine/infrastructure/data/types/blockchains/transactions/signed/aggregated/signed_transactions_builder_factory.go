@@ -9,11 +9,11 @@ import (
 // SignedTransactionsBuilderFactory represents the concrete SignedTransactionsBuilder factory
 type SignedTransactionsBuilderFactory struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 }
 
 // CreateSignedTransactionsBuilderFactory creates a new SignedTransactionsBuilderFactory instance
-func CreateSignedTransactionsBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) aggregated.SignedTransactionsBuilderFactory {
+func CreateSignedTransactionsBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) aggregated.SignedTransactionsBuilderFactory {
 	out := SignedTransactionsBuilderFactory{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

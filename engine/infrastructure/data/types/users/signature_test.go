@@ -2,13 +2,11 @@ package users
 
 import (
 	"reflect"
-	"strconv"
 	"testing"
 	"time"
 
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/metadata"
 	convert "github.com/XMNBlockchain/openxmn/engine/infrastructure/tests/jsonify/helpers"
 	uuid "github.com/satori/go.uuid"
 )
@@ -20,16 +18,7 @@ func TestCreateSignature_Success(t *testing.T) {
 	sig := concrete_cryptography.CreateSignatureForTests()
 	usr := CreateUserUsingProvidedPublicKeyForTests(sig.GetPublicKey())
 	crOn := time.Now().UTC()
-
-	blocks := [][]byte{
-		id.Bytes(),
-		[]byte(strconv.Itoa(int(crOn.UnixNano()))),
-		usr.GetMetaData().GetHashTree().GetHash().Get(),
-		[]byte(sig.String()),
-	}
-
-	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(crOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).CreatedOn(crOn).Now()
 
 	//execute:
 	userSig, userSigErr := createSignature(met.(*concrete_metadata.MetaData), sig, usr)

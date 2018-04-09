@@ -5,10 +5,10 @@ import (
 	"time"
 
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_aggregated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed/aggregated"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
@@ -34,7 +34,7 @@ func CreateBlockForTests() *Block {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
 
 	blk := createBlock(met.(*concrete_metadata.MetaData), trs)
 	return blk.(*Block)
@@ -52,11 +52,11 @@ func CreateSignedBlockForTests() *SignedBlock {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(crOn.UnixNano()))),
 		blk.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(crOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(crOn).Now()
 
 	signedBlk := createSignedBlock(met.(*concrete_metadata.MetaData), blk, sig)
 	return signedBlk.(*SignedBlock)
@@ -65,14 +65,14 @@ func CreateSignedBlockForTests() *SignedBlock {
 // CreateBlockBuilderFactoryForTests creates a new BlockBuilderFactory for tests
 func CreateBlockBuilderFactoryForTests() blocks.BlockBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateBlockBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateBlockRepositoryForTests creates a new BlockRepository for tests
 func CreateBlockRepositoryForTests() blocks.BlockRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	signedTrsRepository := concrete_aggregated.CreateSignedTransactionsRepositoryForTests()
 	blkBuilderFactory := CreateBlockBuilderFactoryForTests()
 	out := CreateBlockRepository(metaDataRepository, signedTrsRepository, blkBuilderFactory)
@@ -81,7 +81,7 @@ func CreateBlockRepositoryForTests() blocks.BlockRepository {
 
 // CreateBlockServiceForTests creates a new BlockService for tests
 func CreateBlockServiceForTests() blocks.BlockService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	signedTrsService := concrete_aggregated.CreateSignedTransactionsServiceForTests()
 	storedBlkBuilderFactory := concrete_stored_blocks.CreateBlockBuilderFactoryForTests()
 	out := CreateBlockService(metaDataService, signedTrsService, storedBlkBuilderFactory)
@@ -91,14 +91,14 @@ func CreateBlockServiceForTests() blocks.BlockService {
 // CreateSignedBlockBuilderFactoryForTests creates a new SignedBlockBuilderFactory for tests
 func CreateSignedBlockBuilderFactoryForTests() blocks.SignedBlockBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateSignedBlockBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateSignedBlockRepositoryForTests creates a new SignedBlockRepository for tests
 func CreateSignedBlockRepositoryForTests() blocks.SignedBlockRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	userSigRepository := concrete_users.CreateSignatureRepositoryForTests()
 	blkRepository := CreateBlockRepositoryForTests()
 	signedBlkBuilderFactory := CreateSignedBlockBuilderFactoryForTests()
@@ -108,7 +108,7 @@ func CreateSignedBlockRepositoryForTests() blocks.SignedBlockRepository {
 
 // CreateSignedBlockServiceForTests creates a new SignedBlockService for tests
 func CreateSignedBlockServiceForTests() blocks.SignedBlockService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	userSigService := concrete_users.CreateSignatureServiceForTests()
 	blkService := CreateBlockServiceForTests()
 	storedBlkBuilderFactory := concrete_stored_blocks.CreateSignedBlockBuilderFactoryForTests()

@@ -5,10 +5,10 @@ import (
 	"time"
 
 	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_signed_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
@@ -25,10 +25,10 @@ func CreateTransactionForTests() *Transaction {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	sigTrs := createTransaction(met.(*concrete_metadata.MetaData), trs, sig)
 	return sigTrs.(*Transaction)
@@ -56,7 +56,7 @@ func CreateTransactionsForTests() *Transactions {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	sigTrs := createTransactions(met.(*concrete_metadata.MetaData), trs)
 	return sigTrs.(*Transactions)
@@ -74,11 +74,11 @@ func CreateAtomicTransactionForTests() *AtomicTransaction {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	atomicTrs := createAtomicTransaction(met.(*concrete_metadata.MetaData), trs, sig)
 	return atomicTrs.(*AtomicTransaction)
@@ -107,7 +107,7 @@ func CreateAtomicTransactionsForTests() *AtomicTransactions {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	out := createAtomicTransactions(met.(*concrete_metadata.MetaData), atomicTrs)
 	return out.(*AtomicTransactions)
@@ -116,14 +116,14 @@ func CreateAtomicTransactionsForTests() *AtomicTransactions {
 // CreateTransactionBuilderFactoryForTests creates a new TransactionBuilderFactory for tests
 func CreateTransactionBuilderFactoryForTests() signed_transactions.TransactionBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateTransactionRepositoryForTests creates a new TransactionRepository for tests
 func CreateTransactionRepositoryForTests() signed_transactions.TransactionRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	sigRepository := concrete_users.CreateSignatureRepositoryForTests()
 	transactionRepository := concrete_transactions.CreateTransactionRepositoryForTests()
 	signedTrsBuilderFactory := CreateTransactionBuilderFactoryForTests()
@@ -133,7 +133,7 @@ func CreateTransactionRepositoryForTests() signed_transactions.TransactionReposi
 
 // CreateTransactionServiceForTests creates a new TransactionService for tests
 func CreateTransactionServiceForTests() signed_transactions.TransactionService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	trsService := concrete_transactions.CreateTransactionServiceForTests()
 	storedSignedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionBuilderFactoryForTests()
 	sigService := concrete_users.CreateSignatureServiceForTests()
@@ -144,14 +144,14 @@ func CreateTransactionServiceForTests() signed_transactions.TransactionService {
 // CreateTransactionsBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
 func CreateTransactionsBuilderFactoryForTests() signed_transactions.TransactionsBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateTransactionsRepositoryForTests creates a new TransactionsRepository for tests
 func CreateTransactionsRepositoryForTests() signed_transactions.TransactionsRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	trsRepository := CreateTransactionRepositoryForTests()
 	signedTrsBuilderFactory := CreateTransactionsBuilderFactoryForTests()
 	out := CreateTransactionsRepository(metaDataRepository, trsRepository, signedTrsBuilderFactory)
@@ -160,7 +160,7 @@ func CreateTransactionsRepositoryForTests() signed_transactions.TransactionsRepo
 
 // CreateTransactionsServiceForTests creates a new TransactionsService for tests
 func CreateTransactionsServiceForTests() signed_transactions.TransactionsService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	trsService := CreateTransactionServiceForTests()
 	storedTrsBuilderFactory := concrete_stored_signed_transactions.CreateTransactionsBuilderFactoryForTests()
 	out := CreateTransactionsService(metaDataService, trsService, storedTrsBuilderFactory)
@@ -170,14 +170,14 @@ func CreateTransactionsServiceForTests() signed_transactions.TransactionsService
 // CreateAtomicTransactionBuilderFactoryForTests creates a new AtomicTransactionBuilderFactory for tests
 func CreateAtomicTransactionBuilderFactoryForTests() signed_transactions.AtomicTransactionBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateAtomicTransactionBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateAtomicTransactionRepositoryForTests creates a new AtomicTransactionRepository for tests
 func CreateAtomicTransactionRepositoryForTests() signed_transactions.AtomicTransactionRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	userSigRepository := concrete_users.CreateSignatureRepositoryForTests()
 	trsRepository := concrete_transactions.CreateTransactionsRepositoryForTests()
 	atomicTrsBuilderFactory := CreateAtomicTransactionBuilderFactoryForTests()
@@ -187,7 +187,7 @@ func CreateAtomicTransactionRepositoryForTests() signed_transactions.AtomicTrans
 
 // CreateAtomicTransactionServiceForTests creates a new AtomicTransactionService for tests
 func CreateAtomicTransactionServiceForTests() signed_transactions.AtomicTransactionService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	trsService := concrete_transactions.CreateTransactionsServiceForTests()
 	storedAtomicTrsBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionBuilderFactoryForTests()
 	userSigService := concrete_users.CreateSignatureServiceForTests()
@@ -198,14 +198,14 @@ func CreateAtomicTransactionServiceForTests() signed_transactions.AtomicTransact
 // CreateAtomicTransactionsBuilderFactoryForTests creates a new AtomicTransactionsBuilderFactory for tests
 func CreateAtomicTransactionsBuilderFactoryForTests() signed_transactions.AtomicTransactionsBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateAtomicTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateAtomicTransactionsRepositoryForTests creates a new AtomicTransactionsRepository for tests
 func CreateAtomicTransactionsRepositoryForTests() signed_transactions.AtomicTransactionsRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	atomicTrsRepository := CreateAtomicTransactionRepositoryForTests()
 	atomicTransBuilderFactory := CreateAtomicTransactionsBuilderFactoryForTests()
 	out := CreateAtomicTransactionsRepository(metaDataRepository, atomicTrsRepository, atomicTransBuilderFactory)
@@ -214,7 +214,7 @@ func CreateAtomicTransactionsRepositoryForTests() signed_transactions.AtomicTran
 
 // CreateAtomicTransactionsServiceForTests creates a new AtomicTransactionsService for tests
 func CreateAtomicTransactionsServiceForTests() signed_transactions.AtomicTransactionsService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	atomicTrsService := CreateAtomicTransactionServiceForTests()
 	storedAtomicTrsBuilderFactory := concrete_stored_signed_transactions.CreateAtomicTransactionsBuilderFactoryForTests()
 	out := CreateAtomicTransactionsService(metaDataService, atomicTrsService, storedAtomicTrsBuilderFactory)

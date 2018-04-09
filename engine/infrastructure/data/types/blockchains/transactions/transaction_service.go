@@ -3,15 +3,15 @@ package transactions
 import (
 	"path/filepath"
 
-	chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
 )
 
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
-	metaDataService         metadata.MetaDataService
+	metaDataService         metadata.Service
 	chkBuilderFactory       chunks.BuilderFactory
 	chkService              chunks.Service
 	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory
@@ -19,7 +19,7 @@ type TransactionService struct {
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
-	metaDataService metadata.MetaDataService,
+	metaDataService metadata.Service,
 	chkBuilderFactory chunks.BuilderFactory,
 	chkService chunks.Service,
 	storedTrsBuilderFactory stored_transactions.TransactionBuilderFactory,

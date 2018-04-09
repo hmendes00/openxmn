@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
@@ -18,7 +18,7 @@ import (
 
 type atomicTransactionBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory met.MetaDataBuilderFactory
+	metaDataBuilderFactory met.BuilderFactory
 	id                     *uuid.UUID
 	met                    met.MetaData
 	trs                    trs.Transactions
@@ -26,7 +26,7 @@ type atomicTransactionBuilder struct {
 	createdOn              *time.Time
 }
 
-func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) signed_transactions.AtomicTransactionBuilder {
+func createAtomicTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.BuilderFactory) signed_transactions.AtomicTransactionBuilder {
 	out := atomicTransactionBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -103,7 +103,7 @@ func (build *atomicTransactionBuilder) Now() (signed_transactions.AtomicTransact
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
 			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetID().Bytes(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

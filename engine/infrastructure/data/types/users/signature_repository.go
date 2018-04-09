@@ -6,21 +6,21 @@ import (
 	"path/filepath"
 
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
 )
 
 // SignatureRepository represents a concrete SignatureRepository implementation
 type SignatureRepository struct {
-	metaDataRepository    metadata.MetaDataRepository
+	metaDataRepository    metadata.Repository
 	usrRepository         users.UserRepository
 	fileRepository        files.FileRepository
 	userSigBuilderFactory users.SignatureBuilderFactory
 }
 
 // CreateSignatureRepository creates a new SignatureRepository instance
-func CreateSignatureRepository(metaDataRepository metadata.MetaDataRepository, usrRepository users.UserRepository, fileRepository files.FileRepository, userSigBuilderFactory users.SignatureBuilderFactory) users.SignatureRepository {
+func CreateSignatureRepository(metaDataRepository metadata.Repository, usrRepository users.UserRepository, fileRepository files.FileRepository, userSigBuilderFactory users.SignatureBuilderFactory) users.SignatureRepository {
 	out := SignatureRepository{
 		metaDataRepository:    metaDataRepository,
 		usrRepository:         usrRepository,

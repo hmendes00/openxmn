@@ -12,7 +12,7 @@ func TestCreateSignedTransactionsBuilderFactory_Success(t *testing.T) {
 
 	//variables:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 	build := createSignedTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 
 	//execute:

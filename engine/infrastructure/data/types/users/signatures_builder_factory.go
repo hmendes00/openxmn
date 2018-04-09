@@ -1,21 +1,18 @@
 package users
 
 import (
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignaturesBuilderFactory represents a concrete SignaturesBuilderFactory implementation
 type SignaturesBuilderFactory struct {
-	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 }
 
 // CreateSignaturesBuilderFactory creates a new SignaturesBuilderFactory instance
-func CreateSignaturesBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) user.SignaturesBuilderFactory {
+func CreateSignaturesBuilderFactory(metaDataBuilderFactory metadata.BuilderFactory) user.SignaturesBuilderFactory {
 	out := SignaturesBuilderFactory{
-		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
 	}
 
@@ -24,6 +21,6 @@ func CreateSignaturesBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFa
 
 // Create builds a new SignaturesBuilder instance
 func (fac *SignaturesBuilderFactory) Create() user.SignaturesBuilder {
-	out := createSignaturesBuilder(fac.htBuilderFactory, fac.metaDataBuilderFactory)
+	out := createSignaturesBuilder(fac.metaDataBuilderFactory)
 	return out
 }

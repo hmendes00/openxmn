@@ -14,14 +14,14 @@ import (
 
 type atomicTransactionsBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	trs                    []signed_transactions.AtomicTransaction
 	crOn                   *time.Time
 }
 
-func createAtomicTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) signed_transactions.AtomicTransactionsBuilder {
+func createAtomicTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) signed_transactions.AtomicTransactionsBuilder {
 	out := atomicTransactionsBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

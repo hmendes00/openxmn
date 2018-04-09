@@ -2,10 +2,10 @@ package users
 
 import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/metadata"
 )
 
 // User represents the concrete user

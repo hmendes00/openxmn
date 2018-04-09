@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
@@ -17,7 +17,7 @@ func TestBuildTransaction_Success(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	//variables:
 	id := uuid.NewV4()
@@ -29,14 +29,14 @@ func TestBuildTransaction_Success(t *testing.T) {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 	ht, htErr := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
 	if htErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", htErr.Error())
 	}
 
-	met, metErr := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, metErr := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 	if metErr != nil {
 		t.Errorf("the returned error was expected to be nil, error returned: %s", metErr.Error())
 	}
@@ -75,7 +75,7 @@ func TestBuildTransaction_withoutID_returnsError(t *testing.T) {
 
 	//execute:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaBuilderFactory := concrete_metadata.CreateBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metaBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithTransaction(trs).WithSignature(sig).CreatedOn(createdOn).Now()
 
@@ -97,7 +97,7 @@ func TestBuildTransaction_withoutTransaction_returnsError(t *testing.T) {
 
 	//execute:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaBuilderFactory := concrete_metadata.CreateBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metaBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(createdOn).Now()
 
@@ -119,7 +119,7 @@ func TestBuildTransaction_withoutSignature_returnsError(t *testing.T) {
 
 	//execute:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaBuilderFactory := concrete_metadata.CreateBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metaBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithTransaction(trs).CreatedOn(createdOn).Now()
 
@@ -141,7 +141,7 @@ func TestBuildTransaction_withoutCreatedOn_returnsError(t *testing.T) {
 
 	//execute:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaBuilderFactory := concrete_metadata.CreateBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metaBuilderFactory)
 	sigTrs, sigTrsErr := build.Create().WithID(&id).WithTransaction(trs).WithSignature(sig).Now()
 

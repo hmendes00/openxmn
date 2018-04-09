@@ -3,21 +3,21 @@ package blocks
 import (
 	"path/filepath"
 
+	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
-	stored_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks"
 	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
 )
 
 // BlockService represents a concrete BlockService implementation
 type BlockService struct {
-	metaDataService   metadata.MetaDataService
+	metaDataService   metadata.Service
 	signedTrsService  aggregated.SignedTransactionsService
 	blkBuilderFactory stored_blocks.BlockBuilderFactory
 }
 
 // CreateBlockService creates a new BlockService instance
-func CreateBlockService(metaDataService metadata.MetaDataService, signedTrsService aggregated.SignedTransactionsService, blkBuilderFactory stored_blocks.BlockBuilderFactory) blocks.BlockService {
+func CreateBlockService(metaDataService metadata.Service, signedTrsService aggregated.SignedTransactionsService, blkBuilderFactory stored_blocks.BlockBuilderFactory) blocks.BlockService {
 	out := BlockService{
 		metaDataService:   metaDataService,
 		signedTrsService:  signedTrsService,

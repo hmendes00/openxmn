@@ -12,14 +12,14 @@ import (
 // TransactionRepository represents a concrete TransactionRepository implementation
 type TransactionRepository struct {
 	chksRepository            chunks.Repository
-	metRepository             met.MetaDataRepository
+	metRepository             met.Repository
 	transactionBuilderFactory trs.TransactionBuilderFactory
 }
 
 // CreateTransactionRepository creates a new TransactionRepository instance
 func CreateTransactionRepository(
 	chksRepository chunks.Repository,
-	metRepository met.MetaDataRepository,
+	metRepository met.Repository,
 	transactionBuilderFactory trs.TransactionBuilderFactory,
 ) trs.TransactionRepository {
 	out := TransactionRepository{

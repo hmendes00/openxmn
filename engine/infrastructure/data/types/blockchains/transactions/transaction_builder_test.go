@@ -25,7 +25,7 @@ func TestCreateBuilder_withUUID_withBody_withCreatedOn_Success(t *testing.T) {
 	js, _ := json.Marshal(&obj)
 
 	//execute:
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactory()
+	metBuilderFactory := concrete_met.CreateBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metBuilderFactory)
 	trs, trsErr := build.Create().WithID(&id).WithJSON(js).CreatedOn(createdOn).Now()
@@ -79,7 +79,7 @@ func TestCreateBuilder_withoutUUID_withBody_withCreatedOn_Success(t *testing.T) 
 	js, _ := json.Marshal(&obj)
 
 	//execute:
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactory()
+	metBuilderFactory := concrete_met.CreateBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metBuilderFactory)
 	trs, trsErr := build.Create().WithJSON(js).CreatedOn(createdOn).Now()
@@ -106,7 +106,7 @@ func TestCreateBuilder_withUUID_withBody_withoutCreatedOn_Success(t *testing.T) 
 	js, _ := json.Marshal(&obj)
 
 	//execute:
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactory()
+	metBuilderFactory := concrete_met.CreateBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metBuilderFactory)
 	trs, trsErr := build.Create().WithID(&id).WithJSON(js).Now()
@@ -128,7 +128,7 @@ func TestCreateBuilder_withUUID_withoutBody_withCreatedOn_Success(t *testing.T) 
 	createdOn := time.Now()
 
 	//execute:
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactory()
+	metBuilderFactory := concrete_met.CreateBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metBuilderFactory)
 	trs, trsErr := build.Create().WithID(&id).CreatedOn(createdOn).Now()

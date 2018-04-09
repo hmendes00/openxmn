@@ -11,7 +11,7 @@ import (
 
 // SignedTransactionsService represents a concrete SignedTransactions service
 type SignedTransactionsService struct {
-	metaDataService                         metadata.MetaDataService
+	metaDataService                         metadata.Service
 	userSigService                          users.SignatureService
 	aggregatedTrsService                    aggregated.TransactionsService
 	storedAggregatedSignedTrsBuilderFactory stored_aggregated_transactions.SignedTransactionsBuilderFactory
@@ -19,7 +19,7 @@ type SignedTransactionsService struct {
 
 // CreateSignedTransactionsService creates a new SignedTransactionsService instance
 func CreateSignedTransactionsService(
-	metaDataService metadata.MetaDataService,
+	metaDataService metadata.Service,
 	userSigService users.SignatureService,
 	aggregatedTrsService aggregated.TransactionsService,
 	storedAggregatedSignedTrsBuilderFactory stored_aggregated_transactions.SignedTransactionsBuilderFactory,

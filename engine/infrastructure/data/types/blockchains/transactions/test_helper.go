@@ -37,7 +37,7 @@ func CreateTransactionForTests() *Transaction {
 		js,
 	}
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_met.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_met.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	trs := createTransaction(met.(*concrete_met.MetaData), js)
 	return trs.(*Transaction)
@@ -65,7 +65,7 @@ func CreateTransactionsForTests() *Transactions {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_met.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_met.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	out := createTransactions(met.(*concrete_met.MetaData), trs)
 	return out.(*Transactions)
@@ -74,7 +74,7 @@ func CreateTransactionsForTests() *Transactions {
 // CreateTransactionBuilderFactoryForTests creates a new TransactionBuilderFactory for tests
 func CreateTransactionBuilderFactoryForTests() trs.TransactionBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactoryForTests()
+	metBuilderFactory := concrete_met.CreateBuilderFactoryForTests()
 	out := CreateTransactionBuilderFactory(htBuilderFactory, metBuilderFactory)
 	return out
 }
@@ -82,7 +82,7 @@ func CreateTransactionBuilderFactoryForTests() trs.TransactionBuilderFactory {
 // CreateTransactionRepositoryForTests creates a new TransactionRepository for tests
 func CreateTransactionRepositoryForTests() trs.TransactionRepository {
 	chksRepository := concrete_chunks.CreateRepositoryForTests()
-	metRepository := concrete_met.CreateMetaDataRepositoryForTests()
+	metRepository := concrete_met.CreateRepositoryForTests()
 	transactionBuilderFactory := CreateTransactionBuilderFactoryForTests()
 	out := CreateTransactionRepository(chksRepository, metRepository, transactionBuilderFactory)
 	return out
@@ -90,7 +90,7 @@ func CreateTransactionRepositoryForTests() trs.TransactionRepository {
 
 // CreateTransactionServiceForTests creates a new TransactionService for tests
 func CreateTransactionServiceForTests() trs.TransactionService {
-	metaDataService := concrete_met.CreateMetaDataServiceForTests()
+	metaDataService := concrete_met.CreateServiceForTests()
 	chkBuilderFactory := concrete_chunks.CreateBuilderFactoryForTests()
 	chkService := concrete_chunks.CreateServiceForTests()
 	storedTrsBuilderFactory := concrete_stored_trs.CreateTransactionBuilderFactoryForTests()
@@ -101,14 +101,14 @@ func CreateTransactionServiceForTests() trs.TransactionService {
 // CreateTransactionsBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
 func CreateTransactionsBuilderFactoryForTests() trs.TransactionsBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactoryForTests()
+	metBuilderFactory := concrete_met.CreateBuilderFactoryForTests()
 	out := CreateTransactionsBuilderFactory(htBuilderFactory, metBuilderFactory)
 	return out
 }
 
 // CreateTransactionsRepositoryForTests creates a new TransactionsRepository for tests
 func CreateTransactionsRepositoryForTests() trs.TransactionsRepository {
-	metRepository := concrete_met.CreateMetaDataRepositoryForTests()
+	metRepository := concrete_met.CreateRepositoryForTests()
 	trsRepository := CreateTransactionRepositoryForTests()
 	trsBuilderFactory := CreateTransactionsBuilderFactoryForTests()
 	out := CreateTransactionsRepository(metRepository, trsRepository, trsBuilderFactory)
@@ -117,7 +117,7 @@ func CreateTransactionsRepositoryForTests() trs.TransactionsRepository {
 
 // CreateTransactionsServiceForTests creates a new TransactionsService for tests
 func CreateTransactionsServiceForTests() trs.TransactionsService {
-	metaDataService := concrete_met.CreateMetaDataServiceForTests()
+	metaDataService := concrete_met.CreateServiceForTests()
 	trsService := CreateTransactionServiceForTests()
 	storedTrsBuilderFactory := concrete_stored_trs.CreateBuilderFactory()
 	out := CreateTransactionsService(metaDataService, trsService, storedTrsBuilderFactory)

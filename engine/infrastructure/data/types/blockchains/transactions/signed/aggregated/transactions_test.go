@@ -29,7 +29,7 @@ func TestCreateTransactions_Success(t *testing.T) {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	//execute:
 	aggTrs := createTransactions(met.(*concrete_metadata.MetaData), trs, atomicTrs)

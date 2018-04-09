@@ -16,7 +16,7 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -32,7 +32,7 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_withTransactions_Succe
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	build := createTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).WithTransactions(trs).CreatedOn(createdOn).Now()
@@ -61,7 +61,7 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -75,7 +75,7 @@ func TestCreateTransactionsBuilder_withAtomicTransactions_Success(t *testing.T) 
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	build := createTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	aggTrs, aggTrsErr := build.Create().WithID(&id).WithAtomicTransactions(atomicTrs).CreatedOn(createdOn).Now()
@@ -104,7 +104,7 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	//execute:
 	id := uuid.NewV4()
@@ -118,7 +118,7 @@ func TestCreateTransactionsBuilder_withTransactions_Success(t *testing.T) {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	build := createTransactionsBuilder(htBuilderFactory, metaDataBuilderFactory)
 	aggTrs, aggTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()

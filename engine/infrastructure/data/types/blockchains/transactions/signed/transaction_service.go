@@ -12,7 +12,7 @@ import (
 
 // TransactionService represents a concrete TransactionService implementation
 type TransactionService struct {
-	metaDataService               metadata.MetaDataService
+	metaDataService               metadata.Service
 	trsService                    trs.TransactionService
 	storedSignedTrsBuilderFactory stored_signed_transaction.TransactionBuilderFactory
 	sigService                    users.SignatureService
@@ -20,7 +20,7 @@ type TransactionService struct {
 
 // CreateTransactionService creates a new TransactionService instance
 func CreateTransactionService(
-	metaDataService metadata.MetaDataService,
+	metaDataService metadata.Service,
 	trsService trs.TransactionService,
 	storedSignedTrsBuilderFactory stored_signed_transaction.TransactionBuilderFactory,
 	sigService users.SignatureService,

@@ -2,28 +2,27 @@ package users
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/metadata"
 	uuid "github.com/satori/go.uuid"
 )
 
 type userBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	pub                    cryptography.PublicKey
 	crOn                   *time.Time
 }
 
-func createUserBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) user.UserBuilder {
+func createUserBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) user.UserBuilder {
 	out := userBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -85,23 +84,7 @@ func (build *userBuilder) Now() (user.User, error) {
 			return nil, errors.New("the creation time is mandatory in order to build a User instance")
 		}
 
-		pubKeyAsString, pubKeyAsStringErr := build.pub.String()
-		if pubKeyAsStringErr != nil {
-			return nil, pubKeyAsStringErr
-		}
-
-		blocks := [][]byte{
-			build.id.Bytes(),
-			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
-			[]byte(pubKeyAsString),
-		}
-
-		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
-		if htErr != nil {
-			return nil, htErr
-		}
-
-		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.crOn).Now()
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn).Now()
 		if metErr != nil {
 			return nil, metErr
 		}

@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
@@ -16,7 +16,7 @@ import (
 
 type signedTransactionsBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	trs                    aggregated.Transactions
@@ -24,7 +24,7 @@ type signedTransactionsBuilder struct {
 	createdOn              *time.Time
 }
 
-func createSignedTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) aggregated.SignedTransactionsBuilder {
+func createSignedTransactionsBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) aggregated.SignedTransactionsBuilder {
 	out := signedTransactionsBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -102,7 +102,7 @@ func (build *signedTransactionsBuilder) Now() (aggregated.SignedTransactions, er
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
 			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetID().Bytes(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

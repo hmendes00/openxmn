@@ -1,22 +1,22 @@
 package users
 
 import (
-	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // UserService represents a concrete UserService implementation
 type UserService struct {
-	metaDataService          metadata.MetaDataService
+	metaDataService          metadata.Service
 	fileService              files.FileService
 	fileBuilderFactory       files.FileBuilderFactory
 	storedUserBuilderFactory stored_users.UserBuilderFactory
 }
 
 // CreateUserService creates a new UserService instance
-func CreateUserService(metaDataService metadata.MetaDataService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedUserBuilderFactory stored_users.UserBuilderFactory) users.UserService {
+func CreateUserService(metaDataService metadata.Service, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedUserBuilderFactory stored_users.UserBuilderFactory) users.UserService {
 	out := UserService{
 		metaDataService:          metaDataService,
 		fileService:              fileService,

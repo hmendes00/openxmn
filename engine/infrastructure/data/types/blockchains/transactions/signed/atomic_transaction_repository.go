@@ -12,7 +12,7 @@ import (
 
 // AtomicTransactionRepository represents a concrete AtomicTransactionRepository implementation
 type AtomicTransactionRepository struct {
-	metaDataRepository      metadata.MetaDataRepository
+	metaDataRepository      metadata.Repository
 	userSigRepository       users.SignatureRepository
 	trsRepository           transactions.TransactionsRepository
 	atomicTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory
@@ -20,7 +20,7 @@ type AtomicTransactionRepository struct {
 
 // CreateAtomicTransactionRepository creates a new AtomicTransactionRepository instance
 func CreateAtomicTransactionRepository(
-	metaDataRepository metadata.MetaDataRepository,
+	metaDataRepository metadata.Repository,
 	userSigRepository users.SignatureRepository,
 	trsRepository transactions.TransactionsRepository,
 	atomicTrsBuilderFactory signed_trs.AtomicTransactionBuilderFactory,

@@ -12,7 +12,7 @@ import (
 
 // TransactionRepository represents a concrete TransactionRepository implementation
 type TransactionRepository struct {
-	metaDataRepository      metadata.MetaDataRepository
+	metaDataRepository      metadata.Repository
 	sigRepository           users.SignatureRepository
 	transactionRepository   trs.TransactionRepository
 	signedTrsBuilderFactory signed_trs.TransactionBuilderFactory
@@ -20,7 +20,7 @@ type TransactionRepository struct {
 
 // CreateTransactionRepository creates a new TransactionRepository instance
 func CreateTransactionRepository(
-	metaDataRepository metadata.MetaDataRepository,
+	metaDataRepository metadata.Repository,
 	sigRepository users.SignatureRepository,
 	transactionRepository trs.TransactionRepository,
 	signedTrsBuilderFactory signed_trs.TransactionBuilderFactory,

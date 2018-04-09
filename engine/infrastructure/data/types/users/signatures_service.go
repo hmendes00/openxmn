@@ -3,20 +3,20 @@ package users
 import (
 	"path/filepath"
 
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignaturesService represents a concrete SignaturesService implementation
 type SignaturesService struct {
-	metaDataService          metadata.MetaDataService
+	metaDataService          metadata.Service
 	sigService               users.SignatureService
 	storedSigsBuilderFactory stored_users.SignaturesBuilderFactory
 }
 
 // CreateSignaturesService creates a new SignaturesService instance
-func CreateSignaturesService(metaDataService metadata.MetaDataService, sigService users.SignatureService, storedSigsBuilderFactory stored_users.SignaturesBuilderFactory) users.SignaturesService {
+func CreateSignaturesService(metaDataService metadata.Service, sigService users.SignatureService, storedSigsBuilderFactory stored_users.SignaturesBuilderFactory) users.SignaturesService {
 	out := SignaturesService{
 		metaDataService:          metaDataService,
 		sigService:               sigService,

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
@@ -23,7 +23,7 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
@@ -36,7 +36,7 @@ func TestBuildAtomicTransaction_Success(t *testing.T) {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(createdOn.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 
 	ht, htErr := htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
@@ -76,7 +76,7 @@ func TestBuildAtomicTransaction_withoutID_returnsError(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithTransactions(trs).WithSignature(sig).CreatedOn(createdOn).Now()
@@ -100,7 +100,7 @@ func TestBuildAtomicTransaction_withoutTransactions_returnsError(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithSignature(sig).CreatedOn(createdOn).Now()
@@ -124,7 +124,7 @@ func TestBuildAtomicTransaction_withoutSignature_returnsError(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).CreatedOn(createdOn).Now()
@@ -148,7 +148,7 @@ func TestBuildAtomicTransaction_withoutCreatedOn_returnsError(t *testing.T) {
 
 	//factories:
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactory()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactory()
 
 	build := createAtomicTransactionBuilder(htBuilderFactory, metaDataBuilderFactory)
 	atomicTrs, atomicTrsErr := build.Create().WithID(&id).WithTransactions(trs).WithSignature(sig).Now()

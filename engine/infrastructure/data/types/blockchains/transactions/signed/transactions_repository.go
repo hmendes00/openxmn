@@ -13,13 +13,13 @@ import (
 
 // TransactionsRepository represents a concrete TransactionsRepository implementation
 type TransactionsRepository struct {
-	metaDataRepository metadata.MetaDataRepository
+	metaDataRepository metadata.Repository
 	trsRepository      signed_trs.TransactionRepository
 	trsBuilderFactory  signed_trs.TransactionsBuilderFactory
 }
 
 // CreateTransactionsRepository creates a new TransactionsRepository instance
-func CreateTransactionsRepository(metaDataRepository metadata.MetaDataRepository, trsRepository signed_trs.TransactionRepository, trsBuilderFactory signed_trs.TransactionsBuilderFactory) signed_trs.TransactionsRepository {
+func CreateTransactionsRepository(metaDataRepository metadata.Repository, trsRepository signed_trs.TransactionRepository, trsBuilderFactory signed_trs.TransactionsBuilderFactory) signed_trs.TransactionsRepository {
 	out := TransactionsRepository{
 		metaDataRepository: metaDataRepository,
 		trsRepository:      trsRepository,

@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // SignatureService represents a concrete SignatureService implementation
 type SignatureService struct {
-	metaDataService         metadata.MetaDataService
+	metaDataService         metadata.Service
 	usrService              users.UserService
 	fileService             files.FileService
 	fileBuilderFactory      files.FileBuilderFactory
@@ -20,7 +20,7 @@ type SignatureService struct {
 }
 
 // CreateSignatureService creates a new SignatureService instance
-func CreateSignatureService(metaDataService metadata.MetaDataService, usrService users.UserService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedSigBuilderFactory stored_users.SignatureBuilderFactory) users.SignatureService {
+func CreateSignatureService(metaDataService metadata.Service, usrService users.UserService, fileService files.FileService, fileBuilderFactory files.FileBuilderFactory, storedSigBuilderFactory stored_users.SignatureBuilderFactory) users.SignatureService {
 	out := SignatureService{
 		metaDataService:         metaDataService,
 		usrService:              usrService,

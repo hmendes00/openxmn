@@ -6,8 +6,8 @@ import (
 	"time"
 
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
@@ -16,7 +16,7 @@ import (
 
 type signedBlockBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	blk                    blocks.Block
@@ -24,7 +24,7 @@ type signedBlockBuilder struct {
 	createdOn              *time.Time
 }
 
-func createSignedBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) blocks.SignedBlockBuilder {
+func createSignedBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) blocks.SignedBlockBuilder {
 	out := signedBlockBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -102,7 +102,7 @@ func (build *signedBlockBuilder) Now() (blocks.SignedBlock, error) {
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.createdOn.UnixNano()))),
 			build.blk.GetMetaData().GetHashTree().GetHash().Get(),
-			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetID().Bytes(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

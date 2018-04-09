@@ -11,7 +11,7 @@ import (
 func TestCreateBuilderFactory_Success(t *testing.T) {
 
 	//variables:
-	metBuilderFactory := concrete_met.CreateMetaDataBuilderFactory()
+	metBuilderFactory := concrete_met.CreateBuilderFactory()
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactory()
 	build := createTransactionBuilder(htBuilderFactory, metBuilderFactory)
 

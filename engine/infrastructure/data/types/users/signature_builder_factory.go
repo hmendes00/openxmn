@@ -3,7 +3,7 @@ package users
 import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
@@ -11,11 +11,11 @@ import (
 type SignatureBuilderFactory struct {
 	sigBuilderFactory      cryptography.SignatureBuilderFactory
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 }
 
 // CreateSignatureBuilderFactory creates a new SignatureBuilderFactory instance
-func CreateSignatureBuilderFactory(sigBuilderFactory cryptography.SignatureBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) user.SignatureBuilderFactory {
+func CreateSignatureBuilderFactory(sigBuilderFactory cryptography.SignatureBuilderFactory, htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) user.SignatureBuilderFactory {
 	out := SignatureBuilderFactory{
 		sigBuilderFactory:      sigBuilderFactory,
 		htBuilderFactory:       htBuilderFactory,

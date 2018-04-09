@@ -12,7 +12,7 @@ import (
 
 // BlockService represents a concrete BlockService implementation
 type BlockService struct {
-	metaDataService                  metadata.MetaDataService
+	metaDataService                  metadata.Service
 	signedBlkService                 blocks.SignedBlockService
 	userSigService                   users.SignaturesService
 	storedValidatedBlkBuilderFactory stored_validated_blocks.BlockBuilderFactory
@@ -20,7 +20,7 @@ type BlockService struct {
 
 // CreateBlockService creates a new BlockService instance
 func CreateBlockService(
-	metaDataService metadata.MetaDataService,
+	metaDataService metadata.Service,
 	signedBlkService blocks.SignedBlockService,
 	userSigService users.SignaturesService,
 	storedValidatedBlkBuilderFactory stored_validated_blocks.BlockBuilderFactory,

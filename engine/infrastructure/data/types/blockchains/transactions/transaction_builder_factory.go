@@ -8,11 +8,11 @@ import (
 
 type transactionBuilderFactory struct {
 	htBuilderFactory  hashtrees.HashTreeBuilderFactory
-	metBuilderFactory met.MetaDataBuilderFactory
+	metBuilderFactory met.BuilderFactory
 }
 
 // CreateTransactionBuilderFactory creates a new TransactionBuilderFactory
-func CreateTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metBuilderFactory met.MetaDataBuilderFactory) trs.TransactionBuilderFactory {
+func CreateTransactionBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metBuilderFactory met.BuilderFactory) trs.TransactionBuilderFactory {
 	out := transactionBuilderFactory{
 		htBuilderFactory:  htBuilderFactory,
 		metBuilderFactory: metBuilderFactory,

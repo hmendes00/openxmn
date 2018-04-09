@@ -2,28 +2,24 @@ package users
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/metadata"
 	uuid "github.com/satori/go.uuid"
 )
 
 type signaturesBuilder struct {
-	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	sigs                   []user.Signature
 	crOn                   *time.Time
 }
 
-func createSignaturesBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) user.SignaturesBuilder {
+func createSignaturesBuilder(metaDataBuilderFactory metadata.BuilderFactory) user.SignaturesBuilder {
 	out := signaturesBuilder{
-		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
 		id:   nil,
 		met:  nil,
@@ -86,21 +82,7 @@ func (build *signaturesBuilder) Now() (user.Signatures, error) {
 			return nil, errors.New("the creation time is mandatory in order to build a Signatures instance")
 		}
 
-		blocks := [][]byte{
-			build.id.Bytes(),
-			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
-		}
-
-		for _, oneSig := range build.sigs {
-			blocks = append(blocks, oneSig.GetMetaData().GetHashTree().GetHash().Get())
-		}
-
-		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()
-		if htErr != nil {
-			return nil, htErr
-		}
-
-		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).WithHashTree(ht).CreatedOn(*build.crOn).Now()
+		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn).Now()
 		if metErr != nil {
 			return nil, metErr
 		}

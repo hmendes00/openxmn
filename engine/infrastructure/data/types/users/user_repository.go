@@ -3,20 +3,20 @@ package users
 import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // UserRepository represents a concrete UserRepository implementation
 type UserRepository struct {
-	metaDataRepository   metadata.MetaDataRepository
+	metaDataRepository   metadata.Repository
 	fileRepository       files.FileRepository
 	pubKeyBuilderFactory cryptography.PublicKeyBuilderFactory
 	usrBuilderFactory    users.UserBuilderFactory
 }
 
 // CreateUserRepository creates a new UserRepository instance
-func CreateUserRepository(metaDataRepository metadata.MetaDataRepository, fileRepository files.FileRepository, pubKeyBuilderFactory cryptography.PublicKeyBuilderFactory, usrBuilderFactory users.UserBuilderFactory) users.UserRepository {
+func CreateUserRepository(metaDataRepository metadata.Repository, fileRepository files.FileRepository, pubKeyBuilderFactory cryptography.PublicKeyBuilderFactory, usrBuilderFactory users.UserBuilderFactory) users.UserRepository {
 	out := UserRepository{
 		metaDataRepository:   metaDataRepository,
 		fileRepository:       fileRepository,

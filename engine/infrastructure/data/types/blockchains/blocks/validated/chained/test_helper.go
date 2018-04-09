@@ -5,11 +5,11 @@ import (
 	"time"
 
 	chained "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated/chained"
+	concrete_stored_chained "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks/validated/chained"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	concrete_validated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks/validated"
 	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_stored_chained "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks/validated/chained"
-	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	uuid "github.com/satori/go.uuid"
 )
 

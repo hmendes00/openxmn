@@ -7,8 +7,8 @@ import (
 
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	validated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
@@ -18,7 +18,7 @@ import (
 
 type blockBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 	id                     *uuid.UUID
 	met                    metadata.MetaData
 	blk                    blocks.SignedBlock
@@ -26,7 +26,7 @@ type blockBuilder struct {
 	ts                     *time.Time
 }
 
-func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) validated.BlockBuilder {
+func createBlockBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) validated.BlockBuilder {
 	out := blockBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -104,7 +104,7 @@ func (build *blockBuilder) Now() (validated.Block, error) {
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.ts.UnixNano()))),
 			build.blk.GetMetaData().GetHashTree().GetHash().Get(),
-			build.ls.GetMetaData().GetHashTree().GetHash().Get(),
+			build.ls.GetMetaData().GetID().Bytes(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

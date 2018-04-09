@@ -2,18 +2,18 @@ package users
 
 import (
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // UserBuilderFactory represents a concrete UserBuilderFactory
 type UserBuilderFactory struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory metadata.MetaDataBuilderFactory
+	metaDataBuilderFactory metadata.BuilderFactory
 }
 
 // CreateUserBuilderFactory creates a new UserBuilderFactory instance
-func CreateUserBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.MetaDataBuilderFactory) user.UserBuilderFactory {
+func CreateUserBuilderFactory(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) user.UserBuilderFactory {
 	out := UserBuilderFactory{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,

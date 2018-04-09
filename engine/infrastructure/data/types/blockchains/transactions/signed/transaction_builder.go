@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions"
@@ -18,7 +18,7 @@ import (
 
 type transactionBuilder struct {
 	htBuilderFactory       hashtrees.HashTreeBuilderFactory
-	metaDataBuilderFactory met.MetaDataBuilderFactory
+	metaDataBuilderFactory met.BuilderFactory
 	id                     *uuid.UUID
 	meta                   met.MetaData
 	trs                    trs.Transaction
@@ -26,7 +26,7 @@ type transactionBuilder struct {
 	crOn                   *time.Time
 }
 
-func createTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.MetaDataBuilderFactory) signed_transactions.TransactionBuilder {
+func createTransactionBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory met.BuilderFactory) signed_transactions.TransactionBuilder {
 	out := transactionBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
@@ -104,7 +104,7 @@ func (build *transactionBuilder) Now() (signed_transactions.Transaction, error) 
 			build.id.Bytes(),
 			[]byte(strconv.Itoa(int(build.crOn.UnixNano()))),
 			build.trs.GetMetaData().GetHashTree().GetHash().Get(),
-			build.sig.GetMetaData().GetHashTree().GetHash().Get(),
+			build.sig.GetMetaData().GetID().Bytes(),
 		}
 
 		ht, htErr := build.htBuilderFactory.Create().Create().WithBlocks(blocks).Now()

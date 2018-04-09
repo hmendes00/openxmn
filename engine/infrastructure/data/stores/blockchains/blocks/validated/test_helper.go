@@ -3,8 +3,8 @@ package validated
 import (
 	stored_validated_block "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/blocks/validated"
 	concrete_stored_block "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/blocks"
-	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	concrete_stored_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 
 // CreateBlockForTests creates a Block for tests
@@ -16,9 +16,24 @@ func CreateBlockForTests() *Block {
 	return out.(*Block)
 }
 
+// CreateSignedBlockForTests creates a SignedBlock for tests
+func CreateSignedBlockForTests() *SignedBlock {
+	met := concrete_stored_files.CreateFileForTests()
+	blk := CreateBlockForTests()
+	sig := concrete_stored_users.CreateSignatureForTests()
+	out := createSignedBlock(met, blk, sig)
+	return out.(*SignedBlock)
+}
+
 // CreateBlockBuilderFactoryForTests creates a BlockBuilderFactory for tests
 func CreateBlockBuilderFactoryForTests() stored_validated_block.BlockBuilderFactory {
 	out := CreateBlockBuilderFactory()
+	return out
+}
+
+// CreateSignedBlockBuilderFactoryForTests creates a SignedBlockBuilderFactory for tests
+func CreateSignedBlockBuilderFactoryForTests() stored_validated_block.SignedBlockBuilderFactory {
+	out := CreateSignedBlockBuilderFactory()
 	return out
 }
 

@@ -34,24 +34,24 @@ func CreateMetaDataForTests(t *testing.T) *MetaData {
 	return trs.(*MetaData)
 }
 
-// CreateMetaDataBuilderFactoryForTests creates a new MetaDataBuilderFactory for tests
-func CreateMetaDataBuilderFactoryForTests() met.MetaDataBuilderFactory {
-	out := CreateMetaDataBuilderFactory()
+// CreateBuilderFactoryForTests creates a new BuilderFactory for tests
+func CreateBuilderFactoryForTests() met.BuilderFactory {
+	out := CreateBuilderFactory()
 	return out
 }
 
-// CreateMetaDataRepositoryForTests creates a new MetaDataRepository for tests
-func CreateMetaDataRepositoryForTests() met.MetaDataRepository {
+// CreateRepositoryForTests creates a new Repository for tests
+func CreateRepositoryForTests() met.Repository {
 	fileRepository := concrete_files.CreateFileRepositoryForTests()
-	out := CreateMetaDataRepository(fileRepository)
+	out := CreateRepository(fileRepository)
 	return out
 }
 
-// CreateMetaDataServiceForTests creates a new MetaDataService for tests
-func CreateMetaDataServiceForTests() met.MetaDataService {
+// CreateServiceForTests creates a new Service for tests
+func CreateServiceForTests() met.Service {
 	fileBuilderFactory := concrete_files.CreateFileBuilderFactoryForTests()
 	fileService := concrete_files.CreateFileServiceForTests()
 	storedFileBuilderFactory := concrete_stored_files.CreateFileBuilderFactoryForTests()
-	out := CreateMetaDataService(fileBuilderFactory, fileService, storedFileBuilderFactory)
+	out := CreateService(fileBuilderFactory, fileService, storedFileBuilderFactory)
 	return out
 }

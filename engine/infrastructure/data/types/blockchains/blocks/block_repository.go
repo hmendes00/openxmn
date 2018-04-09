@@ -14,13 +14,13 @@ import (
 
 // BlockRepository represents a concrete BlockRepository implementation
 type BlockRepository struct {
-	metaDataRepository  metadata.MetaDataRepository
+	metaDataRepository  metadata.Repository
 	signedTrsRepository aggregated.SignedTransactionsRepository
 	blkBuilderFactory   blocks.BlockBuilderFactory
 }
 
 // CreateBlockRepository creates a new BlockRepository instance
-func CreateBlockRepository(metaDataRepository metadata.MetaDataRepository, signedTrsRepository aggregated.SignedTransactionsRepository, blkBuilderFactory blocks.BlockBuilderFactory) blocks.BlockRepository {
+func CreateBlockRepository(metaDataRepository metadata.Repository, signedTrsRepository aggregated.SignedTransactionsRepository, blkBuilderFactory blocks.BlockBuilderFactory) blocks.BlockRepository {
 	out := BlockRepository{
 		metaDataRepository:  metaDataRepository,
 		signedTrsRepository: signedTrsRepository,

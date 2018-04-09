@@ -10,7 +10,7 @@ import (
 
 // SignedBlockRepository represents a concrete SignedBlockRepository implementation
 type SignedBlockRepository struct {
-	metaDataRepository      metadata.MetaDataRepository
+	metaDataRepository      metadata.Repository
 	userSigRepository       users.SignatureRepository
 	blkRepository           blocks.BlockRepository
 	signedBlkBuilderFactory blocks.SignedBlockBuilderFactory
@@ -18,7 +18,7 @@ type SignedBlockRepository struct {
 
 // CreateSignedBlockRepository creates a new SignedBlockRepository instance
 func CreateSignedBlockRepository(
-	metaDataRepository metadata.MetaDataRepository,
+	metaDataRepository metadata.Repository,
 	userSigRepository users.SignatureRepository,
 	blkRepository blocks.BlockRepository,
 	signedBlkBuilderFactory blocks.SignedBlockBuilderFactory,

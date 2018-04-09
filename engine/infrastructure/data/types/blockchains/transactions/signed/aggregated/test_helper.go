@@ -5,10 +5,10 @@ import (
 	"time"
 
 	aggregated "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed/aggregated"
-	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_stored_aggregated "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/transactions/signed/aggregated"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 	concrete_signed "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed"
+	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 	uuid "github.com/satori/go.uuid"
 )
@@ -29,7 +29,7 @@ func CreateTransactionsForTests() *Transactions {
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(htBlocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(createdOn).Now()
 
 	aggregatedTrs := createTransactions(met.(*concrete_metadata.MetaData), trs, atomicTrs)
 	return aggregatedTrs.(*Transactions)
@@ -47,11 +47,11 @@ func CreateSignedTransactionsForTests() *SignedTransactions {
 		id.Bytes(),
 		[]byte(strconv.Itoa(int(cr.UnixNano()))),
 		trs.GetMetaData().GetHashTree().GetHash().Get(),
-		sig.GetMetaData().GetHashTree().GetHash().Get(),
+		sig.GetMetaData().GetID().Bytes(),
 	}
 
 	ht, _ := concrete_hashtrees.CreateHashTreeBuilderFactory().Create().Create().WithBlocks(blocks).Now()
-	met, _ := concrete_metadata.CreateMetaDataBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
+	met, _ := concrete_metadata.CreateBuilderFactory().Create().Create().WithID(&id).WithHashTree(ht).CreatedOn(cr).Now()
 
 	sigTrs := createSignedTransactions(met.(*concrete_metadata.MetaData), trs, sig)
 	return sigTrs.(*SignedTransactions)
@@ -60,14 +60,14 @@ func CreateSignedTransactionsForTests() *SignedTransactions {
 // CreateTransactionsBuilderFactoryForTests creates a new TransactionsBuilderFactory for tests
 func CreateTransactionsBuilderFactoryForTests() aggregated.TransactionsBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateTransactionsRepositoryForTests creates a new TransactionsRepository for tests
 func CreateTransactionsRepositoryForTests() aggregated.TransactionsRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	signedTrsRepository := concrete_signed.CreateTransactionsRepositoryForTests()
 	signedAtomicTrsRepository := concrete_signed.CreateAtomicTransactionsRepositoryForTests()
 	aggregatedTrsBuilderFactory := CreateTransactionsBuilderFactoryForTests()
@@ -77,7 +77,7 @@ func CreateTransactionsRepositoryForTests() aggregated.TransactionsRepository {
 
 // CreateTransactionsServiceForTests creates a new TransactionsService for tests
 func CreateTransactionsServiceForTests() aggregated.TransactionsService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	signedTrsService := concrete_signed.CreateTransactionsServiceForTests()
 	atomicSignedTrsService := concrete_signed.CreateAtomicTransactionsServiceForTests()
 	storedTrsBuilderFactory := concrete_stored_aggregated.CreateTransactionsBuilderFactory()
@@ -88,14 +88,14 @@ func CreateTransactionsServiceForTests() aggregated.TransactionsService {
 // CreateSignedTransactionsBuilderFactoryForTests creates a new SignedTransactionsBuilderFactory for tests
 func CreateSignedTransactionsBuilderFactoryForTests() aggregated.SignedTransactionsBuilderFactory {
 	htBuilderFactory := concrete_hashtrees.CreateHashTreeBuilderFactoryForTests()
-	metaDataBuilderFactory := concrete_metadata.CreateMetaDataBuilderFactoryForTests()
+	metaDataBuilderFactory := concrete_metadata.CreateBuilderFactoryForTests()
 	out := CreateSignedTransactionsBuilderFactory(htBuilderFactory, metaDataBuilderFactory)
 	return out
 }
 
 // CreateSignedTransactionsRepositoryForTests creates a new SignedTransactionsRepository for tests
 func CreateSignedTransactionsRepositoryForTests() aggregated.SignedTransactionsRepository {
-	metaDataRepository := concrete_metadata.CreateMetaDataRepositoryForTests()
+	metaDataRepository := concrete_metadata.CreateRepositoryForTests()
 	userSigRepository := concrete_users.CreateSignatureRepositoryForTests()
 	aggregatedTrsRepository := CreateTransactionsRepositoryForTests()
 	signedTrsBuilderFactory := CreateSignedTransactionsBuilderFactoryForTests()
@@ -105,7 +105,7 @@ func CreateSignedTransactionsRepositoryForTests() aggregated.SignedTransactionsR
 
 // CreateSignedTransactionsServiceForTests creates a new SignedTransactionsService for tests
 func CreateSignedTransactionsServiceForTests() aggregated.SignedTransactionsService {
-	metaDataService := concrete_metadata.CreateMetaDataServiceForTests()
+	metaDataService := concrete_metadata.CreateServiceForTests()
 	userSigService := concrete_users.CreateSignatureServiceForTests()
 	aggregatedTrsService := CreateTransactionsServiceForTests()
 	storedAggregatedSignedTrsBuilderFactory := concrete_stored_aggregated.CreateSignedTransactionsBuilderFactory()

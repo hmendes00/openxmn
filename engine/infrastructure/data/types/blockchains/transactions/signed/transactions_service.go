@@ -10,13 +10,13 @@ import (
 
 // TransactionsService represents a concrete TransactionsService implementation
 type TransactionsService struct {
-	metaDataService         metadata.MetaDataService
+	metaDataService         metadata.Service
 	trsService              signed_trs.TransactionService
 	storedTrsBuilderFactory stored_signed_transaction.TransactionsBuilderFactory
 }
 
 // CreateTransactionsService creates a new TransactionsService instance
-func CreateTransactionsService(metaDataService metadata.MetaDataService, trsService signed_trs.TransactionService, storedTrsBuilderFactory stored_signed_transaction.TransactionsBuilderFactory) signed_trs.TransactionsService {
+func CreateTransactionsService(metaDataService metadata.Service, trsService signed_trs.TransactionService, storedTrsBuilderFactory stored_signed_transaction.TransactionsBuilderFactory) signed_trs.TransactionsService {
 	out := TransactionsService{
 		metaDataService:         metaDataService,
 		trsService:              trsService,

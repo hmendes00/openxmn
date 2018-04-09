@@ -11,7 +11,7 @@ import (
 
 // SignedTransactionsRepository represents a concrete SignedTransactions repository
 type SignedTransactionsRepository struct {
-	metaDataRepository      metadata.MetaDataRepository
+	metaDataRepository      metadata.Repository
 	userSigRepository       users.SignatureRepository
 	aggregatedTrsRepository aggregated.TransactionsRepository
 	signedTrsBuilderFactory aggregated.SignedTransactionsBuilderFactory
@@ -19,7 +19,7 @@ type SignedTransactionsRepository struct {
 
 // CreateSignedTransactionsRepository creates a new SignedTransactionsRepository instance
 func CreateSignedTransactionsRepository(
-	metaDataRepository metadata.MetaDataRepository,
+	metaDataRepository metadata.Repository,
 	userSigRepository users.SignatureRepository,
 	aggregatedTrsRepository aggregated.TransactionsRepository,
 	signedTrsBuilderFactory aggregated.SignedTransactionsBuilderFactory,
