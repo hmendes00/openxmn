@@ -1,6 +1,7 @@
 package databases
 
 import (
+	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands/files"
 	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	uuid "github.com/satori/go.uuid"
 )
@@ -24,4 +25,14 @@ func CreateToken(dirPath string, repository tokens.TokenRepository) *Token {
 // RetrieveByID retrieves a Token by ID
 func (db *Token) RetrieveByID(id *uuid.UUID) (tokens.Token, error) {
 	return nil, nil
+}
+
+// Insert inserts a new token to the database
+func (db *Token) Insert(tok tokens.Token) (files.File, error) {
+	return nil, nil
+}
+
+// Update updates a token to the database
+func (db *Token) Update(old tokens.Token, new tokens.Token) (files.File, files.File, error) {
+	return nil, nil, nil
 }

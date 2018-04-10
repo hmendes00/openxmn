@@ -13,7 +13,7 @@ import (
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
-// SaveOrganization processes the save organization transaction, on the XMN instance
+// SaveOrganization represents a save user processor
 type SaveOrganization struct {
 	orgDB                      *databases.Organization
 	tokenDB                    *databases.Token

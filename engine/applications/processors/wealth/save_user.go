@@ -12,7 +12,7 @@ import (
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
-// SaveUser represents a save user transaction
+// SaveUser represents a save user processor
 type SaveUser struct {
 	userDB                 *databases.User
 	metaDataBuilderFactory metadata.BuilderFactory
