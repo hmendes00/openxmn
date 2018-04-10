@@ -31,3 +31,8 @@ func (db *Stake) RetrieveByID(id *uuid.UUID) (stakes.Stake, error) {
 func (db *Stake) Insert(stk stakes.Stake) (files.File, error) {
 	return nil, nil
 }
+
+// Delete deletes a stake
+func (db *Stake) Delete(stk stakes.Stake) (files.File, error) {
+	return nil, nil
+}
