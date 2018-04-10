@@ -12,29 +12,41 @@ import (
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
+	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
 )
 
-// InsertToken represents a save token processor
+// InsertToken represents an insert token processor
 type InsertToken struct {
-	tokenDB              databases.Token
+	tokenDB              *databases.Token
+	walDB                *databases.Wallet
 	tokenBuilderFactory  tokens.TokenBuilderFactory
+	walBuilderFactory    wallets.WalletBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
-	updateBuilderFactory commands.UpdateBuilderFactory
+	cmdsBuilderFactory   commands.BuilderFactory
 	insertBuilderFactory commands.InsertBuilderFactory
+	updateBuilderFactory commands.UpdateBuilderFactory
 }
 
 // CreateInsertToken creates a InsertToken instance
 func CreateInsertToken(
-	tokenDB databases.Token,
+	tokenDB *databases.Token,
+	walDB *databases.Wallet,
 	tokenBuilderFactory tokens.TokenBuilderFactory,
+	walBuilderFactory wallets.WalletBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
+	cmdsBuilderFactory commands.BuilderFactory,
 	insertBuilderFactory commands.InsertBuilderFactory,
+	updateBuilderFactory commands.UpdateBuilderFactory,
 ) processors.Transaction {
 	out := InsertToken{
 		tokenDB:              tokenDB,
+		walDB:                walDB,
 		tokenBuilderFactory:  tokenBuilderFactory,
+		walBuilderFactory:    walBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
+		cmdsBuilderFactory:   cmdsBuilderFactory,
 		insertBuilderFactory: insertBuilderFactory,
+		updateBuilderFactory: updateBuilderFactory,
 	}
 
 	return &out
@@ -44,16 +56,17 @@ func CreateInsertToken(
 func (trans *InsertToken) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
 	//try to unmarshal:
 	js := trs.GetJSON()
-	saveTokTrs := new(transaction_wealth.InsertToken)
-	jsErr := json.Unmarshal(js, saveTokTrs)
+	insTokTrs := new(transaction_wealth.InsertToken)
+	jsErr := json.Unmarshal(js, insTokTrs)
 	if jsErr != nil {
 		return nil, jsErr
 	}
 
 	//retrieves the transaction  data:
-	tokID := saveTokTrs.GetTokenID()
-	symbol := saveTokTrs.GetSymbol()
-	amount := saveTokTrs.GetAmount()
+	tokID := insTokTrs.GetTokenID()
+	creatorID := insTokTrs.GetCreatorID()
+	symbol := insTokTrs.GetSymbol()
+	amount := insTokTrs.GetAmount()
 	crOn := trs.GetMetaData().CreatedOn()
 
 	//make sure the token does not already exists:
@@ -91,5 +104,54 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 		return nil, cmdErr
 	}
 
-	return cmd, nil
+	//retrieve the wallet:
+	wal, walErr := trans.walDB.RetrieveByCreatorIDAndTokenID(creatorID, tokID)
+	if walErr != nil {
+		return nil, walErr
+	}
+
+	//build the updated wallet:
+	walCrOn := wal.GetMetaData().CreatedOn()
+	owner := wal.GetOwner()
+	newAmount := wal.GetAmount() + float64(amount)
+	newWal, newWalErr := trans.walBuilderFactory.Create().Create().WithID(creatorID).CreatedOn(walCrOn).LastUpdatedOn(crOn).WithOwner(owner).WithToken(tok).WithAmount(newAmount).Now()
+	if newWalErr != nil {
+		return nil, newWalErr
+	}
+
+	//save the updated wallet:
+	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(wal, newWal)
+	if walFileErr != nil {
+		return nil, walFileErr
+	}
+
+	//build the wallet update command:
+	walUp, walUpErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
+	if walUpErr != nil {
+		return nil, walUpErr
+	}
+
+	//build the wallet command:
+	walCmd, walCmdErr := trans.cmdBuilderFactory.Create().Create().WithUpdate(walUp).Now()
+	if walCmdErr != nil {
+		return nil, walCmdErr
+	}
+
+	//build the commands:
+	cmds, cmdsErr := trans.cmdsBuilderFactory.Create().Create().WithCommands([]commands.Command{
+		cmd,
+		walCmd,
+	}).Now()
+
+	if cmdsErr != nil {
+		return nil, cmdsErr
+	}
+
+	//build the output command:
+	out, outErr := trans.cmdBuilderFactory.Create().Create().WithCommands(cmds).Now()
+	if outErr != nil {
+		return nil, outErr
+	}
+
+	return out, nil
 }

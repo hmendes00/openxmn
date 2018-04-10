@@ -20,6 +20,7 @@ type tokenBuilder struct {
 	symbol                 string
 	amount                 int
 	crOn                   *time.Time
+	lstUpOn                *time.Time
 }
 
 func createTokenBuilder(metaDataBuilderFactory metadata.BuilderFactory) tokens.TokenBuilder {
@@ -31,6 +32,7 @@ func createTokenBuilder(metaDataBuilderFactory metadata.BuilderFactory) tokens.T
 		symbol:  "",
 		amount:  0,
 		crOn:    nil,
+		lstUpOn: nil,
 	}
 
 	return &out
@@ -44,6 +46,7 @@ func (build *tokenBuilder) Create() tokens.TokenBuilder {
 	build.symbol = ""
 	build.amount = 0
 	build.crOn = nil
+	build.lstUpOn = nil
 	return build
 }
 
@@ -83,6 +86,12 @@ func (build *tokenBuilder) CreatedOn(crOn time.Time) tokens.TokenBuilder {
 	return build
 }
 
+// LastUpdatedOn adds a last updated on time to the token builder
+func (build *tokenBuilder) LastUpdatedOn(lstUpOn time.Time) tokens.TokenBuilder {
+	build.lstUpOn = &lstUpOn
+	return build
+}
+
 // Now builds a new Token instance
 func (build *tokenBuilder) Now() (tokens.Token, error) {
 
@@ -107,7 +116,12 @@ func (build *tokenBuilder) Now() (tokens.Token, error) {
 			return nil, errors.New("the creation time is mandatory in order to build a Token instance")
 		}
 
-		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn).Now()
+		metBuilder := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn)
+		if build.lstUpOn != nil {
+			metBuilder.LastUpdatedOn(*build.lstUpOn)
+		}
+
+		met, metErr := metBuilder.Now()
 		if metErr != nil {
 			return nil, metErr
 		}

@@ -17,5 +17,6 @@ type TokenBuilder interface {
 	WithSymbol(symbol string) TokenBuilder
 	WithAmount(amount int) TokenBuilder
 	CreatedOn(crOn time.Time) TokenBuilder
+	LastUpdatedOn(lstUpOn time.Time) TokenBuilder
 	Now() (Token, error)
 }
