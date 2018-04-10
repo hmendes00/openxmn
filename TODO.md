@@ -8,3 +8,4 @@
 
 -----
 Finish the command builder
+In the transactions processor, make sure we verify that the user exists

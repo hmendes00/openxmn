@@ -49,7 +49,7 @@ func CreateSaveOrganization(
 
 // Process processes a SaveOrganization transaction
 func (trans *SaveOrganization) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
-	//try to marshal:
+	//try to unmarshal:
 	js := trs.GetJSON()
 	saveOrgTrs := new(transaction_wealth.SaveOrganization)
 	jsErr := json.Unmarshal(js, saveOrgTrs)
@@ -76,7 +76,7 @@ func (trans *SaveOrganization) Process(trs transactions.Transaction, user users.
 
 	if org == nil {
 		crOn := trs.GetMetaData().CreatedOn()
-		met, metErr := trans.metaDataBuilderFactory.Create().Create().CreatedOn(crOn).Now()
+		met, metErr := trans.metaDataBuilderFactory.Create().Create().CreatedOn(crOn).WithID(orgID).Now()
 		if metErr != nil {
 			return nil, metErr
 		}

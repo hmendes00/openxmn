@@ -13,12 +13,12 @@ import (
 
 // Transactions represents a concrete transactions processor implementation
 type Transactions struct {
-	processors         []processors.SingleTransaction
+	processors         []processors.Transaction
 	cmdsBuilderFactory commands.BuilderFactory
 }
 
 // CreateTransactions creates a new Transactions instance
-func CreateTransactions(processors []processors.SingleTransaction, cmdsBuilderFactory commands.BuilderFactory) processors.Transactions {
+func CreateTransactions(processors []processors.Transaction, cmdsBuilderFactory commands.BuilderFactory) processors.Transactions {
 	out := Transactions{
 		processors:         processors,
 		cmdsBuilderFactory: cmdsBuilderFactory,
@@ -62,6 +62,10 @@ func (fr *Transactions) AtomicProcess(atomicTrs signed_transactions.AtomicTransa
 }
 
 func (fr *Transactions) processPass(trs transactions.Transaction, usr users.User) (commands.Command, error) {
+
+	// verify that the user exists:
+
+	//process:
 	for _, oneProc := range fr.processors {
 		cmd, cmdErr := oneProc.Process(trs, usr)
 		if cmdErr != nil {
