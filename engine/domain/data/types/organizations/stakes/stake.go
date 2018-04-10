@@ -1,4 +1,4 @@
-package organizations
+package stakes
 
 import (
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
