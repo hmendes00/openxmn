@@ -19,6 +19,7 @@ import (
 type InsertToken struct {
 	tokenDB              *databases.Token
 	walDB                *databases.Wallet
+	userDB               *databases.User
 	tokenBuilderFactory  tokens.TokenBuilderFactory
 	walBuilderFactory    wallets.WalletBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
@@ -31,6 +32,7 @@ type InsertToken struct {
 func CreateInsertToken(
 	tokenDB *databases.Token,
 	walDB *databases.Wallet,
+	userDB *databases.User,
 	tokenBuilderFactory tokens.TokenBuilderFactory,
 	walBuilderFactory wallets.WalletBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
@@ -41,6 +43,7 @@ func CreateInsertToken(
 	out := InsertToken{
 		tokenDB:              tokenDB,
 		walDB:                walDB,
+		userDB:               userDB,
 		tokenBuilderFactory:  tokenBuilderFactory,
 		walBuilderFactory:    walBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
@@ -104,35 +107,44 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 		return nil, cmdErr
 	}
 
+	//retrieve the creator:
+	creator, creatorErr := trans.userDB.RetrieveByID(creatorID)
+	if creatorErr != nil {
+		return nil, creatorErr
+	}
+
 	//retrieve the wallet:
 	wal, walErr := trans.walDB.RetrieveByCreatorIDAndTokenID(creatorID, tokID)
 	if walErr != nil {
 		return nil, walErr
 	}
 
-	//build the updated wallet:
-	walCrOn := wal.GetMetaData().CreatedOn()
-	owner := wal.GetOwner()
-	newAmount := wal.GetAmount() + float64(amount)
-	newWal, newWalErr := trans.walBuilderFactory.Create().Create().WithID(creatorID).CreatedOn(walCrOn).LastUpdatedOn(crOn).WithOwner(owner).WithToken(tok).WithAmount(newAmount).Now()
+	//the wallet should not exists:
+	if wal != nil {
+		str := fmt.Sprintf("the wallet (creatorID: %s, tokenID: %s) should not exists", creatorID.String(), tokID.String())
+		return nil, errors.New(str)
+	}
+
+	//build the new wallet:
+	newWal, newWalErr := trans.walBuilderFactory.Create().Create().WithID(creatorID).CreatedOn(crOn).WithOwner(creator).WithToken(tok).WithAmount(float64(amount)).Now()
 	if newWalErr != nil {
 		return nil, newWalErr
 	}
 
-	//save the updated wallet:
-	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(wal, newWal)
+	//insert the wallet:
+	newWalFile, walFileErr := trans.walDB.Insert(newWal)
 	if walFileErr != nil {
 		return nil, walFileErr
 	}
 
-	//build the wallet update command:
-	walUp, walUpErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
-	if walUpErr != nil {
-		return nil, walUpErr
+	//build the wallet insert command:
+	walIns, walInsErr := trans.insertBuilderFactory.Create().Create().WithFile(newWalFile).Now()
+	if walInsErr != nil {
+		return nil, walInsErr
 	}
 
 	//build the wallet command:
-	walCmd, walCmdErr := trans.cmdBuilderFactory.Create().Create().WithUpdate(walUp).Now()
+	walCmd, walCmdErr := trans.cmdBuilderFactory.Create().Create().WithInsert(walIns).Now()
 	if walCmdErr != nil {
 		return nil, walCmdErr
 	}
