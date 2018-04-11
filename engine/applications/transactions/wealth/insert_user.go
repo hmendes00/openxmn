@@ -6,15 +6,15 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// SaveUser represents a save user transaction
-type SaveUser struct {
+// InsertUser represents a save user transaction
+type InsertUser struct {
 	UserID *uuid.UUID                       `json:"user_id"`
 	PubKey *concrete_cryptography.PublicKey `json:"public_key"`
 }
 
-// CreateSaveUser creates a new SaveUser instance
-func CreateSaveUser(userID *uuid.UUID, pubKey *concrete_cryptography.PublicKey) *SaveUser {
-	out := SaveUser{
+// CreateInsertUser creates a new InsertUser instance
+func CreateInsertUser(userID *uuid.UUID, pubKey *concrete_cryptography.PublicKey) *InsertUser {
+	out := InsertUser{
 		UserID: userID,
 		PubKey: pubKey,
 	}
@@ -23,11 +23,11 @@ func CreateSaveUser(userID *uuid.UUID, pubKey *concrete_cryptography.PublicKey) 
 }
 
 // GetUserID returns the userID
-func (sav *SaveUser) GetUserID() *uuid.UUID {
+func (sav *InsertUser) GetUserID() *uuid.UUID {
 	return sav.UserID
 }
 
 // GetPublicKey returns the public key
-func (sav *SaveUser) GetPublicKey() cryptography.PublicKey {
+func (sav *InsertUser) GetPublicKey() cryptography.PublicKey {
 	return sav.PubKey
 }

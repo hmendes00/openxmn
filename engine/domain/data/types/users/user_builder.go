@@ -11,9 +11,10 @@ import (
 // UserBuilder represents a User builder
 type UserBuilder interface {
 	Create() UserBuilder
-	WithID(id uuid.UUID) UserBuilder
+	WithID(id *uuid.UUID) UserBuilder
 	WithMetaData(met metadata.MetaData) UserBuilder
 	WithPublicKey(pub cryptography.PublicKey) UserBuilder
 	CreatedOn(crOn time.Time) UserBuilder
+	LastUpdatedOn(lstUpOn time.Time) UserBuilder
 	Now() (User, error)
 }

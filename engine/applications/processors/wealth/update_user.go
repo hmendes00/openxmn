@@ -12,8 +12,8 @@ import (
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
-// SaveUser represents a save user processor
-type SaveUser struct {
+// UpdateUser represents a save user processor
+type UpdateUser struct {
 	userDB                 *databases.User
 	metaDataBuilderFactory metadata.BuilderFactory
 	userBuilderFactory     users.UserBuilderFactory
@@ -22,8 +22,8 @@ type SaveUser struct {
 	insertBuilderFactory   commands.InsertBuilderFactory
 }
 
-// CreateSaveUser creates a new SaveUser instance
-func CreateSaveUser(
+// CreateUpdateUser creates a new UpdateUser instance
+func CreateUpdateUser(
 	userDB *databases.User,
 	metaDataBuilderFactory metadata.BuilderFactory,
 	userBuilderFactory users.UserBuilderFactory,
@@ -31,7 +31,7 @@ func CreateSaveUser(
 	updateBuilderFactory commands.UpdateBuilderFactory,
 	insertBuilderFactory commands.InsertBuilderFactory,
 ) processors.Transaction {
-	out := SaveUser{
+	out := UpdateUser{
 		userDB:                 userDB,
 		metaDataBuilderFactory: metaDataBuilderFactory,
 		userBuilderFactory:     userBuilderFactory,
@@ -43,19 +43,20 @@ func CreateSaveUser(
 	return &out
 }
 
-// Process processes a SaveUser transaction
-func (trans *SaveUser) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
+// Process processes a UpdateUser transaction
+func (trans *UpdateUser) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
 	//try to unmarshal:
 	js := trs.GetJSON()
-	saveUsrTrs := new(transaction_wealth.SaveUser)
-	jsErr := json.Unmarshal(js, saveUsrTrs)
+	upUserTrs := new(transaction_wealth.UpdateUser)
+	jsErr := json.Unmarshal(js, upUserTrs)
 	if jsErr != nil {
 		return nil, jsErr
 	}
 
 	//retrieve data from the transaction:
-	userID := saveUsrTrs.GetUserID()
-	pubKey := saveUsrTrs.GetPublicKey()
+	userID := user.GetMetaData().GetID()
+	pubKey := upUserTrs.GetPublicKey()
+	crOn := trs.GetMetaData().CreatedOn()
 
 	//retrieve the user by ID:
 	retUsr, retUsrErr := trans.userDB.RetrieveByID(userID)
@@ -63,48 +64,8 @@ func (trans *SaveUser) Process(trs transactions.Transaction, user users.User) (c
 		return nil, retUsrErr
 	}
 
-	//if the user does not exists, create it:
-	if retUsr == nil {
-		crOn := trs.GetMetaData().CreatedOn()
-		met, metErr := trans.metaDataBuilderFactory.Create().Create().CreatedOn(crOn).WithID(userID).Now()
-		if metErr != nil {
-			return nil, metErr
-		}
-
-		newUsr, newUsrErr := trans.userBuilderFactory.Create().Create().WithMetaData(met).WithPublicKey(pubKey).Now()
-		if newUsrErr != nil {
-			return nil, newUsrErr
-		}
-
-		//insert the new user:
-		newUsrFile, newUsrFileErr := trans.userDB.Insert(newUsr)
-		if newUsrFileErr != nil {
-			return nil, newUsrFileErr
-		}
-
-		//build the insert command:
-		ins, insErr := trans.insertBuilderFactory.Create().Create().WithFile(newUsrFile).Now()
-		if insErr != nil {
-			return nil, insErr
-		}
-
-		//create the command:
-		cmd, cmdErr := trans.cmdBuilderFactory.Create().Create().WithInsert(ins).Now()
-		if cmdErr != nil {
-			return nil, cmdErr
-		}
-
-		return cmd, nil
-	}
-
-	crOn := retUsr.GetMetaData().CreatedOn()
-	lastUpdatedOn := trs.GetMetaData().CreatedOn()
-	met, metErr := trans.metaDataBuilderFactory.Create().Create().WithID(userID).CreatedOn(crOn).LastUpdatedOn(lastUpdatedOn).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
-	newUsr, newUsrErr := trans.userBuilderFactory.Create().Create().WithMetaData(met).WithPublicKey(pubKey).Now()
+	usrCrOn := retUsr.GetMetaData().CreatedOn()
+	newUsr, newUsrErr := trans.userBuilderFactory.Create().Create().WithID(userID).CreatedOn(usrCrOn).LastUpdatedOn(crOn).WithPublicKey(pubKey).Now()
 	if newUsrErr != nil {
 		return nil, newUsrErr
 	}
