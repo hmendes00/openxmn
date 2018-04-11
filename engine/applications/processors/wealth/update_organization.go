@@ -2,65 +2,61 @@ package wealth
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
 	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	organizations "github.com/XMNBlockchain/openxmn/engine/domain/data/types/organizations"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
-// SaveOrganization represents a save user processor
-type SaveOrganization struct {
+// UpdateOrganization represents a save user processor
+type UpdateOrganization struct {
 	orgDB                      *databases.Organization
 	tokenDB                    *databases.Token
-	metaDataBuilderFactory     metadata.BuilderFactory
 	organizationBuilderFactory organizations.OrganizationBuilderFactory
 	cmdBuilderFactory          commands.CommandBuilderFactory
 	updateBuilderFactory       commands.UpdateBuilderFactory
-	insertBuilderFactory       commands.InsertBuilderFactory
 }
 
-// CreateSaveOrganization creates a new SaveOrganization instance
-func CreateSaveOrganization(
+// CreateUpdateOrganization creates a new UpdateOrganization instance
+func CreateUpdateOrganization(
 	orgDB *databases.Organization,
 	tokenDB *databases.Token,
-	metaDataBuilderFactory metadata.BuilderFactory,
 	organizationBuilderFactory organizations.OrganizationBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
 	updateBuilderFactory commands.UpdateBuilderFactory,
-	insertBuilderFactory commands.InsertBuilderFactory,
 ) processors.Transaction {
-	out := SaveOrganization{
+	out := UpdateOrganization{
 		orgDB:                      orgDB,
 		tokenDB:                    tokenDB,
-		metaDataBuilderFactory:     metaDataBuilderFactory,
 		organizationBuilderFactory: organizationBuilderFactory,
 		cmdBuilderFactory:          cmdBuilderFactory,
 		updateBuilderFactory:       updateBuilderFactory,
-		insertBuilderFactory:       insertBuilderFactory,
 	}
 
 	return &out
 }
 
-// Process processes a SaveOrganization transaction
-func (trans *SaveOrganization) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
+// Process processes a UpdateOrganization transaction
+func (trans *UpdateOrganization) Process(trs transactions.Transaction, user users.User) (commands.Command, error) {
 	//try to unmarshal:
 	js := trs.GetJSON()
-	saveOrgTrs := new(transaction_wealth.SaveOrganization)
+	saveOrgTrs := new(transaction_wealth.UpdateOrganization)
 	jsErr := json.Unmarshal(js, saveOrgTrs)
 	if jsErr != nil {
 		return nil, jsErr
 	}
 
 	//retrieve data from the transaction:
-	orgID := saveOrgTrs.GetID()
+	orgID := saveOrgTrs.GetOrganizationID()
 	tokID := saveOrgTrs.GetTokenID()
 	percent := saveOrgTrs.GetPercentNeededForConcensus()
+	crOn := trs.GetMetaData().CreatedOn()
 
 	//retrieve the token by ID:
 	tok, tokErr := trans.tokenDB.RetrieveByID(tokID)
@@ -74,47 +70,14 @@ func (trans *SaveOrganization) Process(trs transactions.Transaction, user users.
 		return nil, orgErr
 	}
 
+	//make sure the organization exists:
 	if org == nil {
-		crOn := trs.GetMetaData().CreatedOn()
-		met, metErr := trans.metaDataBuilderFactory.Create().Create().CreatedOn(crOn).WithID(orgID).Now()
-		if metErr != nil {
-			return nil, metErr
-		}
-
-		newOrg, newOrgErr := trans.organizationBuilderFactory.Create().Create().WithMetaData(met).WithAcceptedToken(tok).WithPercentNeededForConcensus(percent).WithUser(user).Now()
-		if newOrgErr != nil {
-			return nil, newOrgErr
-		}
-
-		//insert the new organization:
-		newFile, newFileErr := trans.orgDB.Insert(newOrg)
-		if newFileErr != nil {
-			return nil, newFileErr
-		}
-
-		//create the insert command:
-		ins, insErr := trans.insertBuilderFactory.Create().Create().WithFile(newFile).Now()
-		if insErr != nil {
-			return nil, insErr
-		}
-
-		//create the command:
-		cmd, cmdErr := trans.cmdBuilderFactory.Create().Create().WithInsert(ins).Now()
-		if cmdErr != nil {
-			return nil, cmdErr
-		}
-
-		return cmd, nil
+		str := fmt.Sprintf("the organization (ID: %s) does not exists", orgID.String())
+		return nil, errors.New(str)
 	}
 
-	crOn := org.GetMetaData().CreatedOn()
-	lastUpdatedOn := trs.GetMetaData().CreatedOn()
-	met, metErr := trans.metaDataBuilderFactory.Create().Create().WithID(orgID).CreatedOn(crOn).LastUpdatedOn(lastUpdatedOn).Now()
-	if metErr != nil {
-		return nil, metErr
-	}
-
-	newOrg, newOrgErr := trans.organizationBuilderFactory.Create().Create().WithMetaData(met).WithAcceptedToken(tok).WithPercentNeededForConcensus(percent).WithUser(user).Now()
+	orgCrOn := org.GetMetaData().CreatedOn()
+	newOrg, newOrgErr := trans.organizationBuilderFactory.Create().Create().WithID(orgID).CreatedOn(orgCrOn).LastUpdatedOn(crOn).WithAcceptedToken(tok).WithPercentNeededForConcensus(percent).WithUser(user).Now()
 	if newOrgErr != nil {
 		return nil, newOrgErr
 	}

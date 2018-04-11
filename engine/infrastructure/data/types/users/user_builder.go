@@ -20,16 +20,18 @@ type userBuilder struct {
 	met                    metadata.MetaData
 	pub                    cryptography.PublicKey
 	crOn                   *time.Time
+	lstUpOn                *time.Time
 }
 
 func createUserBuilder(htBuilderFactory hashtrees.HashTreeBuilderFactory, metaDataBuilderFactory metadata.BuilderFactory) user.UserBuilder {
 	out := userBuilder{
 		htBuilderFactory:       htBuilderFactory,
 		metaDataBuilderFactory: metaDataBuilderFactory,
-		id:   nil,
-		met:  nil,
-		pub:  nil,
-		crOn: nil,
+		id:      nil,
+		met:     nil,
+		pub:     nil,
+		crOn:    nil,
+		lstUpOn: nil,
 	}
 
 	return &out
@@ -41,12 +43,13 @@ func (build *userBuilder) Create() user.UserBuilder {
 	build.met = nil
 	build.pub = nil
 	build.crOn = nil
+	build.lstUpOn = nil
 	return build
 }
 
 // WithID adds an ID to the UserBuilder
-func (build *userBuilder) WithID(id uuid.UUID) user.UserBuilder {
-	build.id = &id
+func (build *userBuilder) WithID(id *uuid.UUID) user.UserBuilder {
+	build.id = id
 	return build
 }
 
@@ -68,6 +71,12 @@ func (build *userBuilder) CreatedOn(crOn time.Time) user.UserBuilder {
 	return build
 }
 
+// LastUpdatedOn adds a last updated on time to the UserBuilder
+func (build *userBuilder) LastUpdatedOn(lstUpOn time.Time) user.UserBuilder {
+	build.lstUpOn = &lstUpOn
+	return build
+}
+
 // Now builds a new User instance
 func (build *userBuilder) Now() (user.User, error) {
 
@@ -84,7 +93,12 @@ func (build *userBuilder) Now() (user.User, error) {
 			return nil, errors.New("the creation time is mandatory in order to build a User instance")
 		}
 
-		met, metErr := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn).Now()
+		metBuilder := build.metaDataBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn)
+		if build.lstUpOn != nil {
+			metBuilder.LastUpdatedOn(*build.lstUpOn)
+		}
+
+		met, metErr := metBuilder.Now()
 		if metErr != nil {
 			return nil, metErr
 		}
