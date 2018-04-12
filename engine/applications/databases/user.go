@@ -36,3 +36,8 @@ func (db *User) Insert(usr users.User) (files.File, error) {
 func (db *User) Update(old users.User, new users.User) (files.File, files.File, error) {
 	return nil, nil, nil
 }
+
+// Delete deletes a user from the database
+func (db *User) Delete(usr users.User) (files.File, error) {
+	return nil, nil
+}
