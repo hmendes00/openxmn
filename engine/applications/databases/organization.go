@@ -36,3 +36,8 @@ func (db *Organization) Insert(org organizations.Organization) (files.File, erro
 func (db *Organization) Update(old organizations.Organization, new organizations.Organization) (files.File, files.File, error) {
 	return nil, nil, nil
 }
+
+// Delete deletes an organizartion from the database
+func (db *Organization) Delete(org organizations.Organization) (files.File, error) {
+	return nil, nil
+}
