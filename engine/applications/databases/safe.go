@@ -31,3 +31,8 @@ func (saf *Safe) RetrieveByID(id *uuid.UUID) (safes.Safe, error) {
 func (saf *Safe) Update(old safes.Safe, new safes.Safe) (files.File, files.File, error) {
 	return nil, nil, nil
 }
+
+// Delete deletes a safe
+func (saf *Safe) Delete(safe safes.Safe) (files.File, error) {
+	return nil, nil
+}
