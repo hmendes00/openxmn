@@ -129,7 +129,7 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 
 	//add the cipher to the safe:
 	safeCrOn := safe.GetMetaData().CreatedOn()
-	newSafe, newSafeErr := trans.safeBuilderFactory.Create().Create().WithID(safeID).CreatedOn(safeCrOn).LastUpdatedOn(crOn).WithToken(newTok).WithCipher(cipher).Now()
+	newSafe, newSafeErr := trans.safeBuilderFactory.Create().Create().WithID(safeID).CreatedOn(safeCrOn).LastUpdatedOn(crOn).WithCipher(cipher).Now()
 	if newSafeErr != nil {
 		return nil, newSafeErr
 	}
