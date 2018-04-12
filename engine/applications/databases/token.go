@@ -36,3 +36,8 @@ func (db *Token) Insert(tok tokens.Token) (files.File, error) {
 func (db *Token) Update(old tokens.Token, new tokens.Token) (files.File, files.File, error) {
 	return nil, nil, nil
 }
+
+// Delete deletes a token
+func (db *Token) Delete(tok tokens.Token) (files.File, error) {
+	return nil, nil
+}
