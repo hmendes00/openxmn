@@ -2,8 +2,6 @@ package wealth
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
@@ -61,7 +59,7 @@ func (trans *UpdateToken) Process(trs transactions.Transaction, user users.User)
 
 	//retrieve data from the transaction:
 	tokID := upTokTrs.GetTokenID()
-	amount := upTokTrs.GetAmount()
+	symbol := upTokTrs.GetSymbol()
 	updatedOn := trs.GetMetaData().CreatedOn()
 
 	//retrieve the token:
@@ -70,18 +68,10 @@ func (trans *UpdateToken) Process(trs transactions.Transaction, user users.User)
 		return nil, retTokErr
 	}
 
-	//the amount must be greater than the previous amount:
-	prevAmount := retTok.GetAmount()
-	if amount < prevAmount {
-		str := fmt.Sprintf("the new amount (%d) is smaller than the previous one (%d)", amount, prevAmount)
-		return nil, errors.New(str)
-	}
-
 	//create the updated token:
 	crOn := retTok.GetMetaData().CreatedOn()
-	symbol := retTok.GetSymbol()
 	creator := retTok.GetCreator()
-	updatedTok, updatedTokErr := trans.tokenBuilderFactory.Create().Create().WithID(tokID).CreatedOn(crOn).LastUpdatedOn(updatedOn).WithSymbol(symbol).WithCreator(creator).WithAmount(amount).Now()
+	updatedTok, updatedTokErr := trans.tokenBuilderFactory.Create().Create().WithID(tokID).CreatedOn(crOn).LastUpdatedOn(updatedOn).WithSymbol(symbol).WithCreator(creator).Now()
 	if updatedTokErr != nil {
 		return nil, updatedTokErr
 	}
@@ -104,55 +94,5 @@ func (trans *UpdateToken) Process(trs transactions.Transaction, user users.User)
 		return nil, tokCmdErr
 	}
 
-	//retrieve the wallet of the creator user:
-	creatorID := creator.GetMetaData().GetID()
-	retWal, retWalErr := trans.walDB.RetrieveByCreatorIDAndTokenID(creatorID, tokID)
-	if retWalErr != nil {
-		return nil, retWalErr
-	}
-
-	//add the new tokens to the wallet:
-	walCrOn := retWal.GetMetaData().CreatedOn()
-	diff := amount - prevAmount
-	newAmount := retWal.GetAmount() + float64(diff)
-	upWal, upWalErr := trans.walBuilderFactory.Create().Create().WithID(creatorID).CreatedOn(walCrOn).LastUpdatedOn(updatedOn).WithOwner(creator).WithToken(retTok).WithAmount(newAmount).Now()
-	if upWalErr != nil {
-		return nil, upWalErr
-	}
-
-	//update the wallet:
-	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(retWal, upWal)
-	if walFileErr != nil {
-		return nil, walFileErr
-	}
-
-	//build the updated wallet command:
-	upWalCmd, upWalCmdErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
-	if upWalCmdErr != nil {
-		return nil, upWalCmdErr
-	}
-
-	//build the wallet command:
-	walCmd, walCmdErr := trans.cmdBuilderFactory.Create().Create().WithUpdate(upWalCmd).Now()
-	if walCmdErr != nil {
-		return nil, walCmdErr
-	}
-
-	//build the commands:
-	cmds, cmdsErr := trans.cmdsBuilderFactory.Create().Create().WithCommands([]commands.Command{
-		tokCmd,
-		walCmd,
-	}).Now()
-
-	if cmdsErr != nil {
-		return nil, cmdsErr
-	}
-
-	//build the output command:
-	out, outErr := trans.cmdBuilderFactory.Create().Create().WithCommands(cmds).Now()
-	if outErr != nil {
-		return nil, outErr
-	}
-
-	return out, nil
+	return tokCmd, nil
 }

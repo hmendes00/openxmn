@@ -10,6 +10,7 @@ import (
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
 	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
+	safes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/safes"
 	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
@@ -20,8 +21,10 @@ type InsertToken struct {
 	tokenDB              *databases.Token
 	walDB                *databases.Wallet
 	userDB               *databases.User
+	safeDB               *databases.Safe
 	tokenBuilderFactory  tokens.TokenBuilderFactory
 	walBuilderFactory    wallets.WalletBuilderFactory
+	safeBuilderFactory   safes.SafeBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	cmdsBuilderFactory   commands.BuilderFactory
 	insertBuilderFactory commands.InsertBuilderFactory
@@ -33,8 +36,10 @@ func CreateInsertToken(
 	tokenDB *databases.Token,
 	walDB *databases.Wallet,
 	userDB *databases.User,
+	safeDB *databases.Safe,
 	tokenBuilderFactory tokens.TokenBuilderFactory,
 	walBuilderFactory wallets.WalletBuilderFactory,
+	safeBuilderFactory safes.SafeBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
 	cmdsBuilderFactory commands.BuilderFactory,
 	insertBuilderFactory commands.InsertBuilderFactory,
@@ -44,8 +49,10 @@ func CreateInsertToken(
 		tokenDB:              tokenDB,
 		walDB:                walDB,
 		userDB:               userDB,
+		safeDB:               safeDB,
 		tokenBuilderFactory:  tokenBuilderFactory,
 		walBuilderFactory:    walBuilderFactory,
+		safeBuilderFactory:   safeBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
 		cmdsBuilderFactory:   cmdsBuilderFactory,
 		insertBuilderFactory: insertBuilderFactory,
@@ -66,10 +73,11 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 	}
 
 	//retrieves the transaction  data:
+	safeID := insTokTrs.GetSafeID()
 	tokID := insTokTrs.GetTokenID()
 	creatorID := insTokTrs.GetCreatorID()
 	symbol := insTokTrs.GetSymbol()
-	amount := insTokTrs.GetAmount()
+	cipher := insTokTrs.GetCipher()
 	crOn := trs.GetMetaData().CreatedOn()
 
 	//make sure the token does not already exists:
@@ -83,8 +91,14 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 		return nil, errors.New(str)
 	}
 
+	//retrieve the creator:
+	creator, creatorErr := trans.userDB.RetrieveByID(creatorID)
+	if creatorErr != nil {
+		return nil, creatorErr
+	}
+
 	//build the new token:
-	newTok, newTokErr := trans.tokenBuilderFactory.Create().Create().WithID(tokID).CreatedOn(crOn).WithAmount(amount).WithSymbol(symbol).Now()
+	newTok, newTokErr := trans.tokenBuilderFactory.Create().Create().WithID(tokID).CreatedOn(crOn).WithSymbol(symbol).WithCreator(creator).Now()
 	if newTokErr != nil {
 		return nil, newTokErr
 	}
@@ -107,52 +121,41 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 		return nil, cmdErr
 	}
 
-	//retrieve the creator:
-	creator, creatorErr := trans.userDB.RetrieveByID(creatorID)
-	if creatorErr != nil {
-		return nil, creatorErr
+	//retrieve the safe by ID:
+	safe, safeErr := trans.safeDB.RetrieveByID(safeID)
+	if safeErr != nil {
+		return nil, safeErr
 	}
 
-	//retrieve the wallet:
-	wal, walErr := trans.walDB.RetrieveByCreatorIDAndTokenID(creatorID, tokID)
-	if walErr != nil {
-		return nil, walErr
+	//add the cipher to the safe:
+	safeCrOn := safe.GetMetaData().CreatedOn()
+	newSafe, newSafeErr := trans.safeBuilderFactory.Create().Create().WithID(safeID).CreatedOn(safeCrOn).LastUpdatedOn(crOn).WithToken(newTok).WithCipher(cipher).Now()
+	if newSafeErr != nil {
+		return nil, newSafeErr
 	}
 
-	//the wallet should not exists:
-	if wal != nil {
-		str := fmt.Sprintf("the wallet (creatorID: %s, tokenID: %s) should not exists", creatorID.String(), tokID.String())
-		return nil, errors.New(str)
+	//update the save:
+	oldSafeFile, newSafeFile, safeFileErr := trans.safeDB.Update(safe, newSafe)
+	if safeFileErr != nil {
+		return nil, safeFileErr
 	}
 
-	//build the new wallet:
-	newWal, newWalErr := trans.walBuilderFactory.Create().Create().WithID(creatorID).CreatedOn(crOn).WithOwner(creator).WithToken(tok).WithAmount(float64(amount)).Now()
-	if newWalErr != nil {
-		return nil, newWalErr
+	//build the safe update command:
+	safeUp, safeUpErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldSafeFile).WithNewFile(newSafeFile).Now()
+	if safeUpErr != nil {
+		return nil, safeUpErr
 	}
 
-	//insert the wallet:
-	newWalFile, walFileErr := trans.walDB.Insert(newWal)
-	if walFileErr != nil {
-		return nil, walFileErr
-	}
-
-	//build the wallet insert command:
-	walIns, walInsErr := trans.insertBuilderFactory.Create().Create().WithFile(newWalFile).Now()
-	if walInsErr != nil {
-		return nil, walInsErr
-	}
-
-	//build the wallet command:
-	walCmd, walCmdErr := trans.cmdBuilderFactory.Create().Create().WithInsert(walIns).Now()
-	if walCmdErr != nil {
-		return nil, walCmdErr
+	//build the safe command:
+	safeCmd, safeCmdErr := trans.cmdBuilderFactory.Create().Create().WithUpdate(safeUp).Now()
+	if safeCmdErr != nil {
+		return nil, safeCmdErr
 	}
 
 	//build the commands:
 	cmds, cmdsErr := trans.cmdsBuilderFactory.Create().Create().WithCommands([]commands.Command{
 		cmd,
-		walCmd,
+		safeCmd,
 	}).Now()
 
 	if cmdsErr != nil {

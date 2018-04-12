@@ -9,3 +9,4 @@
 -----
 Finish the command builder
 In the transactions processor, make sure we verify that the user exists
+Create a insert_safe transaction

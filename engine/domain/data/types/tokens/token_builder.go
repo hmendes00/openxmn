@@ -15,7 +15,6 @@ type TokenBuilder interface {
 	WithMetaData(met metadata.MetaData) TokenBuilder
 	WithCreator(creator users.User) TokenBuilder
 	WithSymbol(symbol string) TokenBuilder
-	WithAmount(amount int) TokenBuilder
 	CreatedOn(crOn time.Time) TokenBuilder
 	LastUpdatedOn(lstUpOn time.Time) TokenBuilder
 	Now() (Token, error)

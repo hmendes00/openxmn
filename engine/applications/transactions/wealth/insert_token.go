@@ -1,22 +1,28 @@
 package wealth
 
-import uuid "github.com/satori/go.uuid"
+import (
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
+	uuid "github.com/satori/go.uuid"
+)
 
 // InsertToken represents a save token transaction
 type InsertToken struct {
-	TokenID   *uuid.UUID `json:"token_id"`
-	CreatorID *uuid.UUID `json:"creator_id"`
-	Symbol    string     `json:"symbol"`
-	Amount    int        `json:"amount"`
+	TokenID   *uuid.UUID                    `json:"token_id"`
+	CreatorID *uuid.UUID                    `json:"creator_id"`
+	Symbol    string                        `json:"symbol"`
+	SafeID    *uuid.UUID                    `json:"safe_id"`
+	Cipher    *concrete_cryptography.Cipher `json:"cipher"`
 }
 
 // CreateInsertToken creates a new InsertToken instance
-func CreateInsertToken(tokenID *uuid.UUID, creatorID *uuid.UUID, symbol string, amount int) *InsertToken {
+func CreateInsertToken(tokenID *uuid.UUID, creatorID *uuid.UUID, symbol string, safeID *uuid.UUID, cipher *concrete_cryptography.Cipher) *InsertToken {
 	out := InsertToken{
 		TokenID:   tokenID,
 		CreatorID: creatorID,
 		Symbol:    symbol,
-		Amount:    amount,
+		SafeID:    safeID,
+		Cipher:    cipher,
 	}
 
 	return &out
@@ -37,7 +43,12 @@ func (tok *InsertToken) GetSymbol() string {
 	return tok.Symbol
 }
 
-// GetAmount returns the amount
-func (tok *InsertToken) GetAmount() int {
-	return tok.Amount
+// GetSafeID returns the safeID
+func (tok *InsertToken) GetSafeID() *uuid.UUID {
+	return tok.SafeID
+}
+
+// GetCipher returns the cipher
+func (tok *InsertToken) GetCipher() cryptography.Cipher {
+	return tok.Cipher
 }

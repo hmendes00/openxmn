@@ -10,5 +10,4 @@ type Token interface {
 	GetMetaData() metadata.MetaData
 	GetCreator() users.User
 	GetSymbol() string
-	GetAmount() int
 }

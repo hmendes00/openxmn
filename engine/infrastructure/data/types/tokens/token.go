@@ -13,15 +13,13 @@ type Token struct {
 	Met     *concrete_metadata.MetaData `json:"metadata"`
 	Creator *concrete_users.User        `json:"creator"`
 	Symbol  string                      `json:"symbol"`
-	Amount  int                         `json:"amount"`
 }
 
-func createToken(met *concrete_metadata.MetaData, creator *concrete_users.User, symbol string, amount int) tokens.Token {
+func createToken(met *concrete_metadata.MetaData, creator *concrete_users.User, symbol string) tokens.Token {
 	out := Token{
 		Met:     met,
 		Creator: creator,
 		Symbol:  symbol,
-		Amount:  amount,
 	}
 
 	return &out
@@ -40,9 +38,4 @@ func (tok *Token) GetCreator() users.User {
 // GetSymbol returns the symbol
 func (tok *Token) GetSymbol() string {
 	return tok.Symbol
-}
-
-// GetAmount returns the amount
-func (tok *Token) GetAmount() int {
-	return tok.Amount
 }

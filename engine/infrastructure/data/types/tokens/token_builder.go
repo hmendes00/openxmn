@@ -18,7 +18,6 @@ type tokenBuilder struct {
 	met                    metadata.MetaData
 	creator                users.User
 	symbol                 string
-	amount                 int
 	crOn                   *time.Time
 	lstUpOn                *time.Time
 }
@@ -30,7 +29,6 @@ func createTokenBuilder(metaDataBuilderFactory metadata.BuilderFactory) tokens.T
 		met:     nil,
 		creator: nil,
 		symbol:  "",
-		amount:  0,
 		crOn:    nil,
 		lstUpOn: nil,
 	}
@@ -44,7 +42,6 @@ func (build *tokenBuilder) Create() tokens.TokenBuilder {
 	build.met = nil
 	build.creator = nil
 	build.symbol = ""
-	build.amount = 0
 	build.crOn = nil
 	build.lstUpOn = nil
 	return build
@@ -74,12 +71,6 @@ func (build *tokenBuilder) WithSymbol(symbol string) tokens.TokenBuilder {
 	return build
 }
 
-// WithAmount adds an amount to the token builder
-func (build *tokenBuilder) WithAmount(amount int) tokens.TokenBuilder {
-	build.amount = amount
-	return build
-}
-
 // CreatedOn adds a creation time to the token builder
 func (build *tokenBuilder) CreatedOn(crOn time.Time) tokens.TokenBuilder {
 	build.crOn = &crOn
@@ -101,10 +92,6 @@ func (build *tokenBuilder) Now() (tokens.Token, error) {
 
 	if build.symbol == "" {
 		return nil, errors.New("the symbol is mandatory in order to build a token instance")
-	}
-
-	if build.amount <= 0 {
-		return nil, errors.New("the amount must be greater than 0 in order to build a token instance")
 	}
 
 	if build.met == nil {
@@ -130,6 +117,6 @@ func (build *tokenBuilder) Now() (tokens.Token, error) {
 
 	}
 
-	out := createToken(build.met.(*concrete_metadata.MetaData), build.creator.(*concrete_users.User), build.symbol, build.amount)
+	out := createToken(build.met.(*concrete_metadata.MetaData), build.creator.(*concrete_users.User), build.symbol)
 	return out, nil
 }
