@@ -27,6 +27,11 @@ func (db *Wallet) RetrieveByCreatorIDAndTokenID(userID *uuid.UUID, tokID *uuid.U
 	return nil, nil
 }
 
+// RetrieveByID retrieves a wallet by its ID
+func (db *Wallet) RetrieveByID(walID *uuid.UUID) (wallets.Wallet, error) {
+	return nil, nil
+}
+
 // Insert inserts a new wallet to the database
 func (db *Wallet) Insert(wal wallets.Wallet) (files.File, error) {
 	return nil, nil
