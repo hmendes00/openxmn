@@ -3,7 +3,7 @@ package users
 import (
 	"errors"
 
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )

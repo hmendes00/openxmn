@@ -2,6 +2,7 @@ package stakes
 
 import (
 	"errors"
+	"time"
 
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	organizations "github.com/XMNBlockchain/openxmn/engine/domain/data/types/organizations"
@@ -12,23 +13,32 @@ import (
 	concrete_organizations "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/organizations"
 	concrete_tokens "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/tokens"
 	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
+	uuid "github.com/satori/go.uuid"
 )
 
 type stakeBuilder struct {
-	met      metadata.MetaData
-	fromUser users.User
-	toOrg    organizations.Organization
-	tok      tokens.Token
-	amount   float64
+	metBuilderFactory metadata.BuilderFactory
+	id                *uuid.UUID
+	met               metadata.MetaData
+	fromUser          users.User
+	toOrg             organizations.Organization
+	tok               tokens.Token
+	amount            float64
+	crOn              *time.Time
+	lstUpOn           *time.Time
 }
 
-func createStakeBuilder() stakes.StakeBuilder {
+func createStakeBuilder(metBuilderFactory metadata.BuilderFactory) stakes.StakeBuilder {
 	out := stakeBuilder{
-		met:      nil,
-		fromUser: nil,
-		toOrg:    nil,
-		tok:      nil,
-		amount:   0,
+		metBuilderFactory: metBuilderFactory,
+		id:                nil,
+		met:               nil,
+		fromUser:          nil,
+		toOrg:             nil,
+		tok:               nil,
+		amount:            0,
+		crOn:              nil,
+		lstUpOn:           nil,
 	}
 
 	return &out
@@ -36,11 +46,20 @@ func createStakeBuilder() stakes.StakeBuilder {
 
 // Create initializes a StakeBuilder instance
 func (build *stakeBuilder) Create() stakes.StakeBuilder {
+	build.id = nil
 	build.met = nil
 	build.fromUser = nil
 	build.toOrg = nil
 	build.tok = nil
 	build.amount = 0
+	build.crOn = nil
+	build.lstUpOn = nil
+	return build
+}
+
+// WithID adds an ID to the StakeBuilder
+func (build *stakeBuilder) WithID(id *uuid.UUID) stakes.StakeBuilder {
+	build.id = id
 	return build
 }
 
@@ -74,11 +93,20 @@ func (build *stakeBuilder) WithAmount(amount float64) stakes.StakeBuilder {
 	return build
 }
 
+// CreatedOn adds a creation time to the StakeBuilder
+func (build *stakeBuilder) CreatedOn(crOn time.Time) stakes.StakeBuilder {
+	build.crOn = &crOn
+	return build
+}
+
+// LastUpdatedOn adds a last updated on time to the StakeBuilder
+func (build *stakeBuilder) LastUpdatedOn(lstUpOn time.Time) stakes.StakeBuilder {
+	build.lstUpOn = &lstUpOn
+	return build
+}
+
 // Now builds a new Stake instance
 func (build *stakeBuilder) Now() (stakes.Stake, error) {
-	if build.met == nil {
-		return nil, errors.New("the metadata is mandatory in order to build a stake instance")
-	}
 
 	if build.fromUser == nil {
 		return nil, errors.New("the fromUse ris mandatory in order to build a stake instance")
@@ -94,6 +122,28 @@ func (build *stakeBuilder) Now() (stakes.Stake, error) {
 
 	if build.amount == 0 {
 		return nil, errors.New("the amount is mandatory in order to build a stake instance")
+	}
+
+	if build.met == nil {
+		if build.id == nil {
+			return nil, errors.New("the ID is mandatory in order to build a Stake instance")
+		}
+
+		if build.crOn == nil {
+			return nil, errors.New("the creation time is mandatory in order to build a Stake instance")
+		}
+
+		metBuilder := build.metBuilderFactory.Create().Create().WithID(build.id).CreatedOn(*build.crOn)
+		if build.lstUpOn != nil {
+			metBuilder.LastUpdatedOn(*build.lstUpOn)
+		}
+
+		met, metErr := metBuilder.Now()
+		if metErr != nil {
+			return nil, metErr
+		}
+
+		build.met = met
 	}
 
 	out := createStake(build.met.(*concrete_metadata.MetaData), build.fromUser.(*concrete_users.User), build.toOrg.(*concrete_organizations.Organization), build.tok.(*concrete_tokens.Token), build.amount)

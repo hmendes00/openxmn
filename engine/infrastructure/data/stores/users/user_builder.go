@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 )
 

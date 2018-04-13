@@ -1,7 +1,7 @@
 package domain
 
 import (
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 )
 
 // SignaturesService represents a signatures service

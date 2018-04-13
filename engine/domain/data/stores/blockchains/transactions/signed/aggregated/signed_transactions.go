@@ -2,7 +2,7 @@ package aggregated
 
 import (
 	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 )
 
 // SignedTransactions represents aggregated signed transactions

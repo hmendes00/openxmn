@@ -3,7 +3,7 @@ package users
 import (
 	"path/filepath"
 
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )

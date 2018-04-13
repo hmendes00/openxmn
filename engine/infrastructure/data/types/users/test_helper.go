@@ -6,7 +6,7 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	user "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	concrete_cryptography "github.com/XMNBlockchain/openxmn/engine/infrastructure/cryptography"
-	concrete_stored_user "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/blockchains/users"
+	concrete_stored_user "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/users"
 	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
 	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/metadata"

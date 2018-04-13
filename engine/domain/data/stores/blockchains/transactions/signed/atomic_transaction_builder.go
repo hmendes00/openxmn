@@ -3,7 +3,7 @@ package signed
 import (
 	stored_files "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/files"
 	stored_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/transactions"
-	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/blockchains/users"
+	stored_users "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/users"
 )
 
 // AtomicTransactionBuilder represents a signed atomic transaction builder
