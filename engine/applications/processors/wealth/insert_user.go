@@ -72,13 +72,19 @@ func (trans *InsertUser) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//insert the new user:
-	newUsrFile, newUsrFileErr := trans.userDB.Insert(usr)
-	if newUsrFileErr != nil {
-		return nil, newUsrFileErr
+	newUsrErr := trans.userDB.Insert(usr)
+	if newUsrErr != nil {
+		return nil, newUsrErr
+	}
+
+	//convert the new user to json data:
+	newUserJS, newUserJSErr := json.Marshal(usr)
+	if newUserJSErr != nil {
+		return nil, newUserJSErr
 	}
 
 	//build the insert command:
-	ins, insErr := trans.insertBuilderFactory.Create().Create().WithFile(newUsrFile).Now()
+	ins, insErr := trans.insertBuilderFactory.Create().Create().WithJS(newUserJS).Now()
 	if insErr != nil {
 		return nil, insErr
 	}

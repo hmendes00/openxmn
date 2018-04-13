@@ -66,13 +66,25 @@ func (trans *UpdateSafe) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//update the safe:
-	oldSafeFile, newSafeFile, safeFileErr := trans.safeDB.Update(originalSafe, newSafe)
-	if safeFileErr != nil {
-		return nil, safeFileErr
+	upSafeErr := trans.safeDB.Update(originalSafe, newSafe)
+	if upSafeErr != nil {
+		return nil, upSafeErr
+	}
+
+	//convert the old safe to json data:
+	oldSafeJS, oldSafeJSErr := json.Marshal(originalSafe)
+	if oldSafeJSErr != nil {
+		return nil, oldSafeJSErr
+	}
+
+	//convert the new safe to json data:
+	newSafeJS, newSafeJSErr := json.Marshal(newSafe)
+	if newSafeJSErr != nil {
+		return nil, newSafeJSErr
 	}
 
 	//create the update command:
-	upCmd, upCmdErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldSafeFile).WithNewFile(newSafeFile).Now()
+	upCmd, upCmdErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldSafeJS).WithNewJS(newSafeJS).Now()
 	if upCmdErr != nil {
 		return nil, upCmdErr
 	}

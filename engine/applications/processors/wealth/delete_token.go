@@ -39,13 +39,19 @@ func (trans *DeleteToken) Process(trs transactions.Transaction, user users.User)
 	}
 
 	//delete the token:
-	tokFile, tokFileErr := trans.tokenDB.Delete(tok)
-	if tokFileErr != nil {
-		return nil, tokFileErr
+	delTokErr := trans.tokenDB.Delete(tok)
+	if delTokErr != nil {
+		return nil, delTokErr
+	}
+
+	//convert the deleted token to json data:
+	delTokJS, delTokJSErr := json.Marshal(tok)
+	if delTokJSErr != nil {
+		return nil, delTokJSErr
 	}
 
 	//build the delete command:
-	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithFile(tokFile).Now()
+	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithJS(delTokJS).Now()
 	if delCmdErr != nil {
 		return nil, delCmdErr
 	}

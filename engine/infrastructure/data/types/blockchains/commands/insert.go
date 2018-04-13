@@ -2,24 +2,22 @@ package commands
 
 import (
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
-	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands/files"
-	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/commands/files"
 )
 
 // Insert represents a concrete Insert implementation
 type Insert struct {
-	Fil *concrete_files.File `json:"file"`
+	JS []byte `json:"js"`
 }
 
-func createInsert(fil *concrete_files.File) commands.Insert {
+func createInsert(js []byte) commands.Insert {
 	out := Insert{
-		Fil: fil,
+		JS: js,
 	}
 
 	return &out
 }
 
-// GetFile returns the file
-func (up *Insert) GetFile() files.File {
-	return up.Fil
+// GetJS returns the json data
+func (up *Insert) GetJS() []byte {
+	return up.JS
 }

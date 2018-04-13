@@ -64,13 +64,19 @@ func (trans *CashSafe) Process(trs transactions.Transaction, user users.User) (c
 	}
 
 	//delete the safe:
-	delSafe, delSafeErr := trans.safeDB.Delete(safe)
+	delSafeErr := trans.safeDB.Delete(safe)
 	if delSafeErr != nil {
 		return nil, delSafeErr
 	}
 
+	//convert the deleted safe to json data:
+	delSafeJS, delSafeJSErr := json.Marshal(safe)
+	if delSafeJSErr != nil {
+		return nil, delSafeJSErr
+	}
+
 	//build the delete safe command:
-	delSafeCmd, delSafeCmdErr := trans.deleteBuilderFactory.Create().Create().WithFile(delSafe).Now()
+	delSafeCmd, delSafeCmdErr := trans.deleteBuilderFactory.Create().Create().WithJS(delSafeJS).Now()
 	if delSafeCmdErr != nil {
 		return nil, delSafeCmdErr
 	}
@@ -113,13 +119,25 @@ func (trans *CashSafe) Process(trs transactions.Transaction, user users.User) (c
 	}
 
 	//update the wallet:
-	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(wal, newWal)
-	if walFileErr != nil {
-		return nil, walFileErr
+	upWalErr := trans.walDB.Update(wal, newWal)
+	if upWalErr != nil {
+		return nil, upWalErr
+	}
+
+	//create the old wallet json data:
+	oldWalJS, oldWalJSErr := json.Marshal(wal)
+	if oldWalJSErr != nil {
+		return nil, oldWalJSErr
+	}
+
+	//create the new wallet json data:
+	newWalJS, newWalJSErr := json.Marshal(newWal)
+	if newWalJSErr != nil {
+		return nil, newWalJSErr
 	}
 
 	//build the update command:
-	upWalCmd, upWalCmdErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
+	upWalCmd, upWalCmdErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldWalJS).WithNewJS(newWalJS).Now()
 	if upWalCmdErr != nil {
 		return nil, upWalCmdErr
 	}

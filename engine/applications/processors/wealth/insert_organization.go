@@ -2,8 +2,6 @@ package wealth
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
@@ -64,18 +62,6 @@ func (trans *InsertOrganization) Process(trs transactions.Transaction, user user
 		return nil, tokErr
 	}
 
-	//retrieve the organization by ID:
-	org, orgErr := trans.orgDB.RetrieveByID(orgID)
-	if orgErr != nil {
-		return nil, orgErr
-	}
-
-	//make sure the organization does NOT exists:
-	if org != nil {
-		str := fmt.Sprintf("the organization (ID: %s) does not exists", orgID.String())
-		return nil, errors.New(str)
-	}
-
 	//build the new organization:
 	newOrg, newOrgErr := trans.organizationBuilderFactory.Create().Create().WithID(orgID).CreatedOn(crOn).WithAcceptedToken(tok).WithPercentNeededForConcensus(percent).WithUser(user).Now()
 	if newOrgErr != nil {
@@ -83,13 +69,19 @@ func (trans *InsertOrganization) Process(trs transactions.Transaction, user user
 	}
 
 	//insert the new organization:
-	newFile, newFileErr := trans.orgDB.Insert(newOrg)
-	if newFileErr != nil {
-		return nil, newFileErr
+	insFileErr := trans.orgDB.Insert(newOrg)
+	if insFileErr != nil {
+		return nil, insFileErr
+	}
+
+	//convert the new organization to json data:
+	newOrgJS, newOrgJSErr := json.Marshal(newOrg)
+	if newOrgJSErr != nil {
+		return nil, newOrgJSErr
 	}
 
 	//create the insert command:
-	ins, insErr := trans.insertBuilderFactory.Create().Create().WithFile(newFile).Now()
+	ins, insErr := trans.insertBuilderFactory.Create().Create().WithJS(newOrgJS).Now()
 	if insErr != nil {
 		return nil, insErr
 	}

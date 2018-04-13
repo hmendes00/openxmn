@@ -39,13 +39,19 @@ func (trans *DeleteOrganization) Process(trs transactions.Transaction, user user
 	}
 
 	//delete the organization:
-	orgFile, orgFileErr := trans.orgDB.Delete(org)
-	if orgFileErr != nil {
-		return nil, orgFileErr
+	delOrgErr := trans.orgDB.Delete(org)
+	if delOrgErr != nil {
+		return nil, delOrgErr
+	}
+
+	//convert the deleted organization to json data:
+	delOrgJS, delOrgJSErr := json.Marshal(org)
+	if delOrgJSErr != nil {
+		return nil, delOrgJSErr
 	}
 
 	//build the delete organization command:
-	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithFile(orgFile).Now()
+	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithJS(delOrgJS).Now()
 	if delCmdErr != nil {
 		return nil, delCmdErr
 	}

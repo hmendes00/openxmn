@@ -83,13 +83,25 @@ func (trans *UpdateOrganization) Process(trs transactions.Transaction, user user
 	}
 
 	//update the new organization:
-	oldFile, newFile, fileErr := trans.orgDB.Update(org, newOrg)
-	if fileErr != nil {
-		return nil, fileErr
+	upOrgErr := trans.orgDB.Update(org, newOrg)
+	if upOrgErr != nil {
+		return nil, upOrgErr
+	}
+
+	//convert the old organization to json data:
+	oldOrgJS, oldOrgJsErr := json.Marshal(org)
+	if oldOrgJsErr != nil {
+		return nil, oldOrgJsErr
+	}
+
+	//convert the new organization to json data:
+	newOrgJS, newOrgJSErr := json.Marshal(newOrg)
+	if newOrgJSErr != nil {
+		return nil, newOrgJSErr
 	}
 
 	//create the update command:
-	up, upErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldFile).WithNewFile(newFile).Now()
+	up, upErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldOrgJS).WithNewJS(newOrgJS).Now()
 	if upErr != nil {
 		return nil, upErr
 	}

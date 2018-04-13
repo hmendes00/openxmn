@@ -134,13 +134,19 @@ func (trans *StakeToken) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//save the stake:
-	stkFile, stkFileErr := trans.stakeDB.Insert(newStk)
-	if stkFileErr != nil {
-		return nil, stkFileErr
+	insStakeErr := trans.stakeDB.Insert(newStk)
+	if insStakeErr != nil {
+		return nil, insStakeErr
+	}
+
+	//convert the inserted stake to json:
+	insStakeJS, insStakeJSErr := json.Marshal(newStk)
+	if insStakeJSErr != nil {
+		return nil, insStakeJSErr
 	}
 
 	//build the insert command:
-	insStk, insStkErr := trans.insertBuilderFactory.Create().Create().WithFile(stkFile).Now()
+	insStk, insStkErr := trans.insertBuilderFactory.Create().Create().WithJS(insStakeJS).Now()
 	if insStkErr != nil {
 		return nil, insStkErr
 	}
@@ -161,13 +167,25 @@ func (trans *StakeToken) Process(trs transactions.Transaction, user users.User) 
 		return nil, newWalletErr
 	}
 
-	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(wal, newWallet)
-	if walFileErr != nil {
-		return nil, walFileErr
+	upWalErr := trans.walDB.Update(wal, newWallet)
+	if upWalErr != nil {
+		return nil, upWalErr
+	}
+
+	//convert the old wallet to json data:
+	oldWalJS, oldWalJSErr := json.Marshal(wal)
+	if oldWalJSErr != nil {
+		return nil, oldWalJSErr
+	}
+
+	//convert the new wallet to json data:
+	newWalJS, newWalJSErr := json.Marshal(newWallet)
+	if newWalJSErr != nil {
+		return nil, newWalJSErr
 	}
 
 	//build an update wallet command:
-	upWal, upWalErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
+	upWal, upWalErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldWalJS).WithNewJS(newWalJS).Now()
 	if upWalErr != nil {
 		return nil, upWalErr
 	}

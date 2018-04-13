@@ -39,13 +39,19 @@ func (trans *DeleteSafe) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//delete the safe:
-	safeFile, safeFileErr := trans.safeDB.Delete(safe)
-	if safeFileErr != nil {
-		return nil, safeFileErr
+	delSafeErr := trans.safeDB.Delete(safe)
+	if delSafeErr != nil {
+		return nil, delSafeErr
+	}
+
+	//convert the deleted safe to json data:
+	delSafeJS, delSafeJSErr := json.Marshal(safe)
+	if delSafeJSErr != nil {
+		return nil, delSafeJSErr
 	}
 
 	//build the delete command:
-	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithFile(safeFile).Now()
+	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithJS(delSafeJS).Now()
 	if delCmdErr != nil {
 		return nil, delCmdErr
 	}

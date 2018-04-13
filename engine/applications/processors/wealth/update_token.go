@@ -76,14 +76,26 @@ func (trans *UpdateToken) Process(trs transactions.Transaction, user users.User)
 		return nil, updatedTokErr
 	}
 
-	//save the updated amount:
-	oldFile, newFile, fileErr := trans.tokenDB.Update(retTok, updatedTok)
-	if fileErr != nil {
-		return nil, fileErr
+	//save the updated token:
+	upTokErr := trans.tokenDB.Update(retTok, updatedTok)
+	if upTokErr != nil {
+		return nil, upTokErr
+	}
+
+	//convert the old token to json data:
+	oldTokJS, oldTokJSErr := json.Marshal(retTok)
+	if oldTokJSErr != nil {
+		return nil, oldTokJSErr
+	}
+
+	//convert the new token to json data:
+	newTokJS, newTokJSErr := json.Marshal(updatedTok)
+	if newTokJSErr != nil {
+		return nil, newTokJSErr
 	}
 
 	//build the updated token command:
-	upTok, upTokEerr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldFile).WithNewFile(newFile).Now()
+	upTok, upTokEerr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldTokJS).WithNewJS(newTokJS).Now()
 	if upTokEerr != nil {
 		return nil, upTokEerr
 	}

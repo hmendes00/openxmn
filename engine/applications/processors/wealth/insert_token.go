@@ -2,8 +2,6 @@ package wealth
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
@@ -80,17 +78,6 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 	cipher := insTokTrs.GetCipher()
 	crOn := trs.GetMetaData().CreatedOn()
 
-	//make sure the token does not already exists:
-	tok, tokErr := trans.tokenDB.RetrieveByID(tokID)
-	if tokErr != nil {
-		return nil, tokErr
-	}
-
-	if tok != nil {
-		str := fmt.Sprintf("the token (ID: %s) cannot be created because it already exists", tokID)
-		return nil, errors.New(str)
-	}
-
 	//retrieve the creator:
 	creator, creatorErr := trans.userDB.RetrieveByID(creatorID)
 	if creatorErr != nil {
@@ -104,13 +91,19 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 	}
 
 	// insert the token in the database:
-	tokFile, tokFileErr := trans.tokenDB.Insert(newTok)
-	if tokFileErr != nil {
-		return nil, tokFileErr
+	insTokErr := trans.tokenDB.Insert(newTok)
+	if insTokErr != nil {
+		return nil, insTokErr
+	}
+
+	//convert the new token to json data:
+	tokJS, tokJSErr := json.Marshal(newTok)
+	if tokJSErr != nil {
+		return nil, tokJSErr
 	}
 
 	//create the insert command:
-	ins, insErr := trans.insertBuilderFactory.Create().Create().WithFile(tokFile).Now()
+	ins, insErr := trans.insertBuilderFactory.Create().Create().WithJS(tokJS).Now()
 	if insErr != nil {
 		return nil, insErr
 	}
@@ -134,14 +127,26 @@ func (trans *InsertToken) Process(trs transactions.Transaction, user users.User)
 		return nil, newSafeErr
 	}
 
-	//update the save:
-	oldSafeFile, newSafeFile, safeFileErr := trans.safeDB.Update(safe, newSafe)
+	//update the safe:
+	safeFileErr := trans.safeDB.Update(safe, newSafe)
 	if safeFileErr != nil {
 		return nil, safeFileErr
 	}
 
+	//convert the new safe to json data:
+	newSafeJS, newSafeJSErr := json.Marshal(newSafe)
+	if newSafeJSErr != nil {
+		return nil, newSafeJSErr
+	}
+
+	//convert the old safe to json data:
+	oldSafeJS, oldSafeJSErr := json.Marshal(safe)
+	if oldSafeJSErr != nil {
+		return nil, oldSafeJSErr
+	}
+
 	//build the safe update command:
-	safeUp, safeUpErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldSafeFile).WithNewFile(newSafeFile).Now()
+	safeUp, safeUpErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldSafeJS).WithNewJS(newSafeJS).Now()
 	if safeUpErr != nil {
 		return nil, safeUpErr
 	}

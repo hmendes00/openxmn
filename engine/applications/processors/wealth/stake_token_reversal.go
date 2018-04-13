@@ -54,13 +54,19 @@ func (trans *StakeTokenReversal) Process(trs transactions.Transaction, user user
 	}
 
 	//delete the stake:
-	delStkFile, delStkFileErr := trans.stakeDB.Delete(stk)
-	if delStkFileErr != nil {
-		return nil, delStkFileErr
+	delStkErr := trans.stakeDB.Delete(stk)
+	if delStkErr != nil {
+		return nil, delStkErr
+	}
+
+	//convert the deleted stake to json data:
+	delStakeJS, delStakeJSErr := json.Marshal(stk)
+	if delStakeJSErr != nil {
+		return nil, delStakeJSErr
 	}
 
 	//build the delete stake command:
-	delStk, delStkErr := trans.deleteBuilderFactory.Create().Create().WithFile(delStkFile).Now()
+	delStk, delStkErr := trans.deleteBuilderFactory.Create().Create().WithJS(delStakeJS).Now()
 	if delStkErr != nil {
 		return nil, delStkErr
 	}
@@ -91,13 +97,25 @@ func (trans *StakeTokenReversal) Process(trs transactions.Transaction, user user
 	}
 
 	//update the wallet:
-	oldWalFile, newWalFile, walFileErr := trans.walDB.Update(wal, newWal)
-	if walFileErr != nil {
-		return nil, walFileErr
+	upWalErr := trans.walDB.Update(wal, newWal)
+	if upWalErr != nil {
+		return nil, upWalErr
+	}
+
+	//convert the old wallet to json data:
+	oldWalJS, oldWalJSErr := json.Marshal(wal)
+	if oldWalJSErr != nil {
+		return nil, oldWalJSErr
+	}
+
+	//convert the new wallet to json data:
+	newWalJS, newWalJSErr := json.Marshal(newWal)
+	if newWalJSErr != nil {
+		return nil, newWalJSErr
 	}
 
 	//build the update wallet command:
-	upWal, upWalErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldWalFile).WithNewFile(newWalFile).Now()
+	upWal, upWalErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldWalJS).WithNewJS(newWalJS).Now()
 	if upWalErr != nil {
 		return nil, upWalErr
 	}

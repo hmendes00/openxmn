@@ -38,13 +38,19 @@ func (trans *DeleteUser) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//delete the user:
-	userFile, userFileErr := trans.userDB.Delete(usr)
-	if userFileErr != nil {
-		return nil, userFileErr
+	delUserErr := trans.userDB.Delete(usr)
+	if delUserErr != nil {
+		return nil, delUserErr
+	}
+
+	//convert the deleted user to json:
+	delUserJS, delUserJSErr := json.Marshal(usr)
+	if delUserJSErr != nil {
+		return nil, delUserErr
 	}
 
 	//build the delete command:
-	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithFile(userFile).Now()
+	delCmd, delCmdErr := trans.deleteBuilderFactory.Create().Create().WithJS(delUserJS).Now()
 	if delCmdErr != nil {
 		return nil, delCmdErr
 	}

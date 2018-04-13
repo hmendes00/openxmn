@@ -71,13 +71,25 @@ func (trans *UpdateUser) Process(trs transactions.Transaction, user users.User) 
 	}
 
 	//save the updated user:
-	oldFile, newFile, fileErr := trans.userDB.Update(user, newUsr)
-	if fileErr != nil {
-		return nil, fileErr
+	upUserErr := trans.userDB.Update(user, newUsr)
+	if upUserErr != nil {
+		return nil, upUserErr
+	}
+
+	//convert the old user to json data:
+	oldUsrJS, oldUsrJSErr := json.Marshal(user)
+	if oldUsrJSErr != nil {
+		return nil, oldUsrJSErr
+	}
+
+	//convert thew new user to json data:
+	newUsrJS, newUsrJSErr := json.Marshal(newUsr)
+	if newUsrJSErr != nil {
+		return nil, newUsrJSErr
 	}
 
 	//build the update command:
-	up, upErr := trans.updateBuilderFactory.Create().Create().WithOriginalFile(oldFile).WithNewFile(newFile).Now()
+	up, upErr := trans.updateBuilderFactory.Create().Create().WithOriginalJS(oldUsrJS).WithNewJS(newUsrJS).Now()
 	if upErr != nil {
 		return nil, upErr
 	}
