@@ -6,41 +6,31 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
-	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
-	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
 )
 
 // UpdateToken represents an update token processor
 type UpdateToken struct {
 	tokenDB              *databases.Token
-	walDB                *databases.Wallet
 	tokenBuilderFactory  tokens.TokenBuilderFactory
-	walBuilderFactory    wallets.WalletBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
-	cmdsBuilderFactory   commands.BuilderFactory
 	updateBuilderFactory commands.UpdateBuilderFactory
 }
 
 // CreateUpdateToken creates a UpdateToken instance
 func CreateUpdateToken(
 	tokenDB *databases.Token,
-	walDB *databases.Wallet,
 	tokenBuilderFactory tokens.TokenBuilderFactory,
-	walBuilderFactory wallets.WalletBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
-	cmdsBuilderFactory commands.BuilderFactory,
 	updateBuilderFactory commands.UpdateBuilderFactory,
 ) processors.Transaction {
 	out := UpdateToken{
 		tokenDB:              tokenDB,
-		walDB:                walDB,
 		tokenBuilderFactory:  tokenBuilderFactory,
-		walBuilderFactory:    walBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
-		cmdsBuilderFactory:   cmdsBuilderFactory,
 		updateBuilderFactory: updateBuilderFactory,
 	}
 

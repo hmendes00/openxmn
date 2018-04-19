@@ -6,38 +6,31 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
-	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/metadata"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // UpdateUser represents a save user processor
 type UpdateUser struct {
-	userDB                 *databases.User
-	metaDataBuilderFactory metadata.BuilderFactory
-	userBuilderFactory     users.UserBuilderFactory
-	cmdBuilderFactory      commands.CommandBuilderFactory
-	updateBuilderFactory   commands.UpdateBuilderFactory
-	insertBuilderFactory   commands.InsertBuilderFactory
+	userDB               *databases.User
+	userBuilderFactory   users.UserBuilderFactory
+	cmdBuilderFactory    commands.CommandBuilderFactory
+	updateBuilderFactory commands.UpdateBuilderFactory
 }
 
 // CreateUpdateUser creates a new UpdateUser instance
 func CreateUpdateUser(
 	userDB *databases.User,
-	metaDataBuilderFactory metadata.BuilderFactory,
 	userBuilderFactory users.UserBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
 	updateBuilderFactory commands.UpdateBuilderFactory,
-	insertBuilderFactory commands.InsertBuilderFactory,
 ) processors.Transaction {
 	out := UpdateUser{
-		userDB:                 userDB,
-		metaDataBuilderFactory: metaDataBuilderFactory,
-		userBuilderFactory:     userBuilderFactory,
-		cmdBuilderFactory:      cmdBuilderFactory,
-		updateBuilderFactory:   updateBuilderFactory,
-		insertBuilderFactory:   insertBuilderFactory,
+		userDB:               userDB,
+		userBuilderFactory:   userBuilderFactory,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		updateBuilderFactory: updateBuilderFactory,
 	}
 
 	return &out

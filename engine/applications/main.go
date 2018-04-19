@@ -2,12 +2,16 @@ package main
 
 func main() {
 
-	//create the factories:
+	//configurations - transactions:
+	/*apiTrsRoutePrefix := "/transactions"
+	apiTrsSignedTrsBufferSize := 20
+	apiTrsAtomicTrsBufferSize := 20
+	agentTrsAggregationTime := time.Second * 5
+	agentAggregatedTrsBufferSize := 20
 
-	//create the block processor:
+	//create the router:
+	router := mux.NewRouter()
 
-	//create the APIs:
-
-	//create the agents:
-
+	CreateTransactions(router, apiTrsRoutePrefix, apiTrsSignedTrsBufferSize, apiTrsAtomicTrsBufferSize, agentAggregatedTrsBufferSize, agentTrsAggregationTime)
+	*/
 }

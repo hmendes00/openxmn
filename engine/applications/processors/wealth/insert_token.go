@@ -6,22 +6,19 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
-	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	safes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/safes"
 	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
-	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
 )
 
 // InsertToken represents an insert token processor
 type InsertToken struct {
 	tokenDB              *databases.Token
-	walDB                *databases.Wallet
 	userDB               *databases.User
 	safeDB               *databases.Safe
 	tokenBuilderFactory  tokens.TokenBuilderFactory
-	walBuilderFactory    wallets.WalletBuilderFactory
 	safeBuilderFactory   safes.SafeBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	cmdsBuilderFactory   commands.BuilderFactory
@@ -32,11 +29,9 @@ type InsertToken struct {
 // CreateInsertToken creates a InsertToken instance
 func CreateInsertToken(
 	tokenDB *databases.Token,
-	walDB *databases.Wallet,
 	userDB *databases.User,
 	safeDB *databases.Safe,
 	tokenBuilderFactory tokens.TokenBuilderFactory,
-	walBuilderFactory wallets.WalletBuilderFactory,
 	safeBuilderFactory safes.SafeBuilderFactory,
 	cmdBuilderFactory commands.CommandBuilderFactory,
 	cmdsBuilderFactory commands.BuilderFactory,
@@ -45,11 +40,9 @@ func CreateInsertToken(
 ) processors.Transaction {
 	out := InsertToken{
 		tokenDB:              tokenDB,
-		walDB:                walDB,
 		userDB:               userDB,
 		safeDB:               safeDB,
 		tokenBuilderFactory:  tokenBuilderFactory,
-		walBuilderFactory:    walBuilderFactory,
 		safeBuilderFactory:   safeBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
 		cmdsBuilderFactory:   cmdsBuilderFactory,

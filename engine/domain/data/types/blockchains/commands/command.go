@@ -1,7 +1,12 @@
 package commands
 
+import (
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+)
+
 // Command represents a command
 type Command interface {
+	GetMetaData() metadata.MetaData
 	HasCommands() bool
 	GetCommands() Commands
 	HasInsert() bool

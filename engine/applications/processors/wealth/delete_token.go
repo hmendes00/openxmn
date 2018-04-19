@@ -6,17 +6,31 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	tokens "github.com/XMNBlockchain/openxmn/engine/domain/data/types/tokens"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // DeleteToken represents a delete token processor
 type DeleteToken struct {
 	tokenDB              *databases.Token
-	tokenBuilderFactory  tokens.TokenBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	deleteBuilderFactory commands.DeleteBuilderFactory
+}
+
+// CreateDeleteToken creates a DeleteToken instance
+func CreateDeleteToken(
+	tokenDB *databases.Token,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+) processors.Transaction {
+	out := DeleteToken{
+		tokenDB:              tokenDB,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes a DeleteToken transaction

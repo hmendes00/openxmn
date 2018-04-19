@@ -3,7 +3,6 @@ package hashtrees
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -12,8 +11,8 @@ import (
 
 // HashTree represents the concrete implementation of the HashTree
 type HashTree struct {
-	H      hashtrees.Hash
-	Parent *parentLeaf
+	H      *SingleHash `json:"hash"`
+	Parent *ParentLeaf `json:"parent"`
 }
 
 func createHashTreeFromBlocks(blocks [][]byte) (hashtrees.HashTree, error) {
@@ -26,7 +25,7 @@ func createHashTreeFromBlocks(blocks [][]byte) (hashtrees.HashTree, error) {
 	return tree, nil
 }
 
-func createHashTree(h hashtrees.Hash, parent *parentLeaf) hashtrees.HashTree {
+func createHashTree(h *SingleHash, parent *ParentLeaf) hashtrees.HashTree {
 	out := HashTree{
 		H:      h,
 		Parent: parent,
@@ -35,16 +34,16 @@ func createHashTree(h hashtrees.Hash, parent *parentLeaf) hashtrees.HashTree {
 	return &out
 }
 
-// GetHeight returns the height of the HashTree.  It includes the root leaf and the block leaves
+// GetHeight returns the height of the HashTree.  It includes the root Leaf and the block leaves
 func (tree *HashTree) GetHeight() int {
-	left := tree.Parent.left
+	left := tree.Parent.Left
 	return left.getHeight() + 2
 }
 
 // GetLength returns the amount of leaves inside its blockLeaves
 func (tree *HashTree) GetLength() int {
 	blockLeaves := tree.Parent.getBlockLeaves()
-	return len(blockLeaves.leaves)
+	return len(blockLeaves.Lves)
 }
 
 // Compact returns a CompactHashTree.  It contains the bock hashes + the root hashes
@@ -69,15 +68,15 @@ func (tree *HashTree) Order(data [][]byte) ([][]byte, error) {
 	}
 
 	out := [][]byte{}
-	leaves := tree.Parent.getBlockLeaves().leaves
+	leaves := tree.Parent.getBlockLeaves().Lves
 	for _, oneLeaf := range leaves {
-		leafHashAsString := oneLeaf.h.String()
-		if oneData, ok := hashed[leafHashAsString]; ok {
+		LeafHashAsString := oneLeaf.H.String()
+		if oneData, ok := hashed[LeafHashAsString]; ok {
 			out = append(out, oneData)
 			continue
 		}
 
-		//must be a filling leaf, so continue:
+		//must be a filling Leaf, so continue:
 		continue
 	}
 
@@ -87,39 +86,4 @@ func (tree *HashTree) Order(data [][]byte) ([][]byte, error) {
 	}
 
 	return out, nil
-}
-
-func (tree *HashTree) jsonify() *jsonifyHashTree {
-	h := tree.H.String()
-	parent := tree.Parent.jsonify()
-	return createJsonifyHashTree(h, parent)
-}
-
-// MarshalJSON transform an HashTree to JSON
-func (tree *HashTree) MarshalJSON() ([]byte, error) {
-	jsHashTree := tree.jsonify()
-	js, jsErr := json.Marshal(jsHashTree)
-	if jsErr != nil {
-		return nil, jsErr
-	}
-
-	return js, nil
-}
-
-// UnmarshalJSON transform the data to a PublicKey instance
-func (tree *HashTree) UnmarshalJSON(data []byte) error {
-	jsonify := new(jsonifyHashTree)
-	unErr := json.Unmarshal(data, &jsonify)
-	if unErr != nil {
-		return unErr
-	}
-
-	ht, htErr := jsonify.domainify()
-	if htErr != nil {
-		return htErr
-	}
-
-	tree.H = ht.H
-	tree.Parent = ht.Parent
-	return nil
 }

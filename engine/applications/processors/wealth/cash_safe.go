@@ -8,8 +8,8 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	safes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/safes"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
 	concrete_safes "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/safes"
@@ -20,12 +20,36 @@ type CashSafe struct {
 	safeDB               *databases.Safe
 	walDB                *databases.Wallet
 	tokDB                *databases.Token
-	safeBuilderFactory   safes.SafeBuilderFactory
 	walletBuilderFactory wallets.WalletBuilderFactory
 	updateBuilderFactory commands.UpdateBuilderFactory
 	deleteBuilderFactory commands.DeleteBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	cmdsBuilderFactory   commands.BuilderFactory
+}
+
+// CreateCashSafe creates a new CashSafe processor instance
+func CreateCashSafe(
+	safeDB *databases.Safe,
+	walDB *databases.Wallet,
+	tokDB *databases.Token,
+	walletBuilderFactory wallets.WalletBuilderFactory,
+	updateBuilderFactory commands.UpdateBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	cmdsBuilderFactory commands.BuilderFactory,
+) processors.Transaction {
+	out := CashSafe{
+		safeDB:               safeDB,
+		walDB:                walDB,
+		tokDB:                tokDB,
+		walletBuilderFactory: walletBuilderFactory,
+		updateBuilderFactory: updateBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		cmdsBuilderFactory:   cmdsBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes a CashSafe transaction

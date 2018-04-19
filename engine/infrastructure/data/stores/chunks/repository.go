@@ -1,6 +1,7 @@
 package chunks
 
 import (
+	"io/ioutil"
 	"path/filepath"
 
 	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
@@ -45,4 +46,29 @@ func (rep *Repository) Retrieve(dirPath string) (chunk.Chunks, error) {
 	}
 
 	return chks, nil
+}
+
+// RetrieveAll retrieves a stored []chunks instance
+func (rep *Repository) RetrieveAll(dirPath string) ([]chunk.Chunks, error) {
+	files, filesErr := ioutil.ReadDir(dirPath)
+	if filesErr != nil {
+		return nil, filesErr
+	}
+
+	chunks := []chunk.Chunks{}
+	for _, oneFile := range files {
+		if !oneFile.IsDir() {
+			continue
+		}
+
+		chkDirPath := filepath.Join(dirPath, oneFile.Name())
+		oneChk, oneChkErr := rep.Retrieve(chkDirPath)
+		if oneChkErr != nil {
+			return nil, oneChkErr
+		}
+
+		chunks = append(chunks, oneChk)
+	}
+
+	return chunks, nil
 }

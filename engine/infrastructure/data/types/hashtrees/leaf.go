@@ -2,75 +2,62 @@ package hashtrees
 
 import (
 	"bytes"
-
-	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
-type leaf struct {
-	h      hashtrees.Hash
-	parent *parentLeaf
+// Leaf represents an hashtree Leaf
+type Leaf struct {
+	H      *SingleHash `json:"hash"`
+	Parent *ParentLeaf `json:"parent"`
 }
 
-func createLeaf(h hashtrees.Hash, parent *parentLeaf) *leaf {
-	out := leaf{
-		h:      h,
-		parent: parent,
+func createLeaf(h *SingleHash, parent *ParentLeaf) *Leaf {
+	out := Leaf{
+		H:      h,
+		Parent: parent,
 	}
 
 	return &out
 }
 
-func createChildLeaf(left *leaf, right *leaf) *leaf {
+func createChildLeaf(left *Leaf, right *Leaf) *Leaf {
 	data := bytes.Join([][]byte{
-		left.h.Get(),
-		right.h.Get(),
+		left.H.Get(),
+		right.H.Get(),
 	}, []byte{})
-	h := createSingleHashFromData(data).(*singleHash)
+	h := createSingleHashFromData(data)
 	l := h.createLeaf()
 	return l
 }
 
-func (l *leaf) setParent(parent *parentLeaf) *leaf {
-	l.parent = parent
+func (l *Leaf) setParent(parent *ParentLeaf) *Leaf {
+	l.Parent = parent
 	return l
 }
 
-func (l *leaf) getHeight() int {
+func (l *Leaf) getHeight() int {
 	cpt := 0
 	oneLeaf := l
 	for {
 
-		if oneLeaf.parent == nil {
+		if oneLeaf.Parent == nil {
 			return cpt
 		}
 
 		cpt++
-		oneLeaf = oneLeaf.parent.left
+		oneLeaf = oneLeaf.Parent.Left
 	}
 }
 
-func (l *leaf) getBlockLeaves() *leaves {
+func (l *Leaf) getBlockLeaves() *Leaves {
 
-	if l.parent != nil {
-		return l.parent.getBlockLeaves()
+	if l.Parent != nil {
+		return l.Parent.getBlockLeaves()
 	}
 
-	singleLeaves := []*leaf{
+	singleLeaves := []*Leaf{
 		l,
 	}
 
 	output := createLeaves(singleLeaves)
 	return output
-}
-
-func (l *leaf) jsonify() *jsonifyLeaf {
-
-	var par *jsonifyParentLeaf
-	par = nil
-	if l.parent != nil {
-		par = l.parent.jsonify()
-	}
-
-	out := createJsonifyLeaf(l.h.String(), par)
-	return out
 }

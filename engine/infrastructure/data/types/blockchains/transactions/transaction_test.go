@@ -18,7 +18,7 @@ func TestCreate_Success(t *testing.T) {
 	}
 
 	js, _ := json.Marshal(&obj)
-	met := concrete_metadata.CreateMetaDataForTests(t)
+	met := concrete_metadata.CreateMetaDataForTests()
 
 	//execute:
 	trs := createTransaction(met, js)

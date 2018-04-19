@@ -6,17 +6,31 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	safes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/safes"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // DeleteSafe represents a delete safe processor
 type DeleteSafe struct {
 	safeDB               *databases.Safe
-	safeBuilderFactory   safes.SafeBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	deleteBuilderFactory commands.DeleteBuilderFactory
+}
+
+// CreateDeleteSafe creates a DeleteSafe instance
+func CreateDeleteSafe(
+	safeDB *databases.Safe,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+) processors.Transaction {
+	out := DeleteSafe{
+		safeDB:               safeDB,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes an DeleteSafe transaction

@@ -6,24 +6,25 @@ import (
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
-type parentLeaf struct {
-	left  *leaf
-	right *leaf
+// ParentLeaf represents a parent Leaf
+type ParentLeaf struct {
+	Left  *Leaf `json:"left"`
+	Right *Leaf `json:"right"`
 }
 
-func createParentLeaf(left *leaf, right *leaf) *parentLeaf {
-	parent := parentLeaf{
-		left:  left,
-		right: right,
+func createParentLeaf(left *Leaf, right *Leaf) *ParentLeaf {
+	parent := ParentLeaf{
+		Left:  left,
+		Right: right,
 	}
 
 	return &parent
 }
 
-func (parent *parentLeaf) createHashTree() hashtrees.HashTree {
+func (parent *ParentLeaf) createHashTree() hashtrees.HashTree {
 	data := bytes.Join([][]byte{
-		parent.left.h.Get(),
-		parent.right.h.Get(),
+		parent.Left.H.Get(),
+		parent.Right.H.Get(),
 	}, []byte{})
 
 	hash := createSingleHashFromData(data)
@@ -31,15 +32,10 @@ func (parent *parentLeaf) createHashTree() hashtrees.HashTree {
 	return out
 }
 
-func (parent *parentLeaf) getBlockLeaves() *leaves {
-	left := parent.left
-	right := parent.right
+func (parent *ParentLeaf) getBlockLeaves() *Leaves {
+	left := parent.Left
+	right := parent.Right
 	leftLeaves := left.getBlockLeaves()
 	rightLeaves := right.getBlockLeaves()
 	return leftLeaves.merge(rightLeaves)
-}
-
-func (parent *parentLeaf) jsonify() *jsonifyParentLeaf {
-	out := createJsonifyParentLeaf(*parent.left.jsonify(), *parent.right.jsonify())
-	return out
 }

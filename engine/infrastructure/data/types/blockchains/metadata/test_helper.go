@@ -2,13 +2,12 @@ package metadata
 
 import (
 	"strconv"
-	"testing"
 	"time"
 
 	met "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 	concrete_hashtrees "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/hashtrees"
-	concrete_stored_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/stores/files"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -19,7 +18,7 @@ type JsDataForTests struct {
 }
 
 // CreateMetaDataForTests creates a MetaData for tests
-func CreateMetaDataForTests(t *testing.T) *MetaData {
+func CreateMetaDataForTests() *MetaData {
 	//variables:
 	id := uuid.NewV4()
 	createdOn := time.Now().UTC()

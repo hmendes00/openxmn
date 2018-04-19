@@ -7,10 +7,10 @@ import (
 // Compact represents an HashTree, with only the root hash and the block leaves
 type Compact struct {
 	h      hashtrees.Hash
-	leaves *leaves
+	leaves *Leaves
 }
 
-func createCompactHashTree(h hashtrees.Hash, leaves *leaves) hashtrees.Compact {
+func createCompactHashTree(h hashtrees.Hash, leaves *Leaves) hashtrees.Compact {
 	out := Compact{
 		h:      h,
 		leaves: leaves,
@@ -26,5 +26,5 @@ func (compact *Compact) GetHash() hashtrees.Hash {
 
 // GetLength returns the amount of leaves inside its blockLeaves
 func (compact *Compact) GetLength() int {
-	return len(compact.leaves.leaves)
+	return len(compact.leaves.Lves)
 }

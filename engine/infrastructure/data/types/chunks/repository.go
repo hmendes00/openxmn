@@ -1,6 +1,7 @@
 package chunks
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -85,4 +86,29 @@ func (rep *Repository) Retrieve(dirPath string) (chunk.Chunks, error) {
 	}
 
 	return chks, nil
+}
+
+// RetrieveAll retrieves []Chunks instances
+func (rep *Repository) RetrieveAll(dirPath string) ([]chunk.Chunks, error) {
+	files, filesErr := ioutil.ReadDir(dirPath)
+	if filesErr != nil {
+		return nil, filesErr
+	}
+
+	chunks := []chunk.Chunks{}
+	for _, oneFile := range files {
+		if !oneFile.IsDir() {
+			continue
+		}
+
+		chkDirPath := filepath.Join(dirPath, oneFile.Name())
+		oneChk, oneChkErr := rep.Retrieve(chkDirPath)
+		if oneChkErr != nil {
+			return nil, oneChkErr
+		}
+
+		chunks = append(chunks, oneChk)
+	}
+
+	return chunks, nil
 }

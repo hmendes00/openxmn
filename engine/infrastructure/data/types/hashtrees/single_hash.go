@@ -8,8 +8,9 @@ import (
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
-type singleHash struct {
-	h []byte
+// SingleHash represents a single hash
+type SingleHash struct {
+	H []byte `json:"hash"`
 }
 
 func createSingleHashFromString(str string) (hashtrees.Hash, error) {
@@ -19,41 +20,41 @@ func createSingleHashFromString(str string) (hashtrees.Hash, error) {
 		return nil, decErr
 	}
 
-	out := singleHash{
-		h: dec,
+	out := SingleHash{
+		H: dec,
 	}
 
 	return &out, nil
 }
 
-func createSingleHashFromData(data []byte) hashtrees.Hash {
+func createSingleHashFromData(data []byte) *SingleHash {
 	sha := sha256.New()
 	sha.Write(data)
 
-	out := singleHash{
-		h: sha.Sum(nil),
+	out := SingleHash{
+		H: sha.Sum(nil),
 	}
 
 	return &out
 }
 
-func (hash *singleHash) createLeaf() *leaf {
+func (hash *SingleHash) createLeaf() *Leaf {
 	// Block leaves only have a child, no parent
 	out := createLeaf(hash, nil)
 	return out
 }
 
 // String returns a string that represents the singleHash
-func (hash *singleHash) String() string {
-	return hex.EncodeToString(hash.h)
+func (hash *SingleHash) String() string {
+	return hex.EncodeToString(hash.H)
 }
 
 // Get returns the hash.Hash
-func (hash *singleHash) Get() []byte {
-	return hash.h
+func (hash *SingleHash) Get() []byte {
+	return hash.H
 }
 
 // Compare compares the hashes.  If equal, returns true, otherwise false
-func (hash *singleHash) Compare(h hashtrees.Hash) bool {
-	return bytes.Compare(hash.h, h.Get()) == 0
+func (hash *SingleHash) Compare(h hashtrees.Hash) bool {
+	return bytes.Compare(hash.H, h.Get()) == 0
 }

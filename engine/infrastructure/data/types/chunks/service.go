@@ -3,10 +3,10 @@ package chunks
 import (
 	"path/filepath"
 
+	stored_chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
 	chunk "github.com/XMNBlockchain/openxmn/engine/domain/data/types/chunks"
 	files "github.com/XMNBlockchain/openxmn/engine/domain/data/types/files"
 	hashtree "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
-	stored_chunks "github.com/XMNBlockchain/openxmn/engine/domain/data/stores/chunks"
 )
 
 // Service represents a concrete ChunksService implementation
@@ -52,4 +52,20 @@ func (serv *Service) Save(dirPath string, chk chunk.Chunks) (stored_chunks.Chunk
 	}
 
 	return storedChk, nil
+}
+
+// SaveAll saves []Chunks instances to disk
+func (serv *Service) SaveAll(dirPath string, chks []chunk.Chunks) ([]stored_chunks.Chunks, error) {
+	out := []stored_chunks.Chunks{}
+	for _, oneChk := range chks {
+		oneChkDirPath := filepath.Join(dirPath, oneChk.GetHashTree().GetHash().String())
+		oneStoredChk, oneStoredChkErr := serv.Save(oneChkDirPath, oneChk)
+		if oneStoredChkErr != nil {
+			return nil, oneStoredChkErr
+		}
+
+		out = append(out, oneStoredChk)
+	}
+
+	return out, nil
 }

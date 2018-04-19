@@ -2,6 +2,7 @@ package hashtrees
 
 import (
 	"bytes"
+	"encoding/gob"
 	"math"
 	"math/rand"
 	"reflect"
@@ -107,8 +108,34 @@ func TestCreate_convertToJSON_backAndForth_Success(t *testing.T) {
 
 	//variables:
 	empty := new(HashTree)
-	obj := CreateHashTreeForTests(t)
+	obj := CreateHashTreeForTests()
 
 	//execute:
 	convert.ConvertToJSON(t, obj, empty)
+}
+
+func TestCreate_convertToBytes_backAndForth_Success(t *testing.T) {
+	//variables:
+	ht := CreateHashTreeForTests()
+
+	//convert to bytes:
+	buf := new(bytes.Buffer)
+	gobEnc := gob.NewEncoder(buf)
+	gobEncErr := gobEnc.Encode(ht)
+	if gobEncErr != nil {
+		t.Errorf("there was an error while encoding the hashtree to bytes: %s", gobEncErr.Error())
+	}
+
+	//convert bytes to hashtree:
+	rdBuf := bytes.NewReader(buf.Bytes())
+	dec := gob.NewDecoder(rdBuf)
+	newHT := new(HashTree)
+	decErr := dec.Decode(newHT)
+	if decErr != nil {
+		t.Errorf("there was an error while decoding the hashtree bytes to an HashTree instance: %s", decErr.Error())
+	}
+
+	if !reflect.DeepEqual(ht, newHT) {
+		t.Errorf("the decoded hashtree is invalid")
+	}
 }

@@ -2,19 +2,23 @@ package commands
 
 import (
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	metadata "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/metadata"
+	concrete_metadata "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/metadata"
 )
 
 // Command represents a concrete command implementation
 type Command struct {
-	Cmds *Commands `json:"commands"`
-	Ins  *Insert   `json:"insert"`
-	Up   *Update   `json:"update"`
-	Del  *Delete   `json:"delete"`
-	Err  *Error    `json:"error"`
+	Met  *concrete_metadata.MetaData `json:"metadata"`
+	Cmds *Commands                   `json:"commands"`
+	Ins  *Insert                     `json:"insert"`
+	Up   *Update                     `json:"update"`
+	Del  *Delete                     `json:"delete"`
+	Err  *Error                      `json:"error"`
 }
 
-func createCommandWithCommands(cmds *Commands) commands.Command {
+func createCommandWithCommands(met *concrete_metadata.MetaData, cmds *Commands) commands.Command {
 	out := Command{
+		Met:  met,
 		Cmds: cmds,
 		Ins:  nil,
 		Up:   nil,
@@ -25,8 +29,9 @@ func createCommandWithCommands(cmds *Commands) commands.Command {
 	return &out
 }
 
-func createCommandWithInsert(ins *Insert) commands.Command {
+func createCommandWithInsert(met *concrete_metadata.MetaData, ins *Insert) commands.Command {
 	out := Command{
+		Met:  met,
 		Cmds: nil,
 		Ins:  ins,
 		Up:   nil,
@@ -37,8 +42,9 @@ func createCommandWithInsert(ins *Insert) commands.Command {
 	return &out
 }
 
-func createCommandWithUpdate(up *Update) commands.Command {
+func createCommandWithUpdate(met *concrete_metadata.MetaData, up *Update) commands.Command {
 	out := Command{
+		Met:  met,
 		Cmds: nil,
 		Ins:  nil,
 		Up:   up,
@@ -49,8 +55,9 @@ func createCommandWithUpdate(up *Update) commands.Command {
 	return &out
 }
 
-func createCommandWithDelete(del *Delete) commands.Command {
+func createCommandWithDelete(met *concrete_metadata.MetaData, del *Delete) commands.Command {
 	out := Command{
+		Met:  met,
 		Cmds: nil,
 		Ins:  nil,
 		Up:   nil,
@@ -61,8 +68,9 @@ func createCommandWithDelete(del *Delete) commands.Command {
 	return &out
 }
 
-func createCommandWithError(err *Error) commands.Command {
+func createCommandWithError(met *concrete_metadata.MetaData, err *Error) commands.Command {
 	out := Command{
+		Met:  met,
 		Cmds: nil,
 		Ins:  nil,
 		Up:   nil,
@@ -71,6 +79,11 @@ func createCommandWithError(err *Error) commands.Command {
 	}
 
 	return &out
+}
+
+// GetMetaData returns the metadata
+func (cmd *Command) GetMetaData() metadata.MetaData {
+	return cmd.Met
 }
 
 // HasCommands returns true if the command is a Commands, false otherwise

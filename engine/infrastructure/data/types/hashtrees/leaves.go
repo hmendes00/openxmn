@@ -4,23 +4,24 @@ import (
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 )
 
-type leaves struct {
-	leaves []*leaf
+// Leaves represents hashtree leaves
+type Leaves struct {
+	Lves []*Leaf `json:"leaves"`
 }
 
-func createLeaves(l []*leaf) *leaves {
-	out := leaves{
-		leaves: l,
+func createLeaves(l []*Leaf) *Leaves {
+	out := Leaves{
+		Lves: l,
 	}
 
 	return &out
 }
 
-func (leaves *leaves) createHashTree() hashtrees.HashTree {
-	length := len(leaves.leaves)
+func (leaves *Leaves) createHashTree() hashtrees.HashTree {
+	length := len(leaves.Lves)
 	if length == 2 {
-		left := leaves.leaves[0]
-		right := leaves.leaves[1]
+		left := leaves.Lves[0]
+		right := leaves.Lves[1]
 		parent := createParentLeaf(left, right)
 		tree := parent.createHashTree()
 		return tree
@@ -31,16 +32,16 @@ func (leaves *leaves) createHashTree() hashtrees.HashTree {
 	return tree
 }
 
-func (leaves *leaves) createChildrenLeaves() *leaves {
-	var childrenLeaves []*leaf
-	for index, oneLeaf := range leaves.leaves {
+func (leaves *Leaves) createChildrenLeaves() *Leaves {
+	var childrenLeaves []*Leaf
+	for index, oneLeaf := range leaves.Lves {
 
 		if index%2 != 0 {
 			continue
 		}
 
 		left := oneLeaf
-		right := leaves.leaves[index+1]
+		right := leaves.Lves[index+1]
 		child := createChildLeaf(left, right)
 		parent := createParentLeaf(left, right)
 		child.setParent(parent)
@@ -50,9 +51,9 @@ func (leaves *leaves) createChildrenLeaves() *leaves {
 	return createLeaves(childrenLeaves)
 }
 
-func (leaves *leaves) merge(newLeaves *leaves) *leaves {
-	for _, oneLeaf := range newLeaves.leaves {
-		leaves.leaves = append(leaves.leaves, oneLeaf)
+func (leaves *Leaves) merge(newLeaves *Leaves) *Leaves {
+	for _, oneLeaf := range newLeaves.Lves {
+		leaves.Lves = append(leaves.Lves, oneLeaf)
 	}
 	return leaves
 }

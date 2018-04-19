@@ -8,8 +8,8 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	stakes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/organizations/stakes"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	wallets "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users/wallets"
 )
@@ -18,13 +18,34 @@ import (
 type StakeTokenReversal struct {
 	stakeDB              *databases.Stake
 	walDB                *databases.Wallet
-	stakeBuilderFactory  stakes.StakeBuilderFactory
 	walBuilderFactory    wallets.WalletBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	cmdsBuilderFactory   commands.BuilderFactory
-	insertBuilderFactory commands.InsertBuilderFactory
 	updateBuilderFactory commands.UpdateBuilderFactory
 	deleteBuilderFactory commands.DeleteBuilderFactory
+}
+
+// CreateStakeTokenReversal creates a new StakeTokenReversal instance
+func CreateStakeTokenReversal(
+	stakeDB *databases.Stake,
+	walDB *databases.Wallet,
+	walBuilderFactory wallets.WalletBuilderFactory,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	cmdsBuilderFactory commands.BuilderFactory,
+	updateBuilderFactory commands.UpdateBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+) processors.Transaction {
+	out := StakeTokenReversal{
+		stakeDB:              stakeDB,
+		walDB:                walDB,
+		walBuilderFactory:    walBuilderFactory,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		cmdsBuilderFactory:   cmdsBuilderFactory,
+		updateBuilderFactory: updateBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes a StakeTokenReversal transaction

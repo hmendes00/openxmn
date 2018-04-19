@@ -7,4 +7,5 @@ import (
 // Service represents a chunks service
 type Service interface {
 	Save(dirPath string, chk Chunks) (stored_chunks.Chunks, error)
+	SaveAll(dirPath string, chks []Chunks) ([]stored_chunks.Chunks, error)
 }

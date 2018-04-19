@@ -6,17 +6,31 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
-	organizations "github.com/XMNBlockchain/openxmn/engine/domain/data/types/organizations"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
 
 // DeleteOrganization represents a delete organization processor
 type DeleteOrganization struct {
-	orgDB                      *databases.Organization
-	organizationBuilderFactory organizations.OrganizationBuilderFactory
-	cmdBuilderFactory          commands.CommandBuilderFactory
-	deleteBuilderFactory       commands.DeleteBuilderFactory
+	orgDB                *databases.Organization
+	cmdBuilderFactory    commands.CommandBuilderFactory
+	deleteBuilderFactory commands.DeleteBuilderFactory
+}
+
+// CreateDeleteOrganization creates a new DeleteOrganization instance
+func CreateDeleteOrganization(
+	orgDB *databases.Organization,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+) processors.Transaction {
+	out := DeleteOrganization{
+		orgDB:                orgDB,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes a DeleteOrganization transaction

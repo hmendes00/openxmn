@@ -8,7 +8,7 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
-	"github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	stakes "github.com/XMNBlockchain/openxmn/engine/domain/data/types/organizations/stakes"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
@@ -50,6 +50,7 @@ func CreateStakeToken(
 		stakeBuilderFactory:  stakeBuilderFactory,
 		walBuilderFactory:    walBuilderFactory,
 		cmdBuilderFactory:    cmdBuilderFactory,
+		cmdsBuilderFactory:   cmdsBuilderFactory,
 		insertBuilderFactory: insertBuilderFactory,
 		updateBuilderFactory: updateBuilderFactory,
 	}

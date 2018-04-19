@@ -14,7 +14,7 @@ type Token struct {
 }
 
 // CreateToken creates a new Token database
-func CreateToken(dirPath string) *Token {
+func CreateToken() *Token {
 	out := Token{
 		toks: map[string]tokens.Token{},
 	}

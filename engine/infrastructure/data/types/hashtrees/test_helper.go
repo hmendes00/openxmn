@@ -3,14 +3,13 @@ package hashtrees
 import (
 	"fmt"
 	"math/rand"
-	"testing"
 
 	hashtrees "github.com/XMNBlockchain/openxmn/engine/domain/data/types/hashtrees"
 	concrete_files "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/files"
 )
 
 // CreateHashTreeForTests creates an HashTree for tests
-func CreateHashTreeForTests(t *testing.T) *HashTree {
+func CreateHashTreeForTests() *HashTree {
 	//variables:
 	r := rand.New(rand.NewSource(99))
 	blks := [][]byte{
@@ -22,11 +21,7 @@ func CreateHashTreeForTests(t *testing.T) *HashTree {
 	}
 
 	//execute:
-	h, hErr := createHashTreeFromBlocks(blks)
-	if hErr != nil {
-		t.Errorf("there was a problem while creating an HashTree instance from blocks")
-	}
-
+	h, _ := createHashTreeFromBlocks(blks)
 	return h.(*HashTree)
 }
 

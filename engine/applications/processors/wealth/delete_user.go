@@ -6,6 +6,7 @@ import (
 	databases "github.com/XMNBlockchain/openxmn/engine/applications/databases"
 	transaction_wealth "github.com/XMNBlockchain/openxmn/engine/applications/transactions/wealth"
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
+	processors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/processors"
 	transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 )
@@ -13,9 +14,23 @@ import (
 // DeleteUser represents a delete user processor
 type DeleteUser struct {
 	userDB               *databases.User
-	userBuilderFactory   users.UserBuilderFactory
 	cmdBuilderFactory    commands.CommandBuilderFactory
 	deleteBuilderFactory commands.DeleteBuilderFactory
+}
+
+// CreateDeleteUser creates a new DeleteUser instance
+func CreateDeleteUser(
+	userDB *databases.User,
+	cmdBuilderFactory commands.CommandBuilderFactory,
+	deleteBuilderFactory commands.DeleteBuilderFactory,
+) processors.Transaction {
+	out := DeleteUser{
+		userDB:               userDB,
+		cmdBuilderFactory:    cmdBuilderFactory,
+		deleteBuilderFactory: deleteBuilderFactory,
+	}
+
+	return &out
 }
 
 // Process processes a DeleteUser transaction

@@ -9,8 +9,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// PushTransactionsToLeanders represents an application that push the tranactions received from the API, to the leader
-type PushTransactionsToLeanders struct {
+// PushTransactionsToLeaders represents an application that push the tranactions received from the API, to the leader
+type PushTransactionsToLeaders struct {
 	aggrTrsBuilderFactory           aggregated_transactions.TransactionsBuilderFactory
 	signedTransBuilderFactory       signed_transactions.TransactionsBuilderFactory
 	signedAtomicTransBuilderFactory signed_transactions.AtomicTransactionsBuilderFactory
@@ -21,8 +21,8 @@ type PushTransactionsToLeanders struct {
 	stop                            bool
 }
 
-// CreatePushTransactionsToLeanders creates a new PushTransactionsToLeanders instance
-func CreatePushTransactionsToLeanders(
+// CreatePushTransactionsToLeaders creates a new PushTransactionsToLeaders instance
+func CreatePushTransactionsToLeaders(
 	aggrTrsBuilderFactory aggregated_transactions.TransactionsBuilderFactory,
 	signedTransBuilderFactory signed_transactions.TransactionsBuilderFactory,
 	signedAtomicTransBuilderFactory signed_transactions.AtomicTransactionsBuilderFactory,
@@ -30,8 +30,8 @@ func CreatePushTransactionsToLeanders(
 	newSignedTrs <-chan signed_transactions.Transaction,
 	newAtomicSignedTrs <-chan signed_transactions.AtomicTransaction,
 	newAggregatedTrs chan<- aggregated_transactions.Transactions,
-) *PushTransactionsToLeanders {
-	out := PushTransactionsToLeanders{
+) *PushTransactionsToLeaders {
+	out := PushTransactionsToLeaders{
 		aggrTrsBuilderFactory:           aggrTrsBuilderFactory,
 		signedTransBuilderFactory:       signedTransBuilderFactory,
 		signedAtomicTransBuilderFactory: signedAtomicTransBuilderFactory,
@@ -46,12 +46,12 @@ func CreatePushTransactionsToLeanders(
 }
 
 // Stop stops the application
-func (pu *PushTransactionsToLeanders) Stop() {
+func (pu *PushTransactionsToLeaders) Stop() {
 	pu.stop = true
 }
 
 // Execute executes the application
-func (pu *PushTransactionsToLeanders) Execute() {
+func (pu *PushTransactionsToLeaders) Execute() {
 
 	curTime := time.Now().UTC()
 	signedTrs := []signed_transactions.Transaction{}
