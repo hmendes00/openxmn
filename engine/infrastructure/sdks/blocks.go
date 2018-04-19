@@ -8,9 +8,9 @@ import (
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	dblocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
+	servs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	concrete_blocks "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/blocks"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
@@ -35,7 +35,7 @@ func CreateBlocks(sigBuilderFactory users.SignatureBuilderFactory, routePrefix s
 }
 
 // SaveBlock saves a block to the blocks
-func (sdkblks *blocks) SaveBlock(serv servers.Server, blk dblocks.Block) (dblocks.SignedBlock, error) {
+func (sdkblks *blocks) SaveBlock(serv servs.Server, blk dblocks.Block) (dblocks.SignedBlock, error) {
 	url := fmt.Sprintf("%s%s/block", serv.String(), sdkblks.routePrefix)
 	js, jsErr := json.Marshal(blk)
 	if jsErr != nil {

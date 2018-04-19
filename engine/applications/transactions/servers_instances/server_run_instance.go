@@ -1,4 +1,4 @@
-package transactions
+package applications
 
 import uuid "github.com/satori/go.uuid"
 

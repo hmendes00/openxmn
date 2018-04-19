@@ -1,4 +1,4 @@
-package transactions
+package filesservers
 
 import uuid "github.com/satori/go.uuid"
 

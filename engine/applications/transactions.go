@@ -26,7 +26,8 @@ import (
 type Transactions struct {
 	api              *apis.Transactions
 	agent            *agents.PushTransactionsToLeaders
-	sdk              sdks.Leaders
+	leadSDK          sdks.Leaders
+	servSDK          sdks.Servers
 	newAggregatedTrs <-chan aggregated_transactions.Transactions
 }
 
@@ -35,6 +36,7 @@ func CreateTransactions(
 	router *mux.Router,
 	pk cryptography.PrivateKey,
 	user users.User,
+	serverSDK sdks.Servers,
 	routePrefix string,
 	signedTrsBufferSize int,
 	atomicTrsBufferSize int,
@@ -62,8 +64,8 @@ func CreateTransactions(
 	atomicSignedTrsBuilderFactory := concrete_signed_transactions.CreateAtomicTransactionBuilderFactory(htBuilderFactory, blockChainMetaDataBuilderFactory)
 	signedAggregatedTrsBuilderFactory := concrete_aggregated_transactions.CreateTransactionsBuilderFactory(htBuilderFactory, blockChainMetaDataBuilderFactory)
 
-	//create the sdk:
-	sdk := concrete_sdks.CreateLeaders(userSigBuilderFactory, routePrefix, pk, user)
+	//create the leader SDK:
+	leadSDK := concrete_sdks.CreateLeaders(userSigBuilderFactory, routePrefix, pk, user)
 
 	//create the transaction API:
 	transactionsAPI := apis.CreateTransactions(
@@ -89,7 +91,8 @@ func CreateTransactions(
 	out := Transactions{
 		api:              transactionsAPI,
 		agent:            trsAgent,
-		sdk:              sdk,
+		leadSDK:          leadSDK,
+		servSDK:          serverSDK,
 		newAggregatedTrs: newAggregatedTrs,
 	}
 
@@ -102,19 +105,25 @@ func (trs *Transactions) Execute() {
 	//start the agent:
 	go trs.agent.Execute()
 
-	//push the transactions to the leader using the SDK, when needed:
 	for {
 		select {
 		case oneAggregatedTrs := <-trs.newAggregatedTrs:
+
+			//retrieve the next leader server:
+			lead, leadErr := trs.servSDK.RetrieveNextLeader()
+			if leadErr != nil {
+				log.Fatalf("there was an error while retrieving the next leader server: %s", leadErr.Error())
+			}
+
 			idAsString := oneAggregatedTrs.GetMetaData().GetID().String()
-			signedAggregatedTrs, signedAggregatedTrsErr := trs.sdk.SaveTrs(nil, oneAggregatedTrs)
+			signedAggregatedTrs, signedAggregatedTrsErr := trs.leadSDK.SaveTrs(lead, oneAggregatedTrs)
 			if signedAggregatedTrsErr != nil {
-				log.Fatalf("there was an error while saving the aggregated transaction (ID: %s) to server: %s", idAsString, "adsfdfs")
+				log.Fatalf("there was an error while saving the aggregated transaction (ID: %s) to server: %s", idAsString, lead.String())
 				break
 			}
 
 			signedIDAsString := signedAggregatedTrs.GetMetaData().GetID().String()
-			log.Printf("succerssfully pushed aggregated transaction (ID: %s) to server: %s.  Received signed aggregated transaction (ID: %s)", idAsString, "asdfasf", signedIDAsString)
+			log.Printf("successfully pushed aggregated transaction (ID: %s) to server: %s.  Received signed aggregated transaction (ID: %s)", idAsString, lead.String(), signedIDAsString)
 			break
 		}
 

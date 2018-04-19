@@ -9,9 +9,9 @@ import (
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	trs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions"
 	signed_transactions "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/transactions/signed"
+	servs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	concrete_signed_transactions "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/blockchains/transactions/signed"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
@@ -36,7 +36,7 @@ func CreateTransactions(sigBuilderFactory users.SignatureBuilderFactory, routePr
 }
 
 // SaveTrs save a Transaction on the Transactions API
-func (sdktrs *transactions) SaveTrs(serv servers.Server, trs trs.Transaction) (signed_transactions.Transaction, error) {
+func (sdktrs *transactions) SaveTrs(serv servs.Server, trs trs.Transaction) (signed_transactions.Transaction, error) {
 	url := fmt.Sprintf("%s%s/transaction", serv.String(), sdktrs.routePrefix)
 
 	js, jsErr := json.Marshal(trs)
@@ -84,7 +84,7 @@ func (sdktrs *transactions) SaveTrs(serv servers.Server, trs trs.Transaction) (s
 }
 
 // SaveAtomicTrs save an AtomicTransaction on the Transactions API
-func (sdktrs *transactions) SaveAtomicTrs(serv servers.Server, trs trs.Transactions) (signed_transactions.AtomicTransaction, error) {
+func (sdktrs *transactions) SaveAtomicTrs(serv servs.Server, trs trs.Transactions) (signed_transactions.AtomicTransaction, error) {
 	url := fmt.Sprintf("%s%s/atomic-transaction", serv.String(), sdktrs.routePrefix)
 
 	js, jsErr := json.Marshal(trs)

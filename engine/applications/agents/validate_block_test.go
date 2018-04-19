@@ -37,10 +37,10 @@ func TestValidateBlock_Success(t *testing.T) {
 	}
 
 	//gets the validate block from the passed chan:
-	getValidatedBlockFn := func(newValidatedBlk <-chan validated_blocks.Block) validated_blocks.Block {
+	getValidatedBlockFn := func(newValidatedBlk <-chan validated_blocks.SignedBlock) validated_blocks.Block {
 		select {
 		case oneValidatedBlock := <-newValidatedBlk:
-			return oneValidatedBlock
+			return oneValidatedBlock.GetBlock()
 		default:
 			return nil
 		}
@@ -89,6 +89,9 @@ func TestValidateBlock_Success(t *testing.T) {
 	//create a block:
 	blk := concrete_block.CreateBlockForTests()
 
+	//create owner user:
+	ownerUser, ownerPK := generateUserAndPKFn()
+
 	//create users:
 	invalidUser, invalidPK := generateUserAndPKFn()
 	firstUser, firstPK := generateUserAndPKFn()
@@ -111,6 +114,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	userSigsBuilderFactory := concrete_users.CreateSignaturesBuilderFactoryForTests()
 	signedBlockBuilderFactory := concrete_block.CreateSignedBlockBuilderFactoryForTests()
 	valBlkBuilderFactory := concrete_validated_block.CreateBlockBuilderFactoryForTests()
+	signedValBlkBuilderFactory := concrete_validated_block.CreateSignedBlockBuilderFactoryForTests()
 
 	//sign the blocks:
 	invalidSigID := uuid.NewV4()
@@ -175,17 +179,17 @@ func TestValidateBlock_Success(t *testing.T) {
 
 	//create the channels:
 	newSignedBlks := make(chan blocks.SignedBlock, 20)
-	newValidatedBlks := make(chan validated_blocks.Block, 20)
+	newSignedValidatedBlks := make(chan validated_blocks.SignedBlock, 20)
 
 	//create the application:
-	validateApp := CreateValidateBlock(valBlkBuilderFactory, userSigsBuilderFactory, neededStake, usersStake, waitBeforeRemovalTs, newSignedBlks, newValidatedBlks)
+	validateApp := CreateValidateBlock(ownerPK, ownerUser, userSigBuilderFactory, valBlkBuilderFactory, signedValBlkBuilderFactory, userSigsBuilderFactory, neededStake, usersStake, waitBeforeRemovalTs, newSignedBlks, newSignedValidatedBlks)
 	defer validateApp.Stop()
 
 	//execute:
 	go validateApp.Execute()
 
 	//no signed block have been sent yet:
-	preValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	preValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if preValidatedBlk != nil {
 		t.Errorf("there should be no validated block since no signed block were submitted")
 		return
@@ -194,7 +198,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	//add the invalid signed block (the user is not in the stake list):
 	newSignedBlks <- invalidSignedBlk
 	time.Sleep(time.Second)
-	invalidValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	invalidValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if invalidValidatedBlk != nil {
 		t.Errorf("there should be no validated block because the signed block was created by a user NOT in the stake list")
 		return
@@ -203,7 +207,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	//add the signed blocks to the signed block channel:
 	newSignedBlks <- firstSignedBlk
 	time.Sleep(time.Second)
-	firstValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	firstValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if firstValidatedBlk != nil {
 		t.Errorf("the validated block should not have been validated after the first user submission")
 		return
@@ -211,14 +215,14 @@ func TestValidateBlock_Success(t *testing.T) {
 
 	newSignedBlks <- secondSignedBlk
 	time.Sleep(time.Second)
-	secondValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	secondValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if !verifyValidatedBlockFn(secondValidatedBlk, blk, firstUser, secondUser, t) {
 		return
 	}
 
 	newSignedBlks <- thirdSignedBlk
 	time.Sleep(time.Second)
-	thirdValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	thirdValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if thirdValidatedBlk != nil {
 		t.Errorf("no new validated block should be pushed after the third submission")
 		return
@@ -230,7 +234,7 @@ func TestValidateBlock_Success(t *testing.T) {
 	//re-submit the older signed block.  This should regenerate another validated block:
 	newSignedBlks <- firstSignedBlk
 	time.Sleep(time.Second)
-	againFirstValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	againFirstValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if againFirstValidatedBlk != nil {
 		t.Errorf("the validated block should not have been validated after the first user re-submission")
 		return
@@ -238,14 +242,14 @@ func TestValidateBlock_Success(t *testing.T) {
 
 	newSignedBlks <- secondSignedBlk
 	time.Sleep(time.Second)
-	againValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	againValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if !verifyValidatedBlockFn(againValidatedBlk, blk, firstUser, secondUser, t) {
 		return
 	}
 
 	newSignedBlks <- thirdSignedBlk
 	time.Sleep(time.Second)
-	lastThirdValidatedBlk := getValidatedBlockFn(newValidatedBlks)
+	lastThirdValidatedBlk := getValidatedBlockFn(newSignedValidatedBlks)
 	if lastThirdValidatedBlk != nil {
 		t.Errorf("no new validated block should be pushed after the third submission")
 		return

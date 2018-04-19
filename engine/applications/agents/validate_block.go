@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
 	blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks"
 	validated_blocks "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/blocks/validated"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
@@ -12,39 +13,51 @@ import (
 
 // ValidateBlock represents an application that received SignedBlocks and created validated Blocks
 type ValidateBlock struct {
-	valBlkBuilderFactory   validated_blocks.BlockBuilderFactory
-	userSigsBuilderFactory users.SignaturesBuilderFactory
-	neededStakerPerBlk     float64
-	usersStake             map[string]float64
-	toRemoveSignedBlks     map[string]time.Time
-	signedBlks             map[string][]blocks.SignedBlock
-	newSignedBlks          <-chan blocks.SignedBlock
-	newValidatedBlks       chan<- validated_blocks.Block
-	stop                   bool
-	waitBeforeRemovalTs    time.Duration
+	pk                         cryptography.PrivateKey
+	user                       users.User
+	userSigBuilderFactory      users.SignatureBuilderFactory
+	valBlkBuilderFactory       validated_blocks.BlockBuilderFactory
+	signedValBlkBuilderFactory validated_blocks.SignedBlockBuilderFactory
+	userSigsBuilderFactory     users.SignaturesBuilderFactory
+	neededStakerPerBlk         float64
+	usersStake                 map[string]float64
+	toRemoveSignedBlks         map[string]time.Time
+	signedBlks                 map[string][]blocks.SignedBlock
+	newSignedBlks              <-chan blocks.SignedBlock
+	newSignedValidatedBlk      chan<- validated_blocks.SignedBlock
+	stop                       bool
+	waitBeforeRemovalTs        time.Duration
 }
 
 // CreateValidateBlock creates a new ValidateBlock instance
 func CreateValidateBlock(
+	pk cryptography.PrivateKey,
+	user users.User,
+	userSigBuilderFactory users.SignatureBuilderFactory,
 	valBlkBuilderFactory validated_blocks.BlockBuilderFactory,
+	signedValBlkBuilderFactory validated_blocks.SignedBlockBuilderFactory,
 	userSigsBuilderFactory users.SignaturesBuilderFactory,
 	neededStakerPerBlk float64,
 	usersStake map[string]float64,
 	waitBeforeRemovalTs time.Duration,
 	newSignedBlks <-chan blocks.SignedBlock,
-	newValidatedBlks chan<- validated_blocks.Block,
+	newSignedValidatedBlk chan<- validated_blocks.SignedBlock,
 ) *ValidateBlock {
 	out := ValidateBlock{
-		valBlkBuilderFactory:   valBlkBuilderFactory,
-		userSigsBuilderFactory: userSigsBuilderFactory,
-		neededStakerPerBlk:     neededStakerPerBlk,
-		usersStake:             usersStake,
-		waitBeforeRemovalTs:    waitBeforeRemovalTs,
-		toRemoveSignedBlks:     map[string]time.Time{},
-		signedBlks:             map[string][]blocks.SignedBlock{},
-		newSignedBlks:          newSignedBlks,
-		newValidatedBlks:       newValidatedBlks,
-		stop:                   false,
+		pk:   pk,
+		user: user,
+		userSigBuilderFactory:      userSigBuilderFactory,
+		valBlkBuilderFactory:       valBlkBuilderFactory,
+		signedValBlkBuilderFactory: signedValBlkBuilderFactory,
+		userSigsBuilderFactory:     userSigsBuilderFactory,
+		neededStakerPerBlk:         neededStakerPerBlk,
+		usersStake:                 usersStake,
+		waitBeforeRemovalTs:        waitBeforeRemovalTs,
+		toRemoveSignedBlks:         map[string]time.Time{},
+		signedBlks:                 map[string][]blocks.SignedBlock{},
+		newSignedBlks:              newSignedBlks,
+		newSignedValidatedBlk:      newSignedValidatedBlk,
+		stop: false,
 	}
 
 	return &out
@@ -167,8 +180,25 @@ func (blk *ValidateBlock) Execute() {
 				//write to the logs:
 				log.Printf("the block (hash: %s) needed %f stake to be verified, received: %f\n", signedBlkHash, blk.neededStakerPerBlk, receivedStake)
 
+				//sign the validated block:
+				blkSigID := uuid.NewV4()
+				blkSigCrOn := time.Now().UTC()
+				blkSig, blkSigErr := blk.userSigBuilderFactory.Create().Create().WithID(&blkSigID).CreatedOn(blkSigCrOn).WithUser(blk.user).WithPrivateKey(blk.pk).WithInterface(validatedBlk).Now()
+				if blkSigErr != nil {
+					log.Printf("there was an error while signing the validated block (ID: %s): %s", validatedBlk.GetMetaData().GetID().String(), blkSigErr.Error())
+					continue
+				}
+
+				signedValBlkID := uuid.NewV4()
+				signedValBlkCrOn := time.Now().UTC()
+				signedValBlk, signedValBlkErr := blk.signedValBlkBuilderFactory.Create().Create().WithID(&signedValBlkID).CreatedOn(signedValBlkCrOn).WithSignature(blkSig).WithBlock(validatedBlk).Now()
+				if signedValBlkErr != nil {
+					log.Printf("there was an error while building a signed validated block: %s", signedValBlkErr.Error())
+					continue
+				}
+
 				//add the validated block to the channel:
-				blk.newValidatedBlks <- validatedBlk
+				blk.newSignedValidatedBlk <- signedValBlk
 
 				//add the hash to the list of element to remove:
 				blk.toRemoveSignedBlks[signedBlkHash] = time.Now()

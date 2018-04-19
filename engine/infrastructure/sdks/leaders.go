@@ -7,9 +7,9 @@ import (
 	"time"
 
 	cryptography "github.com/XMNBlockchain/openxmn/engine/domain/cryptography"
+	servs "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	sdks "github.com/XMNBlockchain/openxmn/engine/domain/sdks"
-	servers "github.com/XMNBlockchain/openxmn/engine/domain/data/types/servers"
 	"github.com/go-resty/resty"
 	uuid "github.com/satori/go.uuid"
 
@@ -36,7 +36,7 @@ func CreateLeaders(sigBuilderFactory users.SignatureBuilderFactory, routePrefix 
 }
 
 // SaveTrs saves aggregated transactions to the leaders
-func (sdklead *leaders) SaveTrs(serv servers.Server, trs aggregated.Transactions) (aggregated.SignedTransactions, error) {
+func (sdklead *leaders) SaveTrs(serv servs.Server, trs aggregated.Transactions) (aggregated.SignedTransactions, error) {
 	url := fmt.Sprintf("%s%s/aggregated-transactions", serv.String(), sdklead.routePrefix)
 	js, jsErr := json.Marshal(trs)
 	if jsErr != nil {
