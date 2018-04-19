@@ -1,0 +1,33 @@
+{
+    "server": "http://127.0.0.1:8080",
+    "owner": {
+        "id": "7865652e-3e3e-4e60-ae6a-fdeed18fa5d8",
+        "private_key": "private_key.pfx"
+    },
+    "applications": {
+        "transactions": {
+            "route_prefix": "/transactions",
+            "signed_transactions_buffer_size": 20,
+            "atomic_signed_transactions_buffer_size": 20,
+            "aggregated_transactions_buffer_size": 20,
+        },
+        "leaders": {
+            "route_prefix": "/leaders",
+            "block_buffer_size": 20,
+            "aggregated_transactions_buffer_size": 20,
+            "aggregated_signed_transactions_buffer_size": 20,
+            "block_time": 2,
+        },
+        "blocks": {
+            "route_prefix": "/blocks",
+            "db_path": "./../../../db",
+            "chunk_size": 1024,
+            "chunk_file_extension": "chk",
+            "signed_block_buffer_size": 20,
+            "validated_block_buffer_size": 20,
+            "needed_stake_per_block": 127.98,
+            "wait_before_removal": 10,
+        }
+    }
+
+}
