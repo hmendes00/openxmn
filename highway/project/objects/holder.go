@@ -1,19 +1,20 @@
 package objects
 
 import (
-	users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
+	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
+	concrete_users "github.com/XMNBlockchain/openxmn/engine/infrastructure/data/types/users"
 )
 
 // Holder represents a user or an organization that hold currencies or assets
 type Holder struct {
-	Usr *users.User   `json:"user"`
-	Org *Organization `json:"organization"`
+	Usr *concrete_users.User `json:"user"`
+	Org *Organization        `json:"organization"`
 }
 
 // CreateHolderWithUser creates a new Holder instance from a user instance
-func CreateHolderWithUser(usr *users.User) *Holder {
+func CreateHolderWithUser(usr users.User) *Holder {
 	out := Holder{
-		Usr: usr,
+		Usr: usr.(*concrete_users.User),
 		Org: nil,
 	}
 

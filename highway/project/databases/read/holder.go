@@ -24,5 +24,16 @@ func CreateHolder(userDB *User, orgDB *Organization) *Holder {
 
 // RetrieveByUserOrOrganizationID retrieves an Holder by its organizationID, if not empty, otherwise the given user
 func (db *Holder) RetrieveByUserOrOrganizationID(usr users.User, orgID *uuid.UUID) (*objects.Holder, error) {
-	return nil, nil
+	if orgID != nil {
+		org, orgErr := db.orgDB.RetrieveByID(orgID)
+		if orgErr != nil {
+			return nil, orgErr
+		}
+
+		orgHolder := objects.CreateHolderWithOrganization(org)
+		return orgHolder, nil
+	}
+
+	userHolder := objects.CreateHolderWithUser(usr)
+	return userHolder, nil
 }

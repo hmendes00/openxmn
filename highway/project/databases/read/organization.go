@@ -1,6 +1,9 @@
 package read
 
 import (
+	"errors"
+	"fmt"
+
 	users "github.com/XMNBlockchain/openxmn/engine/domain/data/types/users"
 	objects "github.com/XMNBlockchain/openxmn/highway/project/objects"
 	uuid "github.com/satori/go.uuid"
@@ -22,7 +25,13 @@ func CreateOrganization(org map[string]*objects.Organization) *Organization {
 
 // RetrieveByID retrieves an organization by ID
 func (db *Organization) RetrieveByID(id *uuid.UUID) (*objects.Organization, error) {
-	return nil, nil
+	idAsString := id.String()
+	if oneOrg, ok := db.org[idAsString]; ok {
+		return oneOrg, nil
+	}
+
+	str := fmt.Sprintf("the organization (ID: %s) could not be found", idAsString)
+	return nil, errors.New(str)
 }
 
 // CanUpdate verifies if a given user can update the given organization
