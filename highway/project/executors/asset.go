@@ -6,22 +6,19 @@ import (
 
 	commands "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/commands"
 	executors "github.com/XMNBlockchain/openxmn/engine/domain/data/types/blockchains/executors"
-	readdb "github.com/XMNBlockchain/openxmn/highway/project/databases/read"
 	writedb "github.com/XMNBlockchain/openxmn/highway/project/databases/write"
 	objects "github.com/XMNBlockchain/openxmn/highway/project/objects"
 )
 
-// Asset represents an insert asset executor
+// Asset represents an asset executor
 type Asset struct {
-	readAssetDB  *readdb.Asset
-	writeAssetDB *writedb.Asset
+	writeDB *writedb.Asset
 }
 
 // CreateAsset creates a new Asset instance
-func CreateAsset(readAssetDB *readdb.Asset, writeAssetDB *writedb.Asset) executors.Command {
+func CreateAsset(writeDB *writedb.Asset) executors.Command {
 	out := Asset{
-		readAssetDB:  readAssetDB,
-		writeAssetDB: writeAssetDB,
+		writeDB: writeDB,
 	}
 
 	return &out
@@ -37,26 +34,9 @@ func (db *Asset) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insErr := db.writeAssetDB.Insert(newAsset)
+		insErr := db.writeDB.Insert(newAsset)
 		if insErr != nil {
 			log.Printf("there was an error while inserting a new asset to the database: %s\n", insErr.Error())
-			return nil
-		}
-
-		return nil
-	}
-
-	if cmd.HasDelete() {
-		js := cmd.GetDelete().GetJS()
-		delAsset := new(objects.Asset)
-		jsErr := json.Unmarshal(js, delAsset)
-		if jsErr != nil {
-			return jsErr
-		}
-
-		delErr := db.writeAssetDB.Delete(delAsset)
-		if delErr != nil {
-			log.Printf("there was an error while deleting an existing asset from the database: %s\n", delErr.Error())
 			return nil
 		}
 
@@ -79,9 +59,26 @@ func (db *Asset) Execute(cmd commands.Command) error {
 			return newJsErr
 		}
 
-		upErr := db.writeAssetDB.Update(originalAsset, newAsset)
+		upErr := db.writeDB.Update(originalAsset, newAsset)
 		if upErr != nil {
 			log.Printf("there was an error while updating an existing asset from the database: %s\n", upErr.Error())
+			return nil
+		}
+
+		return nil
+	}
+
+	if cmd.HasDelete() {
+		js := cmd.GetDelete().GetJS()
+		delAsset := new(objects.Asset)
+		jsErr := json.Unmarshal(js, delAsset)
+		if jsErr != nil {
+			return jsErr
+		}
+
+		delErr := db.writeDB.Delete(delAsset)
+		if delErr != nil {
+			log.Printf("there was an error while deleting an existing asset from the database: %s\n", delErr.Error())
 			return nil
 		}
 
