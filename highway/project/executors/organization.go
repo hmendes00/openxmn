@@ -34,12 +34,7 @@ func (db *Organization) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insOrgErr := db.writeDB.Insert(newOrganization)
-		if insOrgErr != nil {
-			log.Printf("there was an error while inserting a new organization to the database: %s\n", insOrgErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newOrganization)
 		return nil
 	}
 

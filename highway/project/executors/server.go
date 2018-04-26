@@ -34,12 +34,7 @@ func (db *Server) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insServErr := db.writeDB.Insert(newServer)
-		if insServErr != nil {
-			log.Printf("there was an error while inserting a new server to the database: %s\n", insServErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newServer)
 		return nil
 	}
 

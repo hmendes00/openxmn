@@ -34,12 +34,7 @@ func (db *User) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insUserErr := db.writeDB.Insert(newUser)
-		if insUserErr != nil {
-			log.Printf("there was an error while inserting a new user to the database: %s\n", insUserErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newUser)
 		return nil
 	}
 

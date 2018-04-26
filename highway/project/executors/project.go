@@ -34,12 +34,7 @@ func (db *Project) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insProjErr := db.writeDB.Insert(newProject)
-		if insProjErr != nil {
-			log.Printf("there was an error while inserting a new project to the database: %s\n", insProjErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newProject)
 		return nil
 	}
 

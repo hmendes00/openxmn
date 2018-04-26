@@ -34,12 +34,7 @@ func (db *Asset) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insErr := db.writeDB.Insert(newAsset)
-		if insErr != nil {
-			log.Printf("there was an error while inserting a new asset to the database: %s\n", insErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newAsset)
 		return nil
 	}
 

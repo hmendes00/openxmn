@@ -34,12 +34,7 @@ func (db *Currency) Execute(cmd commands.Command) error {
 			return jsErr
 		}
 
-		insCurrErr := db.writeDB.Insert(newCurrency)
-		if insCurrErr != nil {
-			log.Printf("there was an error while inserting a new currency to the database: %s\n", insCurrErr.Error())
-			return nil
-		}
-
+		db.writeDB.Insert(newCurrency)
 		return nil
 	}
 
