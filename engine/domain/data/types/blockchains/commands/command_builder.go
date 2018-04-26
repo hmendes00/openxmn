@@ -8,7 +8,7 @@ import (
 type CommandBuilder interface {
 	Create() CommandBuilder
 	WithMetaData(met metadata.MetaData) CommandBuilder
-	WithCommands(cmds Commands) CommandBuilder
+	WithCommands(cmds []Command) CommandBuilder
 	WithInsert(in Insert) CommandBuilder
 	WithUpdate(up Update) CommandBuilder
 	WithDelete(del Delete) CommandBuilder
