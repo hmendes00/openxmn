@@ -1,12 +1,11 @@
-package transactions
+package other
 
 import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// TransferCurrency represents a transfer currency transaction
-type TransferCurrency struct {
-	FromOrgID  *uuid.UUID `json:"from_organization_id"`
+// GenerateCurrency represents a generate currency transaction
+type GenerateCurrency struct {
 	ToUserID   *uuid.UUID `json:"to_user_id"`
 	ToOrgID    *uuid.UUID `json:"to_organization_id"`
 	CurrencyID *uuid.UUID `json:"currency_id"`
